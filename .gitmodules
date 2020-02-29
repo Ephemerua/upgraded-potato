@@ -1,0 +1,3 @@
+[submodule "google-coredumper"]
+	path = google-coredumper
+	url = https://github.com/madscientist/google-coredumper.git
