@@ -18,7 +18,13 @@ def parse_maps(maps, target):
     lib_opts = {}
     main_opts = {}
     maps = maps.split("\n")
-    for line in maps:
+    if "got bp" in maps[0]:
+        bp = maps[0].split(" ")[-1].strip()
+        bp = int(bp, 16)
+    else:
+        puts("No stack pointer recorded?")
+        exit(0)
+    for line in maps[1:]:
         if line == "":
             continue
         
@@ -44,7 +50,7 @@ def parse_maps(maps, target):
             if path[0] == "[":
                 continue
             lib_opts[path] = {"base_addr":start_addr}
-    return main_opts, lib_opts
+    return main_opts, lib_opts, bp
 
 #define LOGGER_PROMPT "$LOGGER$"
 LOGGER_PROMPT = b"$LOGGER$"

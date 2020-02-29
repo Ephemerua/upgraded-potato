@@ -25,13 +25,14 @@ class Replayer(object):
     def __init__(self, path_to_target, path_to_log, path_to_map, check_sat = False):
         # construct the angr.Project, loader's options must be set at first
         target_name = path_to_log.split(r"/")[-1]
-        main_opts, lib_opts = parse_maps_from_file(path_to_map, target_name)
+        main_opts, lib_opts, bp = parse_maps_from_file(path_to_map, target_name)
         self.__proj = angr.Project(path_to_target, main_opts = main_opts, lib_opts = lib_opts, \
             auto_load_libs=True, use_sim_procedures=False )
 
         # contruct sim_file, and save an entry_state as backup
         self.__sim_file = parse_log_from_file(path_to_log)
         self.__entry_state = self.__proj.factory.entry_state(mode="tracing", stdin=self.__sim_file)
+        self.__entry_state.regs.rsp = bp
 
         if check_sat:
             self.check_sat()

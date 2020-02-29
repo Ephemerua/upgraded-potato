@@ -38,6 +38,7 @@ int static inline chk_pr(long long value, char * message)
 /* Trampoline for the real main() */
 static int (*main_orig)(int, char **, char **);
 int DEBUG_MODE;
+//int main_retval;
 
 
 
@@ -101,6 +102,7 @@ int main_hook(int argc, char **argv, char **envp)
     {
         DEBUG_MODE = atoi(temp_ptr);
     }
+    md_debug("got bp: %p\n", (void*)bp);
     
     
     pid_t self_pid = getpid();
@@ -130,6 +132,7 @@ int main_hook(int argc, char **argv, char **envp)
     md_debug("got maps. run origin main\n");
     int ret = main_orig(argc, argv, envp);
     md_debug("after main with ret:%d\n", ret);
+    //close(0);
 
     return ret;
 }

@@ -65,6 +65,16 @@ add(int fd, char *name)
 	SLIST_INSERT_HEAD(&head, p, next);
 }
 
+static int inline check_fd(int fd)
+{
+	if(fcntl(fd, F_GETFD)<0)
+	{
+		puts("found fd error.");
+		return 1;
+	}
+	return 0;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -116,7 +126,7 @@ main(int argc, char *argv[])
 		err(1, "pledge");
 	*/
 
-	while ((rval = read(STDIN_FILENO, buf, sizeof(buf))) > 0) {
+	while ((rval = read(STDIN_FILENO, buf, sizeof(buf)) > 0)) {
 		SLIST_FOREACH(p, &head, next) {
 			
 			//do log here
