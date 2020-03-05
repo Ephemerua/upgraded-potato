@@ -24,7 +24,7 @@ state = r.get_entry_state() # 这个state是设置好了内存布局、寄存器
 
 Replayer几乎只是angr.project的一个封装，代码需要重构。  
 
-+ ~~问题：angr只能处理只有一个参数的scanf，在使用sim_packets读入多个参数时，会发生错误。~~ok这个是angr的bug。暴力注释掉size check之后scanf能够完美运行。
++ ~~问题：angr只能处理只有一个参数的scanf，在使用sim_packets读入多个参数时，会发生错误。~~  ok这个是angr的bug。之后再处理。
 
 ### 分析
 暂未实现。
