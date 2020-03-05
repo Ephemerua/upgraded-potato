@@ -2,6 +2,7 @@
 
 # 编译
 mkdir ./bin/
+gcc ./source/loader/core_dump.c -o ./bin/core_dump.so -fPIC -shared -ldl
 gcc ./source/loader/mmap_dump.c -o ./bin/mmap_dump.so -fPIC -shared -ldl
 gcc ./source/loader/tee.c  -o ./bin/tee
 gcc ./test/replay_test/replay_test.c -o ./bin/replay_test

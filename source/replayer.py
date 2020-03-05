@@ -1,4 +1,4 @@
-# 
+# -*- coding:utf-8 -*-
 
 import angr
 import sys
@@ -11,6 +11,25 @@ from helpers import *
 #p = angr.Project("./aa", main_opts = main_opts, lib_opts = lib_opts,auto_load_libs=True, use_sim_procedures=False )
 #state = p.factory.entry_state(mode="tracing", stdin=sim_file)
 
+def check_sat(simgr):
+    '''
+    Check if the entry_state could be replayed with the SimPackets.
+    There should only be one path, but Simpackets sometimes fails, so do check.
+
+    Args:
+        Replayer's simgr
+
+    Returns:
+        Bool
+        errored path could be found in simgr.errored
+    '''
+    simgr.step()
+    while(simgr.active):
+        if(len(simgr.active)>1):
+            print("More than one path is replayed...")
+            return False
+        simgr.step()
+    return True
 
 class Replayer(object):
     '''
@@ -22,20 +41,20 @@ class Replayer(object):
     def __init__(self):
         pass
 
-    def __init__(self, path_to_target, path_to_log, path_to_map, check_sat = False):
+    def __init__(self, path_to_target, path_to_log, path_to_map, do_check = True):
         # construct the angr.Project, loader's options must be set at first
         target_name = path_to_log.split(r"/")[-1]
         main_opts, lib_opts, bp = parse_maps_from_file(path_to_map, target_name)
         self.__proj = angr.Project(path_to_target, main_opts = main_opts, lib_opts = lib_opts, \
-            auto_load_libs=True, use_sim_procedures=False )
+            auto_load_libs=True, use_sim_procedures=False, exclude_sim_procedures_list = ["scanf"] )
 
         # contruct sim_file, and save an entry_state as backup
         self.__sim_file = parse_log_from_file(path_to_log)
         self.__entry_state = self.__proj.factory.entry_state(mode="tracing", stdin=self.__sim_file)
         self.__entry_state.regs.rsp = bp
 
-        if check_sat:
-            self.check_sat()
+        if do_check:
+            check_sat(self.get_simgr())
     
     def get_entry_state(self):
         # state can't be modified
@@ -47,20 +66,17 @@ class Replayer(object):
     def get_sim_file(self):
         return self.__sim_file
 
-    def check_sat(self):
-        '''
-        simpackets sometimes fails, so do check 
-        '''
-        simgr = self.__proj.factory.simgr(self.__entry_state)
-        simgr.run()
-        if len(simgr.deadended) > 1:
-            print("More than one path is replayed...")
-        return True
+    def get_simgr(self):
+        return self.__proj.factory.simgr(self.__entry_state)
 
-        
+    def set_sim_file(self, sf):
+        self.__sim_file = sf
+        self.__entry_state = self.__proj.factory.entry_state(mode="tracing", stdin=self.__sim_file)
 
 
 
+
+    
 
 
 

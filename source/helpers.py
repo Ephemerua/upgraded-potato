@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import claripy
 import angr
 from pwnlib import elf
@@ -52,8 +53,20 @@ def parse_maps(maps, target):
             lib_opts[path] = {"base_addr":start_addr}
     return main_opts, lib_opts, bp
 
+def parse_maps_from_file(path, target):
+    """
+    wrapper for parse_maps
+
+    Returns:
+        tuple(main_opts, lib_opts), both angr.loader's options
+    """
+    with open(path, "r") as f:
+        return parse_maps(f.read(), target)
+
+
 #define LOGGER_PROMPT "$LOGGER$"
 LOGGER_PROMPT = b"$LOGGER$"
+#python3 version
 def parse_log(log):
     """
     parse tee's logged stdin to sim_file
@@ -82,12 +95,32 @@ def parse_log_from_file(path):
     with open(path, "rb") as f:
         return parse_log(f.read())
 
-def parse_maps_from_file(path, target):
-    """
-    wrapper for parse_maps
+#python2 version
+# def parse_log(log):
+#     """
+#     parse tee's logged stdin to sim_file
 
-    Returns:
-        tuple(main_opts, lib_opts), both angr.loader's options
-    """
-    with open(path, "r") as f:
-        return parse_maps(f.read(), target)
+#     Args:
+#         log: logged file content
+    
+#     Returns:
+#         angr.SimPackets
+#     """
+#     #FIXME: input always has a 0 at beginning... don't use that
+#     packets = log.split(LOGGER_PROMPT+"\x00")[1:]
+#     # prevent packet size unsat
+#     #packets = [claripy.BVV(i, len(i)*8) for i in packets]
+#     sim_file = angr.SimPackets("sim-stream", content = packets)
+#     return sim_file
+
+
+# def parse_log_from_file(path):
+#     """
+#     wrapper for parse_log
+    
+#     Returns:
+#         angr.SimPackets
+#     """
+#     with open(path, "r") as f:
+#         return parse_log(f.read())
+

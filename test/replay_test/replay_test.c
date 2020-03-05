@@ -9,17 +9,23 @@ void init_test()
     alarm(0x10);
 }
 
-int scanf_test()
+int format_str_test()
 {
     printf("start %s:\n", __FUNCTION__);
 
-    char str[10];
+    char str[]="we have 321 and 123";
+    char* dst = malloc(0x100);
     int x;
-    puts("test1");
-    int num = scanf("%d%s", &x, str);
-    if(num != 2)
+    puts("scanf test");
+    int num = scanf("%d%s", &x, dst);
+    if(num != 1)
         puts("scanf error");
-    printf("got int: %d\ngot str: %s\n", x, str);
+    puts("printf test");
+    num = printf("got int: %d, test printf with str:%s\n", x, dst);
+    sscanf(str, "%s %d", dst, &x);
+    num = printf("got int: %d\n, test printf with str:%s\n", x, dst);
+    sprintf(dst, "%s %d", "123", 123);
+    printf("%s\n", dst);
     return 0;
 }
 
@@ -55,7 +61,7 @@ int main()
 {
     init_test();
     read_test();
-    scanf_test();
+    format_str_test();
     malloc_test();
 
     return 0;
