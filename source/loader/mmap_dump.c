@@ -36,8 +36,9 @@ int static inline chk_pr(long long value, char * message)
 }
 
 /* Trampoline for the real main() */
-static int (*main_orig)(int, char **, char **);
+static int (*main_orig)(int, char **, char **) = 0;
 int DEBUG_MODE;
+int reentry_flag = 0;
 //int main_retval;
 
 
@@ -46,12 +47,17 @@ int copy_maps(pid_t pid, unsigned long long bp)
 {
     char buf[0x200];
     char path[0x100];
+
     sprintf(path, "/proc/%d/maps", pid);
     md_debug("trying to get pid:%d's mmap\n", pid);
     int fd_r = open(path, O_RDONLY);
     chk_pr(fd_r, "Open read fd failed: ");
-    int fd_w = open("./maps", O_RDWR|O_CREAT|O_TRUNC);
+
+    memset(buf, 0, sizeof(buf));
+    sprintf(path, "./maps.%d", pid);
+    int fd_w = open(path, O_RDWR|O_CREAT|O_TRUNC);
     chk_pr(fd_w, "Open write fd failed: ");
+
     char *bp_str = (char*)alloc_printf("got bp: %p\n", (void*)bp);
     if (fd_r > 0 && fd_w > 0)
     {
@@ -96,6 +102,7 @@ static unsigned long long inline get_bp()
 int main_hook(int argc, char **argv, char **envp)
 {
     unsigned long long bp = get_bp();
+    int ret;
     DEBUG_MODE = 0;
     char* temp_ptr = getenv("BISHE_DEBUG");
     if (temp_ptr)
@@ -103,8 +110,9 @@ int main_hook(int argc, char **argv, char **envp)
         DEBUG_MODE = atoi(temp_ptr);
     }
     md_debug("got bp: %p\n", (void*)bp);
+
     
-    
+ 
     pid_t self_pid = getpid();
     pid_t child_pid = fork();
     if(chk_pr(child_pid, "fork failed: "))
@@ -130,9 +138,11 @@ int main_hook(int argc, char **argv, char **envp)
     }
 
     md_debug("got maps. run origin main\n");
-    int ret = main_orig(argc, argv, envp);
+
+    ret = main_orig(argc, argv, envp);
     md_debug("after main with ret:%d\n", ret);
     //close(0);
+    
 
     return ret;
 }
@@ -150,10 +160,11 @@ int __libc_start_main(
     void (*rtld_fini)(void),
     void *stack_end)
 {
+    typeof(&__libc_start_main) orig;
     /* Save the real main function address */
     main_orig = main;
     /* Find the real __libc_start_main()... */
-    typeof(&__libc_start_main) orig = dlsym(RTLD_NEXT, "__libc_start_main");
+    orig = dlsym(RTLD_NEXT, "__libc_start_main");
     /* ... and call it with our custom main function */
     return orig(main_hook, argc, argv, init, fini, rtld_fini, stack_end);
 }
