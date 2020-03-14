@@ -8,7 +8,7 @@ import claripy
 import networkx
 LOGGER_PROMPT = b"$LOGGER$"
 from helpers import *
-
+from exploited_state_hook import exploited_execve
 
 #p = angr.Project("./aa", main_opts = main_opts, lib_opts = lib_opts,auto_load_libs=True, use_sim_procedures=False )
 #state = p.factory.entry_state(mode="tracing", stdin=sim_file)
@@ -55,6 +55,9 @@ class Replayer(angr.project.Project):
         
         # replace unsupported syscall
         replace_stub(self)
+
+        # FIXME: set the hook to detect pwned state??
+        self.set_exploited_syscall(exploited_execve())
     
     def get_entry_state(self):
         """
