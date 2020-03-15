@@ -2,6 +2,7 @@
 import claripy
 import angr
 from pwnlib import elf
+from SimPacketsC import SimPacketsC
 
 
 def parse_maps(maps, target):
@@ -74,7 +75,7 @@ def parse_log(log):
     packets = log.split(LOGGER_PROMPT+b"\x00")[1:]
     # prevent packet size unsat
     packets = [bytes(packet) for packet in packets]
-    sim_file = angr.SimPackets("sim-stream", content = packets)
+    sim_file = SimPacketsC("sim-stream", content = packets)
     return sim_file
 
 
