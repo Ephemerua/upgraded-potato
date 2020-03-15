@@ -29,7 +29,7 @@ def parse_maps(maps, target):
             continue
         
         parts = line.split(" ")
-        start_addr, end_addr = [int(x, 16) for x in parts[0].split("-")]
+        start_addr, end_addr = [int(x, 16) for x in parts[0].split("-")] #should work
         mod = parts[1]
         path = parts[-1]
         #set main_opts first

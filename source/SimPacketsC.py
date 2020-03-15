@@ -5,7 +5,7 @@ class SimPacketsC(angr.SimPackets):
     The same with angr.SimPackets, but discard size check.
     Size check will make state unsatisfied. That's an angr bug.
     """
-     def read(self, pos, size, **kwargs):
+    def read(self, pos, size, **kwargs):
         """
         Overrided.
         Read a packet from the stream.
@@ -46,7 +46,7 @@ class SimPacketsC(angr.SimPackets):
         max_size = None
 
         # if short reads are enabled, replace size with a symbol
-                if short_reads is True or (short_reads is None and sim_options.SHORT_READS in self.state.options):
+        if short_reads is True or (short_reads is None and sim_options.SHORT_READS in self.state.options):
             size = self.state.solver.BVS('packetsize_%d_%s' % (len(self.content), self.ident), self.state.arch.bits, key=('file', self.ident, 'packetsize', len(self.content)))
             self.state.solver.add(size <= orig_size)
 
