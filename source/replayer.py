@@ -57,7 +57,7 @@ class Replayer(angr.project.Project):
         replace_stub(self)
 
         # FIXME: set the hook to detect pwned state??
-        self.set_exploited_syscall(exploited_execve())
+        self.set_exploited_syscall("execve", exploited_execve())
     
     def get_entry_state(self):
         """
