@@ -9,6 +9,7 @@ import networkx
 LOGGER_PROMPT = b"$LOGGER$"
 from helpers import *
 from exploited_state_hook import exploited_execve
+from pwnlib.elf.elf import ELF
 
 #p = angr.Project("./aa", main_opts = main_opts, lib_opts = lib_opts,auto_load_libs=True, use_sim_procedures=False )
 #state = p.factory.entry_state(mode="tracing", stdin=sim_file)
@@ -52,9 +53,22 @@ class Replayer(angr.project.Project):
         # construct the project, load objects with recorded base addr
         super().__init__(binary, main_opts = main_opts, lib_opts = lib_opts, \
             auto_load_libs=True, use_sim_procedures=False)
-        
+
+        # use pwnlib's ELF to save all objects
+        # XXX: angr.loader has loaded all objects...
+        self.elfs = {"main":ELF(binary, checksec=False)}
+        self.elfs["main"].address = self._main_opts["base_addr"]
+        for k, v in self._lib_opts.items():
+            f = ELF(k, checksec=False)
+            f.address = v["base_addr"]
+            self.elfs[k] = f
+
         # replace unsupported syscall
         replace_stub(self)
+
+        # do some steps as test
+        simgr = self.get_simgr()
+        simgr.step()
 
         # FIXME: set the hook to detect pwned state??
         self.set_exploited_syscall("execve", exploited_execve())
@@ -102,14 +116,14 @@ class Replayer(angr.project.Project):
         simgr = self.get_simgr()
         simgr.run()
         state = simgr.deadended[0]
-        self.cfg_seqence = list(state.history.bbl_addrs)
+        self.cfg_sequence = list(state.history.bbl_addrs)
         self.cfg_recorded = networkx.Graph()
 
         # no history?
-        assert(len(self.cfg_seqence) > 1)
+        assert(len(self.cfg_sequence) > 1)
 
-        last_addr = self.cfg_seqence[0]
-        for addr in self.cfg_seqence[1:]:
+        last_addr = self.cfg_sequence[0]
+        for addr in self.cfg_sequence[1:]:
             self.cfg_recorded.add_edge(last_addr, addr)
             last_addr = addr
 
@@ -130,7 +144,8 @@ class Replayer(angr.project.Project):
         :param name:        syscall name
         :param procedure:   sim procedure to do the work
         """
-        procedure.project = self
+        # don't set project now, or deepcopy will fail.
+        #procedure.project = self
         self.simos.syscall_library.procedures[name] = procedure
 
     def set_exploited_func(self, addr, hook_func):
@@ -144,6 +159,7 @@ class Replayer(angr.project.Project):
         """
         self.hook(addr, hook_func(self))
         self.hooked_addr.append(addr)
+
 
 
 
