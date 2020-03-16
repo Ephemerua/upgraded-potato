@@ -77,7 +77,9 @@ class Replayer(angr.project.Project):
         """
         Returns the state at entry point, with stdin set to recorded input
         """
-        return self.factory.entry_state(mode="tracing", stdin=self.input)
+        state = self.factory.entry_state(mode="tracing", stdin=self.input)
+        state.regs.rsp = self._bp
+        return state
 
     def get_simgr(self, from_state = None):
         """
@@ -187,7 +189,7 @@ def stack_backtrace(state, depth = 'Max'):
         # We have set uninited memory to zero, and ret_addr shouldn't be zero.
         if (ret_addr == 0).is_true():
             return result
-        if (ret_addr > 0x7fffffffffff):
+        if (ret_addr > 0x7fffffffffff).is_true():
             return result
         result.append(ret_addr)
 
