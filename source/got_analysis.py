@@ -1,13 +1,43 @@
 import angr
 from pwnlib.elf.elf import ELF
+import copy
+import gc
+
 
 # TODO: test this function
 class got_analysis(object):
     def __init__(self, project):
         self.project = project
+    
+    def _resolve_mismatch(self, addr):
+        # first find which object the addr belongs to
+        maps = self.project.maps
+        found_obj = 0
+        for obj in maps:
+            for seg in maps[obj]:
+                if addr >= seg["start"] and addr <=seg["end"]:
+                    found_obj = obj
+                else:
+                    continue
+        
+        if found_obj == 0:
+            print("Cannot find symbol of addr %s." % hex(addr))
+            return None
+        
+        # now try to find the symbol name
+        obj = self.project.elfs[found_obj]
+        symbols = {v:k for k, v in obj.symbols.items()}
+        addrs = [ i for i in symbols]
+        addrs_diff = [ abs(i-addr) for i in addrs]
+        idx = addrs_diff.index(min(addrs_diff))
+        return symbols[addrs[idx]], found_obj
+
+
+
 
     def do_analysis(self):
         # first we resolve all imported symbols' addr
+        assert(self.project.exploited_state)
         main = self.project.elfs["main"]
         origin_got = {}
         exploited_got = {}
@@ -49,7 +79,9 @@ class got_analysis(object):
                 else:
                     #TODO: do report
                     print("Found got mismatch: symbol %s with addr %s" % (sym, hex(addr)) )
-                    pass
+                    resolve_result = self._resolve_mismatch(addr)
+                    if resolve_result:
+                        print("which is func %s in file %s" % (resolve_result[0], resolve_result[1]))
 
             
         

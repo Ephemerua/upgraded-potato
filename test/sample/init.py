@@ -26,14 +26,16 @@ def memory_sum(file):
 state = 0
 simgr = 0
 p = 0
+before_malloc = 0
 
 
 def full_init():
-    global state, simgr, p
+    global state, simgr, p, before_malloc
     p = replayer.Replayer("easyheap", "./sample.txt", "maps.8998")
 
     state = p.get_entry_state()
     simgr = p.get_simgr()
+    before_malloc = p.navigate_to(0x40092e)
 
 def full_reload():
     reload(helpers)

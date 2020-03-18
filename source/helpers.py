@@ -52,13 +52,66 @@ def parse_maps(maps, target):
             lib_opts[path] = {"base_addr":start_addr}
     return main_opts, lib_opts, bp
 
-def parse_maps_from_file(path, target):
+def parse_maps_plus(maps):
+    """
+    Parse mmap_dump's memory map. Save all segments' infomation.
+    #TODO: now target can't be a path
+
+    :param maps:    str, logged mmap content
+    :param target:  target file name    
+    
+    """
+    parsed_maps = {}
+    maps = maps.split("\n")
+    if "got bp" in maps[0]:
+        bp = maps[0].split(" ")[-1].strip()
+        bp = int(bp, 16)
+    else:
+        puts("No stack pointer recorded?")
+        exit(0)
+    for line in maps[1:]:
+        if line == "":
+            continue
+        
+        parts = line.split(" ")
+        start_addr, end_addr = [int(x, 16) for x in parts[0].split("-")] #should work
+        mod = parts[1]
+        path = parts[-1]
+
+        if path == "":
+            if 'anonymous' in parsed_maps:
+                parsed_maps['anonymous'].append({"start":start_addr, \
+                    "end":end_addr, "mod":mod})
+            else:
+                parsed_maps['anonymous'] = [{"start":start_addr, \
+                    "end":end_addr, "mod":mod}]
+        
+        elif path[0] == "[":
+            path = path[1:-1]
+        if path in parsed_maps:
+            parsed_maps[path].append({"start":start_addr, \
+                "end":end_addr, "mod":mod})
+        else:
+            parsed_maps[path] = [{"start":start_addr, \
+                "end":end_addr, "mod":mod}]
+
+    return parsed_maps
+        
+
+
+
+def parse_maps_from_file(path, target = None, plus = False):
     """
     wrapper for parse_maps
     Returns tuple(main_opts, lib_opts), both angr.loader's options
     """
+
     with open(path, "r") as f:
-        return parse_maps(f.read(), target)
+        if plus:
+            return parse_maps_plus(f.read())
+        else:
+            assert(target)
+            return parse_maps(f.read(), target)
 
 
 #define LOGGER_PROMPT "$LOGGER$"

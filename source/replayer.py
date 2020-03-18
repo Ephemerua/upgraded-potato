@@ -10,6 +10,7 @@ LOGGER_PROMPT = b"$LOGGER$"
 from helpers import *
 from exploited_state_hook import exploited_execve
 from pwnlib.elf.elf import ELF
+from heap_analysis import heap_analysis
 
 #p = angr.Project("./aa", main_opts = main_opts, lib_opts = lib_opts,auto_load_libs=True, use_sim_procedures=False )
 #state = p.factory.entry_state(mode="tracing", stdin=sim_file)
@@ -34,8 +35,11 @@ class Replayer(angr.project.Project):
     :ivar hooked_addr:  list of addr been hooked
     """
     def __init__(self, binary, log_path, map_path):
+        # input is the recorded stdin
+        self.input = parse_log_from_file(log_path)
         target_name = binary.split(r"/")[-1]
         main_opts, lib_opts, bp = parse_maps_from_file(map_path, target_name)
+        self.maps = parse_maps_from_file(map_path, plus = True)
 
         self.cfg = 0
         self.cfg_recorded = 0
@@ -47,8 +51,6 @@ class Replayer(angr.project.Project):
         self._lib_opts = lib_opts
         self._bp = bp
         self.exploited_state = 0
-        # input is the recorded stdin
-        self.input = parse_log_from_file(log_path)
 
         # construct the project, load objects with recorded base addr
         super().__init__(binary, main_opts = main_opts, lib_opts = lib_opts, \
@@ -72,6 +74,9 @@ class Replayer(angr.project.Project):
 
         # FIXME: set the hook to detect pwned state??
         self.set_exploited_syscall("execve", exploited_execve())
+
+        # set heap analysis
+        self.heap_analysis = heap_analysis(self)
     
     def get_entry_state(self):
         """
