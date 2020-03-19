@@ -41,7 +41,7 @@ def _malloc_hook(state):
 
     rsp = state.regs.rsp
     assert(rsp.concrete)
-    # malloc use rsp to save return address...
+    # stack frame haven't been created, so return address is in rsp
     ret_addr = state.memory.load(rsp, 8, endness = 'Iend_LE')
     assert(ret_addr.concrete)
     ret_addr = ret_addr.args[0]
@@ -83,7 +83,7 @@ def _calloc_hook(state):
 
     rsp = state.regs.rsp
     assert(rsp.concrete)
-    # malloc use rsp to save return address...
+    # stack frame haven't been created, so return address is in rsp
     ret_addr = state.memory.load(rsp, 8, endness = 'Iend_LE')
     assert(ret_addr.concrete)
     ret_addr = ret_addr.args[0]
@@ -115,7 +115,7 @@ def _free_hook(state):
     size = size.args[0]
     size = (size >> 4)<<4
     print("Free called to free %s with size %s" % (hex(addr), hex(size)))
-    # free also use rsp to save return value
+    # stack frame haven't been created, so return address is in rsp
     ret_addr = state.memory.load(state.regs.rsp, endness = 'Iend_LE')
     ret_addr = ret_addr.args[0]
     state.project.heap_analysis.del_chunk(addr, size)

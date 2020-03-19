@@ -2,14 +2,23 @@ import angr
 from pwnlib.elf.elf import ELF
 import copy
 import gc
+from symbol_resolve import symbol_resolve
 
 
 # TODO: test this function
 class got_analysis(object):
+    """
+    Compare exploited_state's got with original func address.
+    If got is not modified, it should point to the function, or plt stub in elf. 
+    """
     def __init__(self, project):
         self.project = project
+        self.symbol_resolve = symbol_resolve(project)
     
     def _resolve_mismatch(self, addr):
+        """
+        Deprecated function to do the resolve.
+        """
         # first find which object the addr belongs to
         maps = self.project.maps
         found_obj = 0
@@ -33,9 +42,10 @@ class got_analysis(object):
         return symbols[addrs[idx]], found_obj
 
 
-
-
     def do_analysis(self):
+        """
+        Do the job.
+        """
         # first we resolve all imported symbols' addr
         assert(self.project.exploited_state)
         main = self.project.elfs["main"]
@@ -79,9 +89,9 @@ class got_analysis(object):
                 else:
                     #TODO: do report
                     print("Found got mismatch: symbol %s with addr %s" % (sym, hex(addr)) )
-                    resolve_result = self._resolve_mismatch(addr)
+                    resolve_result = self.symbol_resolve.resolve(addr)
                     if resolve_result:
-                        print("which is func %s in file %s" % (resolve_result[0], resolve_result[1]))
+                        print("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
 
             
         
