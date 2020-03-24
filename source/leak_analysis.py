@@ -9,6 +9,9 @@ class leak_analysis(object):
     Also, low bytes of address is usually useless in exploit, so we check leaked higher 
     three bytes to find leak.
 
+    XXX: if we have 140737349736160 in output, which is actually an address, how can we
+    find out that?
+
     :ivar project:          project of the analysis
     :ivar leaked_addrs:     all address that could be leak in stdout(and others).
     :ivar symbol_resolve:   helper to get symbol name from address

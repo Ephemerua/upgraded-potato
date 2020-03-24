@@ -2,6 +2,7 @@ from pwn import *
 
 p = process("./tee sample.txt| LD_PRELOAD=./mmap_dump.so ./easyheap", shell=True)
 #p = remote("121.36.209.145", 9997)
+#p = process("./easyheap")
 context.terminal = ["tmux","split","-h"]
 libc = ELF("./easyheap.so")
 context.log_level='debug'

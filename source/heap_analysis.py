@@ -1,5 +1,8 @@
 import claripy
 def bp_constructor(start_addr, size):
+    """
+    construct an state.inspect.bp, record mem write to detect overflow
+    """
     def write_bp(state):
         target_addr = state.inspect.mem_write_address
         target_size = state.inspect.mem_write_length
@@ -159,6 +162,9 @@ class heap_analysis(object):
         self.bps = {}
     
     def add_chunk(self, addr, size):
+        """
+        when a chunk is alloced, this func is called to do record and check.
+        """
         # do log in chunks_av
         if addr in self.chunks_av:
             # why allocated again?
@@ -178,6 +184,9 @@ class heap_analysis(object):
             self.chunks_sv[size] = [addr]
 
     def del_chunk(self, addr, size):
+        """
+        when a chunk is freed, this func is called to do record and check.
+        """
         # check if the chunk is allocated
         if addr in self.chunks_av:
             sizes = self.chunks_av[addr]
@@ -201,19 +210,28 @@ class heap_analysis(object):
             # this chunk is not alloced by c/m/relloc
             self.abused_chunks.append({"addr":addr, "size": size, "type":"chunk not allocated is freed"})
     
-    def enable(self):
+    def enable_hook(self):
         # hook heap api, save address to hooked_addr
         self.hooked_addr.append(self.project.hook_symbol("malloc", self.malloc_hook))
         self.hooked_addr.append(self.project.hook_symbol("free", self.free_hook))
         self.hooked_addr.append(self.project.hook_symbol("calloc", self.calloc_hook))
 
-    def disable(self):
+    def disable_hook(self):
         # clean hooks by saved addr
         for i in self.hooked_addr:
             self.project.unhook(i)
 
     def parse_arena(self, state):
         pass
+
+    def do_analysis(self):
+        """
+        Do the job.
+        """
+        self.enable_hook()
+        simgr = self.project.get_simgr()
+        simgr.run()
+        self.disable_hook()
         
 
 
