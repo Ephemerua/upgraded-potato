@@ -46,9 +46,9 @@ simgr.run()
 ### TODO
 1. 可视化的表现形式（xml? html? 图表？）
 2. 污点分析  （针对函数指针的替换做分析） 
-3. dwarf解析  pyelftools 通过地址解析符号，获得可读的信息
+3. dwarf解析  （用pyelftools或别的工具，通过地址解析符号，通过调试\符号信息获取可读的信息）
 4. 一个stage，把目标程序绑定到某个端口（这样我们就可以分析ftp，webserver等等不使用stdio作为输入输出的程序）
-5. logging 目前只是用print输出报告（
+5. logging （目前只是用print输出报告）
 
 
 
