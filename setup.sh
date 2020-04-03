@@ -1,5 +1,14 @@
 #!/bin/sh
 
+# compile preeny
+git submodule update --init --recursive
+sudo apt-get install -y libini-config-dev
+cd preeny
+./cmake-build.sh
+cd ../
+mv -f ./preeny/build/lib ./test/preeny
+
+
 # 编译
 mkdir ./bin/
 gcc ./source/loader/core_dump.c -o ./bin/core_dump.so -fPIC -shared -ldl

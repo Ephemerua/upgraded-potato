@@ -17,6 +17,8 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include "common.h"
+#include <string.h>
+#include <sys/wait.h>
 
 
 #define md_debug(_str...) \
@@ -41,20 +43,41 @@ int DEBUG_MODE;
 int reentry_flag = 0;
 //int main_retval;
 
+#define BUF_SIZE 0x200
+#define PATH_SIZE 0x300
 
 
 int copy_maps(pid_t pid, unsigned long long bp)
 {
-    char buf[0x200];
-    char path[0x100];
+    char buf[BUF_SIZE];
+    char path[PATH_SIZE];
 
+
+    // 打开maps文件
     sprintf(path, "/proc/%d/maps", pid);
     md_debug("trying to get pid:%d's mmap\n", pid);
     int fd_r = open(path, O_RDONLY);
     chk_pr(fd_r, "Open read fd failed: ");
 
+    // 用cmdline的第一个字符串命名创建的maps文件
+    memset(path, 0, sizeof(path));
+    sprintf(path, "/proc/%d/cmdline", pid);
+    md_debug("trying to get pid:%d's cmdline\n", pid);
+    int fd_cmdline = open(path, O_RDONLY);
+    chk_pr(fd_cmdline, "Open cmdline fd failed: ");
+    read(fd_cmdline, buf, sizeof(buf));
+    close(fd_cmdline);
+    char* ptr = strrchr(buf, '/');
+    if (!ptr)
+        ptr = buf;
+    if(strlen(ptr) > sizeof(buf) - (ptr-buf))
+        buf[BUF_SIZE-1] = 0;
+    // 输出文件的文件名格式： maps.cmdline[0].pid
+    sprintf(path, "./maps.%s.%d", ptr+1, pid);
     memset(buf, 0, sizeof(buf));
-    sprintf(path, "./maps.%d", pid);
+    //puts(path);
+
+    // 打开输出的文件
     int fd_w = open(path, O_RDWR|O_CREAT|O_TRUNC);
     chk_pr(fd_w, "Open write fd failed: ");
 

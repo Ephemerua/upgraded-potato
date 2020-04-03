@@ -1,3 +1,6 @@
 [submodule "google-coredumper"]
 	path = google-coredumper
 	url = https://github.com/madscientist/google-coredumper.git
+[submodule "preeny"]
+	path = preeny
+	url = https://github.com/zardus/preeny.git
