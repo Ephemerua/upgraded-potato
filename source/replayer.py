@@ -7,10 +7,12 @@ from time import time
 import claripy
 import networkx
 LOGGER_PROMPT = b"$LOGGER$"
-from helpers import *
+from parse_helpers import *
 from exploited_state_hook import exploited_execve
 from pwnlib.elf.elf import ELF
 from heap_analysis import heap_analysis
+from symbol_resolve import symbol_resolve
+
 
 #p = angr.Project("./aa", main_opts = main_opts, lib_opts = lib_opts,auto_load_libs=True, use_sim_procedures=False )
 #state = p.factory.entry_state(mode="tracing", stdin=sim_file)
@@ -40,6 +42,7 @@ class Replayer(angr.project.Project):
         target_name = binary.split(r"/")[-1]
         main_opts, lib_opts, bp = parse_maps_from_file(map_path, target_name)
         self.maps = parse_maps_from_file(map_path, plus = True)
+        self.reverse_maps = reverse_maps(self.maps)
 
         self.cfg = 0
         self.cfg_recorded = 0
@@ -62,6 +65,8 @@ class Replayer(angr.project.Project):
         self.elfs["main"].address = self._main_opts["base_addr"]
         for k, v in self._lib_opts.items():
             f = ELF(k, checksec=False)
+            # TEST: only use filename, not path?
+            k = k.split("/")[-1]
             f.address = v["base_addr"]
             self.elfs[k] = f
 
@@ -75,8 +80,9 @@ class Replayer(angr.project.Project):
         # FIXME: set the hook to detect pwned state??
         self.set_exploited_syscall("execve", exploited_execve())
 
-        # set heap analysis
+        # TEST: set heap analysis
         self.heap_analysis = heap_analysis(self)
+        self.symbol_resolve = symbol_resolve(self)
     
     def get_entry_state(self):
         """
@@ -181,7 +187,7 @@ def stack_backtrace(state, depth = 'Max'):
     # gdb's backtrace records present rip in frame0, do the same with gdb
     result = [state.regs.rip]
     bp = state.regs.rbp
-    frame_num = -1 if depth=='Max' else depths
+    frame_num = -1 if depth=='Max' else depth
 
     while bp.concrete and frame_num:
         frame_num -= 1

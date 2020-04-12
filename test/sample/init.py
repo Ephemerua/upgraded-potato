@@ -4,7 +4,7 @@ import sys
 
 sys.path.append("../../source/")
 
-import helpers
+import parse_helpers
 import replayer
 import angr
 import claripy
@@ -38,7 +38,7 @@ def full_init():
     before_malloc = p.navigate_to(0x40092e)
 
 def full_reload():
-    reload(helpers)
+    reload(parse_helpers)
     reload(replayer)
     reload(analyser)
     full_init()

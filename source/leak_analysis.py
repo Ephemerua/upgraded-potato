@@ -1,3 +1,9 @@
+"""
+Analysis to find information leakage in exploited state.
+Use heuristic way to find leaked address from exploited_state's stdout. It doesn't work well
+in most situation :(
+"""
+
 import struct
 from symbol_resolve import symbol_resolve
 
@@ -62,7 +68,7 @@ class leak_analysis(object):
 
         # TODO: do report
         for i in self.leaked_addrs:
-            result = self.symbol_resolve.resolve(i)
+            result = self.symbol_resolve.reverse_resolve(i)
             if result:
                 print("Found leaked addr: %s %x in lib %s" %(result[0], result[1], result[2]))
     

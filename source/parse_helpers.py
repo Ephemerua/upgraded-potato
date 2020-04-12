@@ -9,6 +9,9 @@ import angr
 from pwnlib import elf
 from SimPacketsC import SimPacketsC
 
+PROT_READ = 1
+PROT_WRITE = 2
+PROT_EXEC = 4
 
 def parse_maps(maps, target):
     """
@@ -57,6 +60,16 @@ def parse_maps(maps, target):
             lib_opts[path] = {"base_addr":start_addr}
     return main_opts, lib_opts, bp
 
+def _parse_mod(mod):
+    prot = 0
+    if 'r' in mod:
+        prot |= PROT_READ
+    if 'w' in mod:
+        prot |= PROT_WRITE
+    if 'x' in mod:
+        prot |= PROT_EXEC
+    return prot
+
 def parse_maps_plus(maps):
     """
     Parse mmap_dump's memory map. Save all segments' infomation.
@@ -81,6 +94,7 @@ def parse_maps_plus(maps):
         parts = line.split(" ")
         start_addr, end_addr = [int(x, 16) for x in parts[0].split("-")] #should work
         mod = parts[1]
+        mod = _parse_mod(mod)
         path = parts[-1]
 
         if path == "":
@@ -101,8 +115,19 @@ def parse_maps_plus(maps):
                 "end":end_addr, "mod":mod}]
 
     return parsed_maps
-        
 
+
+def reverse_maps(maps):
+    reverse_map = {}
+    for name, segs in maps.items():
+        for seg in segs:
+            for page in range(seg['start'], seg['end'], 0x1000):
+                reverse_map[page>>12] = (name, seg['mod'])
+    return reverse_map
+
+def parse_maps_plus_reverse(maps):
+    maps = parse_maps_plus(maps)
+    return reverse_maps(maps)
 
 
 def parse_maps_from_file(path, target = None, plus = False):
@@ -117,6 +142,10 @@ def parse_maps_from_file(path, target = None, plus = False):
         else:
             assert(target)
             return parse_maps(f.read(), target)
+
+def parse_maps_reverse_from_file(path, target = None, plus = False):
+    with open(path, "r") as f:
+        return parse_maps_plus_reverse(f.read())
 
 
 #define LOGGER_PROMPT "$LOGGER$"
@@ -231,35 +260,6 @@ def hex2str(h):
     return unhexlify(h)
 
 
-
-#python2 version
-# def parse_log(log):
-#     """
-#     parse tee's logged stdin to sim_file
-
-#     Args:
-#         log: logged file content
-    
-#     Returns:
-#         angr.SimPackets
-#     """
-#     #FIXME: input always has a 0 at beginning... don't use that
-#     packets = log.split(LOGGER_PROMPT+"\x00")[1:]
-#     # prevent packet size unsat
-#     #packets = [claripy.BVV(i, len(i)*8) for i in packets]
-#     sim_file = angr.SimPackets("sim-stream", content = packets)
-#     return sim_file
-
-
-# def parse_log_from_file(path):
-#     """
-#     wrapper for parse_log
-    
-#     Returns:
-#         angr.SimPackets
-#     """
-#     with open(path, "r") as f:
-#         return parse_log(f.read())
 
 
 

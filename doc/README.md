@@ -17,7 +17,8 @@
 ```
 
 + tee无法确定管道是否被关闭，需要在下一次read时读到eof才能结束进程，在运行记录的命令时，如果发生目标程序已经退出但tee还在运行的情况，用Ctrl-D或者敲回车解决，如果输入了其他字符，可能在重放时导致问题。
-+ google coredumper产生的coredump不完整，修改了一下发现会破坏栈，暂时弃用。gcore的方案还没测试，但angr的elfcore的后端也存在问题。
++ google coredumper产生的coredump不完整，修改了一下发现会破坏栈，暂时弃用。gcore的方案还没测试，但angr的elfcore的后端也存在问题。(原本想要应用的[coredumper](https://github.com/madscientist/google-coredumper.git))
++ **注意⚠️：现在只能在录制的环境下进行重放，正在准备添加打包动态链接库的功能😢**
 
 ### 重放
 ```python
@@ -37,6 +38,7 @@ simgr.run()
 2. 堆分析（部分）
 3. 信息泄露分析
 4. 函数调用分析（部分）
+5. 控制流分析
 
 #### 使用方法
 还没有在replayer.py里面添加binding, 直接导入然后实例化，调用`do_analysis`即可。  
@@ -44,12 +46,19 @@ simgr.run()
 
 
 ### TODO
-1. 可视化的表现形式（xml? html? 图表？）
-2. 污点分析  （针对函数指针的替换做分析） 
-3. dwarf解析  （用pyelftools或别的工具，通过地址解析符号，通过调试\符号信息获取可读的信息）
-4. 一个stage，把目标程序绑定到某个端口（这样我们就可以分析ftp，webserver等等不使用stdio作为输入输出的程序）
-5. logging （目前只是用print输出报告）
-
+1. dwarf解析  （用pyelftools或别的工具，通过地址解析符号，通过调试\符号信息获取可读的信息）
+    + 追踪一次内存修改
+2. 一个stage，把目标程序绑定到某个端口（这样我们就可以分析ftp，webserver等等不使用stdio作为输入输出的程序）
+3. desocket + stage测试
+    目标：用这个模式正常运行tftp server，然后可以取得他的输入
+4. logging （目前只是用print输出报告）  
+暂定记录内容：
+    + 日志级别（debug, info, critical等那一套）
+    + 时序（使用state.history.bbl_addr可以表示）
+    + 内容（主要的记录内容）
+5. 可视化的表现形式（xml? html? 图表？）  
+logging to html/xml
+可以先转换为一些中间表示（json/yaml等）再转换为可读性高的文件
 
 
 ## 设计思路

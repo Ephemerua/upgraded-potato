@@ -1,15 +1,33 @@
 # 'resolve' symbol name from symbol addr
 class symbol_resolve(object):
     """
-    Resolve the symbol name from symbol address.
+    DO resolve job.
     TODO: rewrite
     """
     def __init__(self, project):
         self.project = project
 
-    def resolve(self, addr):
+    def resolve(self, name, obj_name = ""):
         """
-        Do the resolve.
+        Resolve symbol address by name.
+        Returns (symbol address, object name of the address)
+        There maybe symbols with same names in different libs, specify the obj_name to
+        get the specific address.
+        """
+        if obj_name:
+            obj = self.project.elfs[obj_name]
+            if name in obj.symbols:
+                return obj[name], obj_name
+            else:
+                return None
+        for obj_name, obj in self.project.elfs.items():
+            if name in obj.symbols:
+                return obj.symbols[name], obj_name
+        return None
+
+    def reverse_resolve(self, addr):
+        """
+        Resolve symbol name by symbol address. TODO: should be replace by using dwarf
         Returns (symbol name, offset of the found symbol, object name which includes
         the symbol).
         If not found, return None.

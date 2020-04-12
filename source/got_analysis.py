@@ -34,6 +34,7 @@ class got_analysis(object):
             return None
         
         # now try to find the symbol name
+        found_obj = found_obj.split('/')[-1] # TEST: use filename, not path
         obj = self.project.elfs[found_obj]
         symbols = {v:k for k, v in obj.symbols.items()}
         addrs = [ i for i in symbols]
@@ -89,7 +90,7 @@ class got_analysis(object):
                 else:
                     #TODO: do report
                     print("Found got mismatch: symbol %s with addr %s" % (sym, hex(addr)) )
-                    resolve_result = self.symbol_resolve.resolve(addr)
+                    resolve_result = self.symbol_resolve.reverse_resolve(addr)
                     if resolve_result:
                         print("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
 

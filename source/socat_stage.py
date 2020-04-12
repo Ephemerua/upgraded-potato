@@ -2,6 +2,14 @@
 
 # FIXME: now this file should be placed at root folder od the project!
 # fix the path later
+"""
+Use socat to bind target program to a port, like deploying a pwn challenge in ctf.
+
+It first generates a temp script，in which the log file and mmap dump's hook is set, 
+then use the script as socat's argument.
+
+By using this stage, we don't need to modify the original writeup.
+"""
 import os
 import sys
 from hashlib import md5
