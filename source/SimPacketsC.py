@@ -1,6 +1,58 @@
 import angr
+import claripy
+import logging
+import itertools
+
+from angr.storage.memory_object import SimMemoryObject
+from angr.state_plugins.plugin import SimStatePlugin
+from angr.state_plugins.sim_action_object import SimActionObject
+from angr.state_plugins.symbolic_memory import SimSymbolicMemory
+from angr import sim_options
+from angr.errors import *
+
+
 
 class SimPacketsC(angr.SimPackets):
+    """
+    Overrided.
+    Fix bugs about replay, but removes everything about symbol execution.
+    TODO: rewrite
+    """
+    def read(self, pos, size, **kwargs):
+        # sanity checks
+        if self.write_mode is None:
+            self.write_mode = False
+        elif self.write_mode is True:
+            raise SimFileError("Cannot read and write to the same SimPackets")
+
+        # sanity check on packet number and determine if data is already present
+        # if pos is None:
+        #     pos = len(self.content)
+        if pos < 0:
+            raise SimFileError("SimPacket.read(%d): Negative packet number?" % pos)
+        elif pos > len(self.content):
+            raise SimFileError("SimPacket.read(%d): Packet number is past frontier of %d?" % (pos, len(self.content)))
+        elif pos != len(self.content):
+            _, realsize = self.content[pos]
+            if (realsize > size).is_true():
+                # seems to be a short read
+                packet = self.content[pos][0]
+                if not isinstance(size, int):
+                    assert(size.concrete)
+                    size = size.args[0]
+                result = (packet[packet.length-1:packet.length - size*8], self.state.solver.BVV(size, self.state.arch.bits))
+                left = (packet[packet.length - size*8 - 1 : 0], self.state.solver.BVV(packet.length//8 - size, self.state.arch.bits))
+                self.content = self.content[:pos] + [result, left] + self.content[pos+1:]
+            #self.state.solver.add(realsize <= size)  # assert that the packet fits within the read request
+            # if not self.state.solver.satisfiable():
+            #     raise SimFileError("SimPackets could not fit the current packet into the read request of %s bytes: %s" % (size, self.content[pos]))
+            #print(self.content[pos] + (pos+1,))
+            return self.content[pos] + (pos+1,)
+        
+        
+
+
+class SimPackets(angr.SimPackets):
     """
     The same with angr.SimPackets, but discard size check.
     Size check will make state unsatisfied. That's an angr bug.
@@ -32,7 +84,7 @@ class SimPacketsC(angr.SimPackets):
             raise SimFileError("SimPacket.read(%d): Packet number is past frontier of %d?" % (pos, len(self.content)))
         elif pos != len(self.content):
             _, realsize = self.content[pos]
-            #self.state.solver.add(realsize <= size)  # assert that the packet fits within the read request
+            self.state.solver.add(realsize <= size)  # assert that the packet fits within the read request
             if not self.state.solver.satisfiable():
                 raise SimFileError("SimPackets could not fit the current packet into the read request of %s bytes: %s" % (size, self.content[pos]))
             return self.content[pos] + (pos+1,)

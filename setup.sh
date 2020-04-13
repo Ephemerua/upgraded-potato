@@ -28,4 +28,15 @@ then
     python3 -m pip install pwn
 fi
 
+python3 -m pip show pygdbmi 1>/dev/null
+if [ $? -ne 0  ]
+then
+    python3 -m pip install pygdbmi
+fi
+
+python3 -m pip show cstruct 1>/dev/null
+if [ $? -ne 0  ]
+then
+    python3 -m pip install cstruct
+fi
 
