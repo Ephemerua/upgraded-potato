@@ -1,0 +1,41 @@
+<meta http-equiv="Content-Type"content="text/html;charset=utf-8">
+<html align='right'>
+<h1>EXPLOIT REPORT</h1>
+    <body>
+    <h2>Information</h2>
+    <p>name: xxx&nbsp;&nbsp;start time: 2019&nbsp;&nbsp;end time: 2020  </p>
+<!--    <p>result : ***&nbsp;&nbsp;other：***</p>-->
+    <h2>heap analysis</h2>
+    <h3>got change</h3>
+
+    <table border="1" width="40%" cellspacing="0" cellpadding="0" align="left">
+        <tr>
+            <th>got mismatch</th>
+            <th>which function</th>
+        </tr>
+        
+        <tr align='center'>
+            <td>symbol atoi with addr 0x7ffff784f390</td>
+            <td>system in file /lib/x86_64-linux-gnu/libc-2.23.so</td>
+        </tr>
+        
+    </table>
+    <br>
+    <br>
+    <br>
+    <h3>heap transfer graph</h3>
+    <a> <img src="./HeapChange.png"></a>
+    <br>
+    <table border="1" width = "40%" cellspacing='0' cellpadding='0' align='left'>
+        <tr>
+            <th>机柜号</th>
+            <th>检测时间</th>
+            <th>检测结果</th>
+            <th>详细信息</th>
+            <th>图片路径</th>
+        </tr>
+
+        
+    </table>
+    </body>
+</html>
