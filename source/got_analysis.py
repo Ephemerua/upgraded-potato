@@ -3,6 +3,7 @@ from pwnlib.elf.elf import ELF
 import copy
 import gc
 from symbol_resolve import symbol_resolve
+from memwrite_analysis import memwrite_analysis
 
 
 # TODO: test this function
@@ -76,6 +77,8 @@ class got_analysis(object):
         
         # then compare addr with exploited state
         assert(len(origin_got) == len(exploited_got))
+
+        mismatch_got = {}
         for sym, addr in exploited_got.items():
             # check if addr matched, or the symbol haven't been resolved 
             # don't track 0 addr
@@ -89,9 +92,16 @@ class got_analysis(object):
                 else:
                     #TODO: do report
                     print("Found got mismatch: symbol %s with addr %s" % (sym, hex(addr)) )
+                    mismatch_got[sym] = addr
                     resolve_result = self.symbol_resolve.resolve(addr)
                     if resolve_result:
                         print("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
+        self.mismatch_got = mismatch_got
 
-            
-        
+    # TODO: merge this function into self.do_analysis()
+    # XXX: the program got stuck here, totally bullshit
+    def track_exploited_got(self):
+        for sym, addr in self.mismatch_got.items():
+            m = memwrite_analysis(self.project, addr)
+            print("Analysing memory writing to symbol %s" % sym)
+            m.do_analysis()
