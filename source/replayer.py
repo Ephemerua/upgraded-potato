@@ -43,10 +43,12 @@ class Replayer(angr.project.Project):
         main_opts, lib_opts, bp = parse_maps_from_file(map_path, target_name)
         self.maps = parse_maps_from_file(map_path, plus = True)
         self.reverse_maps = reverse_maps(self.maps)
+        self.target  = target_name
 
         self.cfg = 0
         self.cfg_recorded = 0
-        self.cfg_seqence = 0
+        self.cfg_sequence = 0
+        self.bbl_len = 0
 
         self.hooked_addr = []
 
@@ -56,13 +58,15 @@ class Replayer(angr.project.Project):
         self.exploited_state = 0
 
         # construct the project, load objects with recorded base addr
+        skip_libs = ['mmap_dump.so']
+        force_load_libs = [ lib for lib in lib_opts if lib.split("/")[-1] not in skip_libs ]
         super().__init__(binary, main_opts = main_opts, lib_opts = lib_opts, \
-            auto_load_libs=True, use_sim_procedures=False)
+            auto_load_libs=False, use_sim_procedures=False , preload_libs = force_load_libs)
 
         # use pwnlib's ELF to save all objects
         # XXX: angr.loader has loaded all objects...
-        self.elfs = {"main":ELF(binary, checksec=False)}
-        self.elfs["main"].address = self._main_opts["base_addr"]
+        self.elfs = {self.target:ELF(binary, checksec=False)}
+        self.elfs[self.target].address = self._main_opts["base_addr"]
         for k, v in self._lib_opts.items():
             f = ELF(k, checksec=False)
             # TEST: only use filename, not path?
@@ -176,37 +180,42 @@ class Replayer(angr.project.Project):
 
 
 
-def stack_backtrace(state, depth = 'Max'):
-    """
-    Helper func to get stack backtrace.
-    Do the same work as gdb's bt.
 
-    :param state:   state to do bt
-    :param depth:   bt depth
-    """
-    # gdb's backtrace records present rip in frame0, do the same with gdb
-    result = [state.regs.rip]
-    bp = state.regs.rbp
-    frame_num = -1 if depth=='Max' else depth
+def state_timestamp(state):
+    return len(state.history.bbl_addrs)
 
-    while bp.concrete and frame_num:
-        frame_num -= 1
-        # bp==0 means trace ends
-        if (bp == 0).is_true():
-            return result
+PROT_READ = 1
+PROT_WRITE = 2
+PROT_EXEC = 4
 
-        ret_addr = state.memory.load(bp+8, 8, endness = 'Iend_LE')
-        bp = state.memory.load(bp, 8, endness = 'Iend_LE')
-        # We have set uninited memory to zero, and ret_addr shouldn't be zero.
-        if (ret_addr == 0).is_true():
-            return result
-        if (ret_addr > 0x7fffffffffff).is_true():
-            return result
-        result.append(ret_addr)
+def fetch_str(state, addr):
+    try:
+        prots = state.memory.permissions(addr)
+    except angr.errors.SimMemoryMissingError:
+        return ""
+    prots = prots.args[0]
+    result = ""
+    is_str = 1
+    # TODO: move prots definition to other place
+    if not (prots & PROT_READ):
+        return ""
+    while is_str:
+        m = state.memory.load(addr, 8)
+        assert(m.concrete)
+        m = m.args[0]
+        addr += 8
+
+        for i in range(8):
+            c = (m >> (7-i)*8) & 0xff
+            if c > 126 or c < 32:
+                is_str = False
+                break
+            else:
+                result += chr(c)
+    if result:
+        result = ' -> "'+result+'"'
+
+    return result
 
 
-
-
-
-
-
+    
