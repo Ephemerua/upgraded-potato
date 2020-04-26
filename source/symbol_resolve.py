@@ -1,3 +1,5 @@
+import claripy
+
 # 'resolve' symbol name from symbol addr
 class symbol_resolve(object):
     """
@@ -7,23 +9,26 @@ class symbol_resolve(object):
     def __init__(self, project):
         self.project = project
 
-    def resolve(self, name, obj_name = ""):
+    def find_obj(self, addr):
+        maps = self.project.maps
+        for obj, segs in maps.items():
+            for seg in segs:
+                if addr >= seg["start"] and addr <=seg["end"]:
+                    return obj
+                else:
+                    continue
+        
+        #print("Cannot find symbol of addr %s." % hex(addr))
+        return None
+
+    def resolve(self, name):
         """
         Resolve symbol address by name.
         Returns (symbol address, object name of the address)
         There maybe symbols with same names in different libs, specify the obj_name to
         get the specific address.
         """
-        if obj_name:
-            obj = self.project.elfs[obj_name]
-            if name in obj.symbols:
-                return obj[name], obj_name
-            else:
-                return None
-        for obj_name, obj in self.project.elfs.items():
-            if name in obj.symbols:
-                return obj.symbols[name], obj_name
-        return None
+        return self.project.loader.find_symbol(name).rebased_addr
 
     def reverse_resolve(self, addr):
         """
@@ -32,23 +37,20 @@ class symbol_resolve(object):
         the symbol).
         If not found, return None.
         """
+        if isinstance(addr, claripy.ast.bv.BV):
+            addr = addr.args[0]
+        if not isinstance(addr, int):
+            raise TypeError('Addr cannot convert to int!')
         # first find which object the addr belongs to
-        print(addr)
-        maps = self.project.maps
-        found_obj = 0
-        for obj, segs in maps.items():
-            for seg in segs:
-                if addr >= seg["start"] and addr <=seg["end"]:
-                    found_obj = obj
-                else:
-                    continue
-        
-        if found_obj == 0:
-            print("Cannot find symbol of addr %s." % hex(addr))
+        found_obj = self.find_obj(addr)
+        if not found_obj:
             return None
         
         # now try to find the symbol name
-        obj = self.project.elfs[found_obj]
+        found_obj = found_obj.split('/')[-1]
+        if found_obj not in self.project.elfs:
+            return None
+        obj = self.project.elfs[found_obj.split('/')[-1]]
         # index the dict with addr
         symbols = {v:k for k, v in obj.symbols.items()}
         addrs = [ i for i in symbols]
@@ -64,3 +66,4 @@ class symbol_resolve(object):
         min_offset = addr - nearest_addr
         name = symbols[nearest_addr]
         return name, min_offset, found_obj
+

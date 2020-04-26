@@ -1,30 +1,206 @@
 import claripy
 import angr
 from structures import malloc_state
+from arena import Arena
+
+"""
+TODO: move this part to doc
+Heap analysis, focus on alloc, free and read/write on heap.
 
 
-def bp_constructor(start_addr, size, debug = False):
+To detect overflow:
+Backward overflow:
+    A write with size exceeding the size of chunk.
+    We need write bp definitly, so set a bp on malloc's return address, we can track all operaion
+    on that chunk.
+    Remove the bp after the chunk is freed.
+Forward overflow:
+    A write's start address is before the begin of the chunk.(Just care about metadata of 
+    chunk structure. Even with source code, we cannot define if a write writes to unexpected place)
+    Set write bp on chunk's metadata.
+    2 conditions to consider:
+        1. allocated chunk: set write bp on its matadata, delete the bp on free
+        2. free chunk: how to know where the chunk is ???
+            2.1 after free, set bp on all chunks tracked by arena.
+            2.2 when alloced, remove the bp
+        3. heap operation itself write to free chunks, identify them by call stack?
+
+Fake chunk:
+Chunks to be free must be malloc before, so track malloc to identify fake chunks.
+
+UAF:
+For simple double free it is easy. TODO: any other case?
+"""
+
+
+def _print_callstack(state):
+    cs = state.callstack
+    print("\nStack:")
+    for frame in cs:
+        if not frame.func_addr:
+            return 
+        symbol  = state.project.symbol_resolve.reverse_resolve(frame.func_addr)
+        if symbol:
+            if '__gmon_start__' in symbol[0]:
+                symbol = list(symbol)
+                symbol[0] = 'sub_%x'% frame.func_addr
+                symbol[1] = 0
+            print('\t'+ symbol[0]+ "+ %d" % symbol[1])
+        else:
+            print('\t'+ hex(frame.func_addr))
+
+
+# TODO: move this to other place
+from termcolor import colored
+def printable_memory(state, start, size, warn_pos = 0, warn_size = 0, info_pos = 0, info_size = 0):
+    result = ""
+    # align
+    size = ((size >>3) <<3) + 0x10
+    endl = -1
+    warn = 0
+    for addr in range(start, start+size, 8):
+        mem = state.memory.load(addr, 8, endness = "Iend_LE")
+        assert(mem.concrete)
+        mem = mem.args[0]
+        if endl:
+            result += "%s| " %(hex(addr))
+            endl = ~endl
+        else:
+            result += '  ' 
+            endl = ~endl
+        mem = "%016x" % mem
+        colored_mem = ["" for i in range(8)]
+        j = 0
+        for i in range(14, -2, -2):
+            bt = mem[i:i+2]
+            if addr + j in range(warn_pos, warn_pos+warn_size):
+                bt = colored(bt, 'red')
+            if addr + j in range(info_pos, info_pos+info_size):
+                bt = colored(bt, 'yellow')
+            colored_mem[7-j] = bt
+            j += 1
+
+        result += "".join(colored_mem) 
+
+        if endl:
+            result += '\n'
+    return result
+            
+
+
+
+def bp_overflow(start_addr, size, callback = None, debug = False):
+    def write_bp(state):
+        target_addr = state.inspect.mem_write_address
+        target_size = state.inspect.mem_write_length
+        if type(target_addr) != int:
+            target_addr = target_addr.args[0]
+        if type(target_size) != int:
+            target_size = target_size.args[0]
+
+        
+        if (target_addr >= start_addr + size) \
+            or (start_addr >= target_addr + target_size):
+            return
+
+        
+        if debug:
+            print("mem write to %s with length %s" % (hex(target_addr), hex(target_size)))
+        if (target_addr + target_size > start_addr + size):
+            print("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
+             % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
+            overflow_len = target_addr + target_size - (start_addr + size)
+            #print("Overflow length: %s" % hex(overflow_len))
+            overflow_content = state.inspect.mem_write_expr[overflow_len*8 - 1:0]
+            print("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
+            print(printable_memory(state, min(start_addr, target_addr), max(size,target_size)\
+                ,warn_pos = start_addr+size, warn_size  = overflow_len, info_pos = target_addr\
+                    ,info_size = target_size))
+        return
+    return write_bp
+
+
+
+def bp_redzone(start_addr, size, callback = None, debug = False, allow_heap_ops = False, mtype = 'redzone'):
+    def write_bp(state):
+        nonlocal start_addr, size
+        target_addr = state.inspect.mem_write_address
+        target_size = state.inspect.mem_write_length
+        if type(target_addr) != int:
+            target_addr = target_addr.args[0]
+        if type(target_size) != int:
+            target_size = target_size.args[0]
+
+        
+        if (target_addr >= start_addr + size) \
+            or (start_addr >= target_addr + target_size):
+            return
+        info_pos = target_addr
+        info_size = target_size
+        # true analysis starts from here
+        # XXX: at present we extract the write content within the redzone, should we display whole
+        # write content?
+        if target_addr < start_addr:
+            offset = start_addr - target_addr
+            write_size = min(target_size - offset, size)
+            target_addr = start_addr
+        else:
+            offset = 0
+            write_size = min(target_size, size)
+        assert(write_size)
+        # figure out if this write comes from heap operations
+        if write_size < 0x20 and allow_heap_ops:
+            cs = state.callstack
+            for frame in cs:
+                symbol = state.project.symbol_resolve.reverse_resolve(frame.func_addr)
+                if symbol:
+                    name = symbol[0].split('.')[-1]
+                    if name == 'malloc' or name == 'free' or name == 'calloc' or name == 'realloc':
+                        #print(frame)
+                        return
+            
+        write_expr = state.inspect.mem_write_expr
+        write_expr = write_expr[(target_size-offset)*8 - 1: (target_size-offset-write_size)*8]
+
+        print("Mem write to %s %s start at %s with size %s: %s" %(mtype, hex(start_addr), hex(target_addr),\
+             hex(write_size), write_expr))
+        if size > 0x40:
+            start_addr = (target_addr>>4)<<4 - 0x10
+            size = (write_size>>4)<<4 + 0x10
+        print(printable_memory(state, min(start_addr, info_pos)\
+            , max(size, info_size), warn_pos = target_addr,\
+                 warn_size  = write_size, info_pos = info_pos, info_size = info_size))
+        _print_callstack(state)
+        return
+    return write_bp
+    
+#de
+def bp_constructor(start_addr, size, callback = None, debug = False):
     """
     construct an state.inspect.bp, record mem write to detect overflow
+    [start_addr, start_addr + size) is the region we can access.
+
     """
     def write_bp(state):
         target_addr = state.inspect.mem_write_address
         target_size = state.inspect.mem_write_length
-        if isinstance(target_addr, int):
-            target_addr = claripy.BVV(target_addr, 64)
+        if type(target_addr) != int:
+            target_addr = target_addr.args[0]
+        if type(target_size) != int:
+            target_size = target_size.args[0]
 
-        # print("addr: %s" % (target_addr))
-        # print("size: ", target_size)
-        if (target_addr >= start_addr + size).is_true() \
-            or (start_addr >= target_addr + target_size).is_true():
+        
+        if (target_addr >= start_addr + size) \
+            or (start_addr >= target_addr + target_size):
             return
+
+        
         if debug:
-            print("mem write to %s with length %s" % ((target_addr), (target_size)))
-        if (target_addr + target_size > start_addr + size).is_true():
+            print("mem write to %s with length %s" % (hex(target_addr), hex(target_size)))
+        if (target_addr + target_size > start_addr + size):
             print("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
-             % (hex(start_addr), hex(size), target_addr, target_size))
+             % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
             overflow_len = target_addr + target_size - (start_addr + size)
-            overflow_len = overflow_len.args[0]
             #print("Overflow length: %s" % hex(overflow_len))
             overflow_content = state.inspect.mem_write_expr[overflow_len*8 - 1:0]
             print("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
@@ -45,7 +221,10 @@ def _malloc_hook(state):
     size = state.regs.rdi
     assert(size.concrete)
     size = size.args[0]
+    origin_size = size
     size = ((size>>4)<<4) + 0x10
+    if size < 0x20:
+        size = 0x20
 
     rsp = state.regs.rsp
     assert(rsp.concrete)
@@ -57,24 +236,45 @@ def _malloc_hook(state):
 
     def _malloc_callback(state):
         # rax contains return address of malloc
+        state.project.unhook(ret_addr)
         rax = state.regs.rax
         assert(rax.concrete)
         rax = rax.args[0]
         # TODO: do log
         print("Malloc called with size %s, returns addr %s" % (hex(size), hex(rax)))
-        state.project.unhook(ret_addr)
+        # TODO: check if return addr is sane. 
+        symbol = state.project.symbol_resolve.reverse_resolve(rax) # dirty but easy
+        if symbol:
+            print("Chunk address not in heap: %s + %d" % (hex(symbol[0], symbol[1])))
+
         state.project.heap_analysis.add_chunk(rax, size)
-        # TEST
-        ms, arena_addr = get_malloc_state(state, rax)
-        assert(ms)
-        fastbin_check(state, ms, arena_addr)
-        bin_check(state, ms, arena_addr)
+        # # TEST
+        # ms, arena_addr = get_malloc_state(state, rax)
+        # assert(ms)
+        # fastbin_check(state, ms, arena_addr)
+        # bin_check(state, ms, arena_addr)
+
         # set bp
-        if rax - 0x10 in state.project.heap_analysis.bps:
-            return 
-        else:
-            bp = state.inspect.b("mem_write", action = bp_constructor(rax - 0x10, size + 0x18))
-            state.project.heap_analysis.bps[rax - 0x10] = bp
+        #if rax - 0x10 in state.project.heap_analysis.bps:
+        # bps = state.project.heap_analysis.bps
+        # for addr, bp in bps.items():
+        #     if addr >= rax-0x10 and addr < rax-0x10 + size:
+        #         state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bp)
+        bps = state.project.heap_analysis.free_bps
+        if rax - 0x10 in bps:
+            state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bps[rax-0x10])
+            state.project.heap_analysis.free_bps.pop(rax-0x10)
+        if rax in bps:
+            state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bps[rax])
+            state.project.heap_analysis.free_bps.pop(rax)
+
+
+        
+        bp_content = state.inspect.b("mem_write", action = bp_overflow(rax, origin_size))
+        bp_metadata = state.inspect.b("mem_write", action = \
+            bp_redzone(rax-0x10, 0x10, allow_heap_ops = False, mtype = 'chunk header'))
+        state.project.heap_analysis.inuse_bps[rax] = bp_content
+        state.project.heap_analysis.inuse_bps[rax - 0x10] = bp_metadata
 
     assert(not state.project.is_hooked(ret_addr))
     state.project.hook(ret_addr, _malloc_callback)
@@ -92,7 +292,8 @@ def _calloc_hook(state):
     assert(size.concrete)
     size = size.args[0]
     size = ((size>>4)<<4) + 0x10
-
+    if size < 0x20:
+        size = 0x20
 
     rsp = state.regs.rsp
     assert(rsp.concrete)
@@ -128,18 +329,44 @@ def _free_hook(state):
     size = size.args[0]
     size = (size >> 4)<<4
     print("Free called to free %s with size %s" % (hex(addr), hex(size)))
+
+    # get info for ret callback
     # stack frame haven't been created, so return address is in rsp
     ret_addr = state.memory.load(state.regs.rsp, endness = 'Iend_LE')
     ret_addr = ret_addr.args[0]
     state.project.heap_analysis.del_chunk(addr, size)
+
+    # since the chunk is freed, remove write bps
+    bps = state.project.heap_analysis.inuse_bps
+    if addr in bps:
+        state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bps[addr])
+        bps.pop(addr)
+    if addr-0x10 in bps:
+        state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bps[addr-0x10])
+        bps.pop(addr-0x10)
+
+    for addr, bp in state.project.heap_analysis.free_bps.items():
+            #print(state.inspect._breakpoints)
+        state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bp)
+    state.project.heap_analysis.free_bps = {}
+
+        
     def _free_callback(state):
         state.project.heap_analysis.parse_arena(state)
         state.project.unhook(ret_addr)
-        # TEST: to be tested
-        ms, arena_addr = get_malloc_state(state, addr)
-        assert(ms)
-        fastbin_check(state, ms, arena_addr)
-        bin_check(state, ms, arena_addr)
+
+        # # TEST: to be tested
+        # ms, arena_addr = get_malloc_state(state, addr)
+        # assert(ms)
+        # fastbin_check(state, ms, arena_addr)
+        # bin_check(state, ms, arena_addr)
+        arena = Arena(state, addr = addr)
+        chks = arena.get_all_chunks()
+        for chk in chks:
+            chk_size = (chk[1]>>4)<<4
+            bp = state.inspect.b('mem_write', when = angr.BP_AFTER,action=bp_redzone(chk[0], chk_size, allow_heap_ops = True, mtype = "freed chunk"))
+            state.project.heap_analysis.free_bps[chk[0]] = bp
+
 
     assert(not state.project.is_hooked(ret_addr))
     state.project.hook(ret_addr, _free_callback)
@@ -176,8 +403,7 @@ def get_malloc_state(state, addr = 0):
     get struct malloc_state from memory
     still we need the address of the struct
     """
-    # __malloc_hook is a private symbol
-    main_arena_addr = state.project.symbol_resolve.resolve("__malloc_hook")[0] + 0x10
+    main_arena_addr = state.project.symbol_resolve.resolve("__malloc_hook") + 0x10
     result = malloc_state()
     mem = state.memory.load(main_arena_addr, result.size)
     mem = mem.args[0].to_bytes(result.size, 'big')
@@ -304,8 +530,8 @@ def bin_check(state, malloc_state, arena_addr):
         print(printable_bin_entry(fd_nodes + [fd_circlar], bk_nodes + [bk_circlar]))
     pass
 
-
-
+def unsortedbin_check(state, malloc_state, arena_addr):
+    pass
 class heap_analysis(object):
     """
     Analyses heap operations.
@@ -332,7 +558,8 @@ class heap_analysis(object):
         self.chunks_sv = {}
         self.abused_chunks = []
         self.arenas = []
-        self.bps = {}
+        self.inuse_bps ={}
+        self.free_bps = {}
     
     # FIXME: bull shit
     def _ptr_in_chunk(self, ptr):
@@ -354,6 +581,8 @@ class heap_analysis(object):
             else:
                 self.chunks_av[addr] = [sizes, size]
             self.abused_chunks.append({"addr":addr, "size":size, "type":"allocated mutiple times"})
+            print("Chunk at %s size %s : Already allocated!" % (hex(addr), hex(size)))
+
         else:
             self.chunks_av[addr] = size
             
@@ -378,6 +607,7 @@ class heap_analysis(object):
                         self.chunks_av.pop(addr)
                 else:
                     self.abused_chunks.append({"addr": addr, "size":size, "type":"freed with modified size"})
+                    print("Chunk at %s size %s : Freed with mofied size!" % (hex(addr), hex(size)))
             # target chunk doesn't been allocated more than one time,
             # so sizes is an int
             elif size == sizes:
@@ -389,6 +619,8 @@ class heap_analysis(object):
         else:
             # this chunk is not allocated by c/m/relloc
             self.abused_chunks.append({"addr":addr, "size": size, "type":"chunk not allocated is freed"})
+            print("Chunk at %s size %s : Chunk haven't been allocated is freed!" % (hex(addr), hex(size)))
+
     
     def enable_hook(self):
         # hook heap api, save address to hooked_addr
@@ -417,7 +649,9 @@ class heap_analysis(object):
         Do the job.
         """
         self.enable_hook()
-        simgr = self.project.get_simgr()
+        state = self.project.get_entry_state()
+        #state.options.discard("UNICORN")
+        simgr = self.project.get_simgr(state)
         simgr.run()
         self.disable_hook()
         

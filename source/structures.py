@@ -18,3 +18,4 @@ class malloc_state(cstruct.CStruct):
         unsigned long long system_mem;
         unsigned long long max_system_mem;
     """
+

@@ -70,10 +70,12 @@ int copy_maps(pid_t pid, unsigned long long bp)
     char* ptr = strrchr(buf, '/');
     if (!ptr)
         ptr = buf;
+    else 
+        ptr += 1;
     if(strlen(ptr) > sizeof(buf) - (ptr-buf))
         buf[BUF_SIZE-1] = 0;
     // 输出文件的文件名格式： maps.cmdline[0].pid
-    sprintf(path, "./maps.%s.%d", ptr+1, pid);
+    sprintf(path, "./maps.%s.%d", ptr, pid);
     memset(buf, 0, sizeof(buf));
     //puts(path);
 
@@ -87,13 +89,13 @@ int copy_maps(pid_t pid, unsigned long long bp)
         int rlen, wlen;
         wlen = write(fd_w, bp_str, strlen(bp_str));
         if(chk_pr((long long)wlen, "write faied:"))
-                return -1;
+                goto failed;
         while(rlen = read(fd_r, buf, 0x200), rlen>0)
         {
 
             wlen = write(fd_w, buf, rlen);
             if(chk_pr((long long)wlen, "write faied:"))
-                return -1;
+                goto failed;
         }
         if(rlen < 0)
         {
@@ -104,10 +106,13 @@ int copy_maps(pid_t pid, unsigned long long bp)
         close(fd_w);
     }
     else
-    {
-        return -1;
-    }
+        goto failed;
     return 0;
+
+failed:
+    close(fd_r);
+    close(fd_w);
+    return -1;
 }
 
 static unsigned long long inline get_bp()

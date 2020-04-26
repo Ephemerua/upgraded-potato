@@ -118,6 +118,7 @@ def parse_maps_plus(maps):
 
 
 def reverse_maps(maps):
+    # TODO: rewrite
     reverse_map = {}
     for name, segs in maps.items():
         for seg in segs:
