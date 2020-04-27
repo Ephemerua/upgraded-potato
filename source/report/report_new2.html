@@ -230,7 +230,7 @@
                 <div class="col-md-12">
                     <h2 class="fw_300">Infomation</h2>
                     <span class="sectionSubtitle mb_50 pb_10 d_block fw_300"></span>
-                    <p class="color_88 fw_400">target name: xxx&nbsp;&nbsp&nbsp;report time: {{reporttime}}  </p>
+                    <p class="color_88 fw_400">target name: xxx&nbsp;&nbsp&nbsp;report time: 2020.04.27  </p>
                 </div>
             </div>
         </div>
@@ -269,12 +269,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for item in gottable %}
+                                
                                 <tr>
-                                    <td>{{ item.mismatch }}</td>
-                                    <td>{{ item.function }}</td>
+                                    <td>symbol atoi with addr 0x7ffff784f390</td>
+                                    <td>system in file /lib/x86_64-linux-gnu/libc-2.23.so</td>
                                 </tr>
-                                {% endfor%}
+                                
                             </tbody>
                         </table>
                     </div>
@@ -288,7 +288,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <h3 class="fw_300">heap transfer graph</h3>
-                    <a><img src="{{img_path}}"></a>
+                    <a><img src="/home/vis/Desktop/workplace/upgraded-potato/source/report/HeapChange.png"></a>
                 </div>
             </div>
         </div>
@@ -298,7 +298,7 @@
 <!--            <div class="col">-->
 <!--                <div class="col-md-12">-->
 <!--                    <div class="carousel1_wrapper owl-carousel">-->
-<!--                        <img src="{{img_path}}" alt="carousel-img">-->
+<!--                        <img src="/home/vis/Desktop/workplace/upgraded-potato/source/report/HeapChange.png" alt="carousel-img">-->
 <!--                    </div>-->
 <!--                </div>-->
 <!--            </div>-->
@@ -329,13 +329,91 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for item in leaktable %}
+                                
                                 <tr>
-                                    <td>{{ item.name }}</td>
-                                    <td>{{ item.addr }}</td>
-                                    <td>{{ item.lib }}</td>
+                                    <td>_IO_file_jumps</td>
+                                    <td>0</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
                                 </tr>
-                                {% endfor%}
+                                
+                                <tr>
+                                    <td>_IO_2_1_stdout_</td>
+                                    <td>-20</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>got._IO_2_1_stderr_</td>
+                                    <td>-5d</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>got._IO_2_1_stderr_</td>
+                                    <td>-5d</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>got._IO_2_1_stderr_</td>
+                                    <td>-5d</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>got._IO_2_1_stderr_</td>
+                                    <td>-5c</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>_IO_2_1_stdin_</td>
+                                    <td>0</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>_IO_file_jumps</td>
+                                    <td>0</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>_IO_2_1_stdout_</td>
+                                    <td>-20</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>got._IO_2_1_stderr_</td>
+                                    <td>-5d</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>got._IO_2_1_stderr_</td>
+                                    <td>-5d</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>got._IO_2_1_stderr_</td>
+                                    <td>-5d</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>got._IO_2_1_stderr_</td>
+                                    <td>-5c</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>_IO_2_1_stdin_</td>
+                                    <td>0</td>
+                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
                             </tbody>
                         </table>
                     </div>

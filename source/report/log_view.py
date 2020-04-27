@@ -127,146 +127,184 @@ class Generate_doc(object):
         # pic.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER.
 
 
-
-class View_got_log(object):
-    got_change = []
-    path = ""
+class view_leak_log(object):
     def __init__(self, path):
         self.path = path
 
-    def parse_info_from_log(self):
+    def get_leak_table(self):
         '''
-        parse the got analysis log file
-        :return:
+        :return: a list whose format is for jinja2
         '''
-        f = open(self.path, "r")
+        def parse_info_from_log(path):
+            '''
+            parse the leak analysis log file
+            :param path: leak analysis log file path
+            :return: a list whose format is for jinja2
+            '''
 
-        lines = f.readlines()
-        for i in range(len(lines)):
-            node_info = {}
-            misobj = re.match("Found got mismatch: (.*)", lines[i])
-            if misobj:
-                node_info['mismatch'] = misobj.group(1)
-                if i == len(lines)-1:
-                    continue
-                if lines[i+1].startswith("which is func"):
-                    obj = re.match("which is func (.*)", lines[i+1])
-                    node_info['function'] = obj.group(1)
-                else:
-                    # node_info.append("")
-                    node_info['function'] = ""
-                self.got_change.append(copy.deepcopy(node_info))
+            leak_list = []
+            f = open(path, "r")
+            while True:
+                node_info = {}
+                line = f.readline()
+                if not line:
+                    break
+                obj = re.match("Found leaked addr: (.*) (.*) in lib (.*)", line)
+                if obj:
+                    node_info['name'] = obj.group(1)
+                    node_info['addr'] = obj.group(2)
+                    node_info['lib'] = obj.group(3)
+                    leak_list.append(copy.deepcopy(node_info))
+            f.close()
+            return leak_list
+
+        return parse_info_from_log(self.path)
+
+class view_got_log(object):
+    def __init__(self, path):
+        self.path = path
 
     def get_got_change(self):
         '''
         :return: a list whose format is for jinja2
         '''
-        self.parse_info_from_log()
-        return self.got_change
+
+        def parse_info_from_log(path):
+            '''
+            parse the got analysis log file
+            :param path: got analysis log file path
+            :return: a list whose format is for jinja2
+            '''
+            f = open(path, "r")
+            got_change = []
+            lines = f.readlines()
+            for i in range(len(lines)):
+                node_info = {}
+                misobj = re.match("Found got mismatch: (.*)", lines[i])
+                if misobj:
+                    node_info['mismatch'] = misobj.group(1)
+                    if i == len(lines) - 1:
+                        continue
+                    if lines[i + 1].startswith("which is func"):
+                        obj = re.match("which is func (.*)", lines[i + 1])
+                        node_info['function'] = obj.group(1)
+                    else:
+                        # node_info.append("")
+                        node_info['function'] = ""
+                    got_change.append(copy.deepcopy(node_info))
+            f.close()
+            return got_change
+
+        return parse_info_from_log(self.path)
 
 
+def overflow_heap_info(node_info, overflow_info):
+    '''
+    judge which heap is overflow point
+    :param node_info: a list of heap info
+    :param overflow_info: a node which is overflow
+    :return: the node which is overflow point
+    '''
+    for info in node_info:
+        start = int(info[0], 16)-0x10
+        end = start + int(info[1], 16)
+        overflow_start = int(overflow_info[0], 16)
+        if overflow_start >= start and overflow_start <= end:
+            info[2] = overflow_info[2]
+            break
+    return node_info
 
-class View_heap_log(object):
-    heap_infos = []
-    path = ""
+def free_heap_info(node_info, free_info):
+    '''
+    delete the released heap
+    :param node_info: a list of heap info
+    :param free_info: a node which will be free
+    :return: the node which will be free in heap info
+    '''
+    success = False
+    index = 0
+    for info in node_info:
+        if info[0] == free_info[0]:
+            success = True
+            break
+        index += 1
+    if success:
+        del node_info[index]
+        return node_info
+    else:
+        return node_info
+
+class view_heap_log(object):
+
     def __init__(self, path):
         self.path = path
 
-    def free_heap_info(self, node_info, free_info):
-        '''
-        delete the released heap
-        :param node_info:
-        :param free_info:
-        :return:
-        '''
-        success = False
-        index = 0
-        for info in node_info:
-            if info[0] == free_info[0]:
-                success = True
-                break
-            index += 1
-        if success:
-            del node_info[index]
-            return node_info
-        else:
-            return node_info
-
-    def overflow_heap_info(self, node_info, overflow_info):
-        '''
-        judge which heap is overflow point
-        :param node_info:
-        :param overflow_info:
-        :return: overflow point
-        '''
-        for info in node_info:
-            start = int(info[0], 16)-0x10
-            end = start + int(info[1], 16)
-            overflow_start = int(overflow_info[0], 16)
-            if overflow_start >= start and overflow_start <= end:
-                info[2] = overflow_info[2]
-                break
-        return node_info
-
-    def parse_heap_change_log(self):
-        '''
-        Record heap change information
-        :return:
-        '''
-        f = open(self.path, "r")
-        node_info = []
-        while True:
-            line = f.readline()
-            if not line:
-                break
-            mallocobj = re.match("Malloc called with size (.*), returns addr (.*)", line)
-            if mallocobj:
-                print("malloc:" + mallocobj.group(1) + " " + mallocobj.group(2))
-                malloc_info = [mallocobj.group(2), mallocobj.group(1), mallocobj.group()]
-                node_info.append(malloc_info)
-                self.heap_infos.append([mallocobj.group(), copy.deepcopy(node_info)])
-                continue
-
-            callocobj = re.match("Calloc called with size (.*), returns addr (.*)", line)
-            if callocobj:
-                print("calloc:" + callocobj.group(1) + " " + callocobj.group(2))
-                calloc_info = [callocobj.group(2), callocobj.group(1), callocobj.group()]
-                node_info.append(calloc_info)
-                self.heap_infos.append([callocobj.group(), copy.deepcopy(node_info)])
-                continue
-
-            freeobj = re.match("Free called to free (.*) with size (.*)", line)
-            if freeobj:
-                print("free:" + freeobj.group(1) + " " + freeobj.group(2))
-                free_info = [freeobj.group(1), freeobj.group(2), freeobj.group()]
-                node_info = self.free_heap_info(node_info, free_info)
-                self.heap_infos.append([freeobj.group(), copy.deepcopy(node_info)])
-                continue
-
-            overflowobj = re.match(
-                "Found overflow in chunk at 0x6031b0, size 0x20 with write starts at <BV64 (.*)>, size <BV64 (.*)>!\n",
-                line)
-            if overflowobj:
-                print("overflow:" + overflowobj.group(1) + " " + overflowobj.group(2))
-                overlength = f.readline()
-                overflow_info = [overflowobj.group(1), overflowobj.group(2), overflowobj.group()+overlength]
-                node_info = self.overflow_heap_info(node_info, overflow_info)
-                self.heap_infos.append([overflowobj.group()+overlength, copy.deepcopy(node_info)])
-        f.close()
-        print(self.heap_infos)
 
     def gen_heap_change_png(self):
         '''
         generate dot file and png file
         :return:
         '''
-        self.parse_heap_change_log()
+
+        def parse_heap_change_log(path):
+            '''
+            Record heap change information
+            :param path: heap analysis log file path
+            :return: a list of heap info change
+            '''
+
+            heap_infos = []
+            f = open(path, "r")
+            node_info = []
+            while True:
+                line = f.readline()
+                if not line:
+                    break
+                mallocobj = re.match("Malloc called with size (.*), returns addr (.*)", line)
+                if mallocobj:
+                    # print("malloc:" + mallocobj.group(1) + " " + mallocobj.group(2))
+                    malloc_info = [mallocobj.group(2), mallocobj.group(1), mallocobj.group()]
+                    node_info.append(malloc_info)
+                    heap_infos.append([mallocobj.group(), copy.deepcopy(node_info)])
+                    continue
+
+                callocobj = re.match("Calloc called with size (.*), returns addr (.*)", line)
+                if callocobj:
+                    # print("calloc:" + callocobj.group(1) + " " + callocobj.group(2))
+                    calloc_info = [callocobj.group(2), callocobj.group(1), callocobj.group()]
+                    node_info.append(calloc_info)
+                    heap_infos.append([callocobj.group(), copy.deepcopy(node_info)])
+                    continue
+
+                freeobj = re.match("Free called to free (.*) with size (.*)", line)
+                if freeobj:
+                    # print("free:" + freeobj.group(1) + " " + freeobj.group(2))
+                    free_info = [freeobj.group(1), freeobj.group(2), freeobj.group()]
+                    node_info = free_heap_info(node_info, free_info)
+                    heap_infos.append([freeobj.group(), copy.deepcopy(node_info)])
+                    continue
+
+                overflowobj = re.match(
+                    "Found overflow in chunk at 0x6031b0, size 0x20 with write starts at <BV64 (.*)>, size <BV64 (.*)>!\n",
+                    line)
+                if overflowobj:
+                    # print("overflow:" + overflowobj.group(1) + " " + overflowobj.group(2))
+                    overlength = f.readline()
+                    overflow_info = [overflowobj.group(1), overflowobj.group(2), overflowobj.group() + overlength]
+                    node_info = overflow_heap_info(node_info, overflow_info)
+                    heap_infos.append([overflowobj.group() + overlength, copy.deepcopy(node_info)])
+            f.close()
+            # print(self.heap_infos)
+            return heap_infos
+
+
+        heap_infos = parse_heap_change_log(self.path)
         head_dot = '''digraph G {n0[shape=reocord,label="......"]'''
         tail_dot = "}"
         label_dot = ""
         edge_dot = ""
         index = 0
-        for heap_info in self.heap_infos:
+        for heap_info in heap_infos:
             index += 1
             if len(heap_info[1]) == 0:
                 label_dot += '''n%s[shape=record,label="......"]''' % (index)
@@ -288,3 +326,4 @@ class View_heap_log(object):
         t = Source(dot)
         t.save("HeapChange.dot")
         os.system("dot ./HeapChange.dot -T png -o ./HeapChange.png")
+        return os.path.join(os.getcwd(), 'HeapChange.png')
