@@ -4,13 +4,13 @@ import sys
 
 sys.path.append("../../source/")
 
-import parse_helpers
-import replayer
-import angr
-import claripy
+import helpers
+from replayer import *
+from heap_analysis import *
 from imp import reload
-
-
+from call_analysis import *
+from leak_analysis import *
+from got_analysis import *
 
 def memory_sum(file):
     f = open(file, "r")
@@ -31,14 +31,21 @@ before_malloc = 0
 
 def full_init():
     global state, simgr, p, before_malloc
-    p = replayer.Replayer("easyheap", "./sample.txt", "maps.8998")
+    p = Replayer("easyheap", "./sample.txt", "maps.8998")
+    p.do_track()
+    # h = heap_analysis(p)
+    # h.do_analysis()
 
-    state = p.get_entry_state()
-    simgr = p.get_simgr()
-    before_malloc = p.navigate_to(0x40092e)
+    leak_analy = leak_analysis(p)
+    leak_analy.do_analysis()
+    # c = call_analysis(p)
+    # c.do_analysis()
+    # p.do_track()
+    # got_analy = got_analysis(p)
+    # got_analy.do_analysis()
 
 def full_reload():
-    reload(parse_helpers)
+    reload(helpers)
     reload(replayer)
     reload(analyser)
     full_init()

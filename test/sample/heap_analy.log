@@ -3,27 +3,52 @@ Malloc called with size 0x190, returns addr 0x603030
 Malloc called with size 0x20, returns addr 0x6031c0
 Malloc called with size 0x20, returns addr 0x6031e0
 Free called to free 0x6031e0 with size 0x20
-fastbin: 0x6031d0 -> 0
-
 Free called to free 0x6031c0 with size 0x20
-fastbin: 0x6031b0 -> 0x6031d0 -> 0
-
 Free called to free 0x603030 with size 0x190
-fastbin: 0x6031b0 -> 0x6031d0 -> 0
-
 Free called to free 0x603010 with size 0x20
-fastbin: 0x603000 -> 0x6031b0 -> 0x6031d0 -> 0
-
 Malloc called with size 0x20, returns addr 0x603010
-fastbin: 0x6031b0 -> 0x6031d0 -> 0
-
 Malloc called with size 0x20, returns addr 0x6031c0
-fastbin: 0x6031d0 -> 0
-
 Malloc called with size 0x20, returns addr 0x6031e0
-Found overflow in chunk at 0x6031b0, size 0x20 with write starts at <BV64 0x6031b0>, size <BV64 0x21>!
+Found overflow in chunk at 0x6031c0, size 0x10 with write starts at 0x6031b0, size 0x21!
 Overflow length: 0x1, content: <BV8 10>
-Found overflow in chunk at 0x6031b0, size 0x20 with write starts at <BV64 0x6031b0>, size <BV64 0x21>!
+0x6031b0| 0000000000000190  0000000000000020
+0x6031c0| 00000000006031e0  0000000000000008
+0x6031d0| 0000000000000000  0000000000000021
+
+Mem write to chunk header 0x6031b0 start at 0x6031b0 with size 0x10: <BV128 0x90010000000000002000000000000000>
+0x6031b0| 0000000000000190  0000000000000020
+0x6031c0| 00000000006031e0  0000000000000008
+0x6031d0| 0000000000000000  0000000000000021
+
+
+Stack:
+Mem write to chunk header 0x6031d0 start at 0x6031d0 with size 0x1: <BV8 10>
+0x6031b0| 0000000000000190  0000000000000020
+0x6031c0| 00000000006031e0  0000000000000008
+0x6031d0| 0000000000000000  0000000000000021
+
+
+Stack:
+Found overflow in chunk at 0x6031c0, size 0x10 with write starts at 0x6031b0, size 0x21!
 Overflow length: 0x1, content: <BV8 10>
+0x6031b0| 0000000000000190  0000000000000020
+0x6031c0| 0000000000602088  0000000000001000
+0x6031d0| 000000000000000a  0000000000000021
+
+Mem write to chunk header 0x6031b0 start at 0x6031b0 with size 0x10: <BV128 0x90010000000000002000000000000000>
+0x6031b0| 0000000000000190  0000000000000020
+0x6031c0| 0000000000602088  0000000000001000
+0x6031d0| 000000000000000a  0000000000000021
+
+
+Stack:
+Mem write to chunk header 0x6031d0 start at 0x6031d0 with size 0x1: <BV8 10>
+0x6031b0| 0000000000000190  0000000000000020
+0x6031c0| 0000000000602088  0000000000001000
+0x6031d0| 000000000000000a  0000000000000021
+
+
+Stack:
 run into execve!
 found exploited state
+

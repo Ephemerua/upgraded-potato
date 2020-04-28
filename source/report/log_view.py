@@ -285,12 +285,12 @@ class view_heap_log(object):
                     continue
 
                 overflowobj = re.match(
-                    "Found overflow in chunk at 0x6031b0, size 0x20 with write starts at <BV64 (.*)>, size <BV64 (.*)>!\n",
+                    "Found overflow in chunk at (.*), size (.*) with write starts at (.*), size (.*)!\n",
                     line)
                 if overflowobj:
                     # print("overflow:" + overflowobj.group(1) + " " + overflowobj.group(2))
                     overlength = f.readline()
-                    overflow_info = [overflowobj.group(1), overflowobj.group(2), overflowobj.group() + overlength]
+                    overflow_info = [overflowobj.group(3), overflowobj.group(4), overflowobj.group() + overlength]
                     node_info = overflow_heap_info(node_info, overflow_info)
                     heap_infos.append([overflowobj.group() + overlength, copy.deepcopy(node_info)])
             f.close()

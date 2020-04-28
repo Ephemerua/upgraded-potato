@@ -1,41 +1,277 @@
-<meta http-equiv="Content-Type"content="text/html;charset=utf-8">
-<html align='right'>
-<h1>EXPLOIT REPORT</h1>
-    <body>
-    <h2>Information</h2>
-    <p>name: xxx&nbsp;&nbsp;start time: 2019&nbsp;&nbsp;end time: 2020  </p>
-<!--    <p>result : ***&nbsp;&nbsp;other：***</p>-->
-    <h2>heap analysis</h2>
-    <h3>got change</h3>
+<!DOCTYPE html>
+<html class='final report' lang="en-US">
+<head>
+    <meta name="description" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="keywords" content="responsive, template, portfolio, html, css, javascript, Theme">
+    <meta charset="utf-8"><meta name="author" content="">
+    <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
+    <title>Alpha UI Kit - Documentation</title>
 
-    <table border="1" width="40%" cellspacing="0" cellpadding="0" align="left">
+    <!--favicon icon-->
+    <link rel="icon" href="images/favicon.png">
+
+    <!--google font-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900" rel="stylesheet">
+
+    <!-- font awesome css -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+
+    <!-- iconmind icon css -->
+    <link rel="stylesheet" href="css/iconmind-line.css">
+
+    <!--bootstrap min css-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!--owl carousel min css-->
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+
+    <!--nice select css-->
+    <link rel="stylesheet" href="css/nice-select.css">
+
+    <!--Padding margin css-->
+    <link rel="stylesheet" href="css/padding.margin.css">
+
+
+    <!-- style css -->
+    <link rel="stylesheet" href="css/asset/shortcode-common.css">
+    <link rel="stylesheet" href="css/asset/typography.css">
+    <link rel="stylesheet" href="css/asset/accordion.css">
+    <link rel="stylesheet" href="css/asset/alert.css">
+    <link rel="stylesheet" href="css/asset/button.css">
+    <link rel="stylesheet" href="css/asset/input.css">
+    <link rel="stylesheet" href="css/asset/c2action.css">
+    <link rel="stylesheet" href="css/asset/testimonial.css">
+    <link rel="stylesheet" href="css/asset/carousel.css">
+    <link rel="stylesheet" href="css/asset/client.css">
+    <link rel="stylesheet" href="css/asset/color.css">
+    <link rel="stylesheet" href="css/asset/faq.css">
+    <link rel="stylesheet" href="css/asset/grid-systerm.css">
+    <link rel="stylesheet" href="css/asset/pricing.css">
+    <link rel="stylesheet" href="css/asset/progressbar.css">
+    <link rel="stylesheet" href="css/asset/table.css">
+    <link rel="stylesheet" href="css/asset/tab.css">
+    <link rel="stylesheet" href="css/asset/team.css">
+    <link rel="stylesheet" href="css/asset/testimonial.css">
+    <link rel="stylesheet" href="css/asset/navbar.css">
+
+    <!--responsive css-->
+    <link rel="stylesheet" href="css/asset/shortcode-responsive.css">
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+    <body class="spresentation" style="">
+<!----------------  title    ----------------->
+    <section id="headtitle">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 class="fw_300">EXPLOIT ANALYSIS REPORT</h1>
+                    <span class="sectionSubtitle mb_50 pb_10 d_block fw_300"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+<!----------------  title    ----------------->
+<!----------------  info     ----------------->
+    <section id="info">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="fw_300">Infomation</h2>
+                    <span class="sectionSubtitle mb_50 pb_10 d_block fw_300"></span>
+                    <p class="color_88 fw_400">target name: xxx&nbsp;&nbsp;start time: 2019&nbsp;&nbsp;end time: 2020  </p>
+                </div>
+            </div>
+        </div>
+    </section>
+<!----------------  info     ----------------->
+    <section id="heapanalysis">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="fw_300">heap analysis</h2>
+                    <span class="sectionSubtitle mb_50 pb_10 d_block fw_300"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="gotchange">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="fw_300">got change</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="flick_table">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="table_style1 table_style2 table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>got mismatch</th>
+                                    <th>which function</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>symbol atoi with addr 0x7ffff784f390</td>
+                                    <td>system in file /lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="heapgraph">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="fw_300">heap transfer graph</h3>
+                    <a> <img src="./HeapChange.png"></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <h3>leak analysis table</h3>
+    <table border="1" width = "50%" cellspacing='0' cellpadding='0' align='left'>
         <tr>
-            <th>got mismatch</th>
-            <th>which function</th>
+            <th>name</th>
+            <th>offset addr</th>
+            <th>lib file</th>
+        </tr>
+
+        
+        <tr align='center'>
+            <td>_IO_file_jumps</td>
+            <td>0</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
         </tr>
         
         <tr align='center'>
-            <td>symbol atoi with addr 0x7ffff784f390</td>
-            <td>system in file /lib/x86_64-linux-gnu/libc-2.23.so</td>
+            <td>_IO_2_1_stdout_</td>
+            <td>-20</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>got._IO_2_1_stderr_</td>
+            <td>-5d</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>got._IO_2_1_stderr_</td>
+            <td>-5d</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>got._IO_2_1_stderr_</td>
+            <td>-5d</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>got._IO_2_1_stderr_</td>
+            <td>-5c</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>_IO_2_1_stdin_</td>
+            <td>0</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>_IO_file_jumps</td>
+            <td>0</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>_IO_2_1_stdout_</td>
+            <td>-20</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>got._IO_2_1_stderr_</td>
+            <td>-5d</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>got._IO_2_1_stderr_</td>
+            <td>-5d</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>got._IO_2_1_stderr_</td>
+            <td>-5d</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>got._IO_2_1_stderr_</td>
+            <td>-5c</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
+        </tr>
+        
+        <tr align='center'>
+            <td>_IO_2_1_stdin_</td>
+            <td>0</td>
+            <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+<!--            <td></td>-->
+<!--            <td><a href="../../test/sample/HeapChange.png">图片</a> </td>-->
         </tr>
         
     </table>
-    <br>
-    <br>
-    <br>
-    <h3>heap transfer graph</h3>
-    <a> <img src="./HeapChange.png"></a>
-    <br>
-    <table border="1" width = "40%" cellspacing='0' cellpadding='0' align='left'>
-        <tr>
-            <th>机柜号</th>
-            <th>检测时间</th>
-            <th>检测结果</th>
-            <th>详细信息</th>
-            <th>图片路径</th>
-        </tr>
 
-        
-    </table>
+
+
+
     </body>
 </html>

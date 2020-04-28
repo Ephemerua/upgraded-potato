@@ -236,7 +236,7 @@ def ret_cb_constructor(ana, **kwargs):
 
 
         # remove the breakpoint
-        bp = state.project.call_analysis.ret_bps.pop(origin_rsp, None)
+        bp = ana.ret_bps.pop(origin_rsp, None)
         if bp:
             state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bp)
         return

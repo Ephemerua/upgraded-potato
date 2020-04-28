@@ -1,2 +1,2 @@
 Found got mismatch: symbol atoi with addr 0x7ffff784f390
-which is func system in file /lib/x86_64-linux-gnu/libc-2.23.so
+which is func system in file libc-2.23.so

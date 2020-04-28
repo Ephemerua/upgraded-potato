@@ -48,5 +48,5 @@ def generate_report(template_path, report_path = "report.html", got_log_path = "
     generate_html(template_path, report_path, got_table, image_path, leak_table)
 
 if __name__ == '__main__':
-    generate_report("./template.html", "./report_new2.html", got_log_path="../../test/sample/got_analy.log", heap_log_path="../../test/sample/heap_analy.log",
+    generate_report("./template.html", "./report_new.html", got_log_path="../../test/sample/got_analy.log", heap_log_path="../../test/sample/heap_analy.log",
                     leak_log_path="../../test/sample/leak_analy.log")

@@ -4,10 +4,11 @@ import sys
 
 sys.path.append("../../source/")
 
-import parse_helpers
-import replayer
+import source.parse_helpers
+import source.replayer
 import angr
 import claripy
+from source.call_analysis import *
 from imp import reload
 
 
@@ -31,10 +32,12 @@ before_malloc = 0
 
 def full_init():
     global state, simgr, p, before_malloc
-    p = replayer.Replayer("stack", "./sample.txt", "maps.stack.58124")
+    p = source.replayer.Replayer("test", "./testinput.txt", "maps.test.55146")
 
-    state = p.get_entry_state()
-    simgr = p.get_simgr()
+    # state = p.get_entry_state()
+    # simgr = p.get_simgr()
+    c = call_analysis(p)
+    c.do_analysis()
 
 def full_reload():
     reload(parse_helpers)

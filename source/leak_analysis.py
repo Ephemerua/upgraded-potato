@@ -5,7 +5,7 @@ in most situation :(
 """
 
 import struct
-from symbol_resolve import symbol_resolve
+from source.symbol_resolve import symbol_resolve
 
 class leak_analysis(object):
     """

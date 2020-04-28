@@ -230,22 +230,24 @@
                 <div class="col-md-12">
                     <h2 class="fw_300">Infomation</h2>
                     <span class="sectionSubtitle mb_50 pb_10 d_block fw_300"></span>
-                    <p class="color_88 fw_400">target name: xxx&nbsp;&nbsp&nbsp;report time: 2020.04.27  </p>
+                    <p class="color_88 fw_400">target name: xxx&nbsp;&nbsp&nbsp;report time: 2020.04.28  </p>
                 </div>
             </div>
         </div>
     </section>
 <!----------------  info     ----------------->
-    <section id="heapanalysis">
+<!---------------  got analysis  ------------->
+    <section id="gotanalysis">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h2 class="fw_300">heap analysis</h2>
+                    <h2 class="fw_300">got analysis</h2>
                     <span class="sectionSubtitle mb_50 pb_10 d_block fw_300"></span>
                 </div>
             </div>
         </div>
     </section>
+
     <section id="gotchange">
         <div class="container">
             <div class="row">
@@ -272,12 +274,25 @@
                                 
                                 <tr>
                                     <td>symbol atoi with addr 0x7ffff784f390</td>
-                                    <td>system in file /lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>system in file libc-2.23.so</td>
                                 </tr>
                                 
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<!---------------  got analysis  ------------->
+
+<!--------------- heap analysis  ------------->
+    <section id="heapanalysis">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="fw_300">heap analysis</h2>
+                    <span class="sectionSubtitle mb_50 pb_10 d_block fw_300"></span>
                 </div>
             </div>
         </div>
@@ -288,23 +303,24 @@
             <div class="row">
                 <div class="col-md-12">
                     <h3 class="fw_300">heap transfer graph</h3>
-                    <a><img src=""></a>
+                    <a><img src="/home/vis/Desktop/workplace/upgraded-potato/source/report/HeapChange.png"></a>
                 </div>
             </div>
         </div>
     </section>
-<!--    <section class="flick_carousel carousel1">-->
-<!--        <div class="container">-->
-<!--            <div class="col">-->
-<!--                <div class="col-md-12">-->
-<!--                    <div class="carousel1_wrapper owl-carousel">-->
-<!--                        <img src="" alt="carousel-img">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </section>-->
+<!--------------- heap analysis  ------------->
 
+<!--------------- leak analysis  ------------->
+    <section id="leakanalysis">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="fw_300">leak analysis</h2>
+                    <span class="sectionSubtitle mb_50 pb_10 d_block fw_300"></span>
+                </div>
+            </div>
+        </div>
+    </section>
     <section id="leakinfo">
         <div class="container">
             <div class="row">
@@ -333,85 +349,85 @@
                                 <tr>
                                     <td>_IO_file_jumps</td>
                                     <td>0</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>_IO_2_1_stdout_</td>
                                     <td>-20</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>got._IO_2_1_stderr_</td>
                                     <td>-5d</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>got._IO_2_1_stderr_</td>
                                     <td>-5d</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>got._IO_2_1_stderr_</td>
                                     <td>-5d</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>got._IO_2_1_stderr_</td>
                                     <td>-5c</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>_IO_2_1_stdin_</td>
                                     <td>0</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>_IO_file_jumps</td>
                                     <td>0</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>_IO_2_1_stdout_</td>
                                     <td>-20</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>got._IO_2_1_stderr_</td>
                                     <td>-5d</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>got._IO_2_1_stderr_</td>
                                     <td>-5d</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>got._IO_2_1_stderr_</td>
                                     <td>-5d</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>got._IO_2_1_stderr_</td>
                                     <td>-5c</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                                 <tr>
                                     <td>_IO_2_1_stdin_</td>
                                     <td>0</td>
-                                    <td>/lib/x86_64-linux-gnu/libc-2.23.so</td>
+                                    <td>libc-2.23.so</td>
                                 </tr>
                                 
                             </tbody>
@@ -421,7 +437,7 @@
             </div>
         </div>
     </section>
-
+<!--------------- leak analysis  ------------->
 
 
     </body>
