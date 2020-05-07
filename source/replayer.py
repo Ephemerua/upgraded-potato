@@ -13,6 +13,7 @@ from pwnlib.elf.elf import ELF
 from heap_analysis import heap_analysis
 from symbol_resolve import symbol_resolve
 
+from util.rep_pack import rep_pack
 
 #p = angr.Project("./aa", main_opts = main_opts, lib_opts = lib_opts,auto_load_libs=True, use_sim_procedures=False )
 #state = p.factory.entry_state(mode="tracing", stdin=sim_file)
@@ -23,7 +24,7 @@ class Replayer(angr.project.Project):
     Do the replay job.
     XXX: all unsupported syscall will always return 0
 
-    :param binary:      path to the target binary
+    :param binary_path:      path to the target binary_path
     :param log_path:    path to logged input
     :param map_path:    path to the memory map recorded at entry point
 
@@ -36,10 +37,17 @@ class Replayer(angr.project.Project):
 
     :ivar hooked_addr:  list of addr been hooked
     """
-    def __init__(self, binary, log_path, map_path):
+    def __init__(self, binary_path, log_path, map_path):
+        assert(isinstance(binary_path, str))
+        assert(isinstance(log_path, str))
+        assert(isinstance(map_path, str))
+        self.__binary_path = binary_path
+        self.__log_path = log_path
+        self.__map_path = map_path
+        
         # input is the recorded stdin
         self.input = parse_log_from_file(log_path)
-        target_name = binary.split(r"/")[-1]
+        target_name = binary_path.split(r"/")[-1]
         main_opts, lib_opts, bp = parse_maps_from_file(map_path, target_name)
         self.maps = parse_maps_from_file(map_path, plus = True)
         self.reverse_maps = reverse_maps(self.maps)
@@ -60,12 +68,12 @@ class Replayer(angr.project.Project):
         # construct the project, load objects with recorded base addr
         skip_libs = ['mmap_dump.so']
         force_load_libs = [ lib for lib in lib_opts if lib.split("/")[-1] not in skip_libs ]
-        super().__init__(binary, main_opts = main_opts, lib_opts = lib_opts, \
+        super().__init__(binary_path, main_opts = main_opts, lib_opts = lib_opts, \
             auto_load_libs=False, use_sim_procedures=False , preload_libs = force_load_libs)
 
         # use pwnlib's ELF to save all objects
         # XXX: angr.loader has loaded all objects...
-        self.elfs = {self.target:ELF(binary, checksec=False)}
+        self.elfs = {self.target:ELF(binary_path, checksec=False)}
         self.elfs[self.target].address = self._main_opts["base_addr"]
         for k, v in self._lib_opts.items():
             f = ELF(k, checksec=False)
@@ -87,6 +95,9 @@ class Replayer(angr.project.Project):
         # TEST: set heap analysis
         self.heap_analysis = heap_analysis(self)
         self.symbol_resolve = symbol_resolve(self)
+
+        # TEST: serialize the project
+        self.packer = rep_pack(self.__binary_path, self.__log_path, self.__map_path)
     
     def get_entry_state(self):
         """

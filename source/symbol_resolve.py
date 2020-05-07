@@ -21,6 +21,13 @@ class symbol_resolve(object):
         #print("Cannot find symbol of addr %s." % hex(addr))
         return None
 
+    def _syscall_reverse_resolve(self, addr):
+        if self.project.simos.is_syscall_addr(addr):
+            syscall = self.project.simos.syscall_from_addr(addr)
+            return syscall.display_name + "_syscall"
+        else:
+            return None
+
     def resolve(self, name):
         """
         Resolve symbol address by name.
@@ -44,7 +51,11 @@ class symbol_resolve(object):
         # first find which object the addr belongs to
         found_obj = self.find_obj(addr)
         if not found_obj:
-            return None
+            name = self._syscall_reverse_resolve(addr)
+            if name:
+                return name, 0
+            else:
+                return None
         
         # now try to find the symbol name
         found_obj = found_obj.split('/')[-1]

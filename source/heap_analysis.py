@@ -2,6 +2,7 @@ import claripy
 import angr
 from structures import malloc_state
 from arena import Arena
+from util.info_print import print_callstack
 
 """
 TODO: move this part to doc
@@ -30,23 +31,6 @@ Chunks to be free must be malloc before, so track malloc to identify fake chunks
 UAF:
 For simple double free it is easy. TODO: any other case?
 """
-
-
-def _print_callstack(state):
-    cs = state.callstack
-    print("\nStack:")
-    for frame in cs:
-        if not frame.func_addr:
-            return 
-        symbol  = state.project.symbol_resolve.reverse_resolve(frame.func_addr)
-        if symbol:
-            if '__gmon_start__' in symbol[0]:
-                symbol = list(symbol)
-                symbol[0] = 'sub_%x'% frame.func_addr
-                symbol[1] = 0
-            print('\t'+ symbol[0]+ "+ %d" % symbol[1])
-        else:
-            print('\t'+ hex(frame.func_addr))
 
 
 # TODO: move this to other place
@@ -166,7 +150,7 @@ def bp_redzone(start_addr, size, callback = None, debug = False, allow_heap_ops 
         print(printable_memory(state, min(start_addr, info_pos)\
             , max(size, info_size), warn_pos = target_addr,\
                  warn_size  = write_size, info_pos = info_pos, info_size = info_size))
-        _print_callstack(state)
+        print_callstack(state)
         return
     return write_bp
     
