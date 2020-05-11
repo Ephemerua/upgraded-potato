@@ -2,6 +2,12 @@ import claripy
 import angr
 from structures import malloc_state
 from arena import Arena
+import logging
+
+heap_logger = logging.getLogger('heap_analy_log')
+heap_logger.setLevel(logging.INFO)
+heap_logger_file_handle = logging.FileHandler('heap_analy.log')
+heap_logger.addHandler(heap_logger_file_handle)
 
 """
 TODO: move this part to doc
@@ -47,6 +53,7 @@ def _print_callstack(state):
             print('\t'+ symbol[0]+ "+ %d" % symbol[1])
         else:
             print('\t'+ hex(frame.func_addr))
+    print('\n')
 
 
 # TODO: move this to other place
@@ -109,9 +116,14 @@ def bp_overflow(start_addr, size, callback = None, debug = False):
             #print("Overflow length: %s" % hex(overflow_len))
             overflow_content = state.inspect.mem_write_expr[overflow_len*8 - 1:0]
             print("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
-            print(printable_memory(state, min(start_addr, target_addr), max(size,target_size)\
+            str = printable_memory(state, min(start_addr, target_addr), max(size,target_size)\
                 ,warn_pos = start_addr+size, warn_size  = overflow_len, info_pos = target_addr\
-                    ,info_size = target_size))
+                    ,info_size = target_size)
+            print(str)
+            # heap_logger.info(str)
+            # print(printable_memory(state, min(start_addr, target_addr), max(size,target_size)\
+            #     ,warn_pos = start_addr+size, warn_size  = overflow_len, info_pos = target_addr\
+            #         ,info_size = target_size))
         return
     return write_bp
 

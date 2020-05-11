@@ -1,6 +1,6 @@
 import angr
 from replayer import fetch_str
-
+from  util.info_print import stack_backtrace, printable_backtrace
 """
 Set write bp on return address in stack.
 TODO: get rop chain info
@@ -40,43 +40,6 @@ To make it work, I edited angr/engines/successors.py, lineno 211 to this:
                  #state._inspect('return', BP_AFTER)
 """
 
-
-
-def stack_backtrace(state, depth = 'Max'):
-    """
-    Helper func to get stack backtrace.
-    Do the same work as gdb's bt.
-
-    :param state:   state to do bt
-    :param depth:   bt depth
-    """
-    # gdb's backtrace records present rip in frame0, do the same with gdb
-    result = [(state.regs.rip, state.regs.rbp)]
-    bp = state.regs.rbp
-    frame_num = -1 if depth=='Max' else depth
-
-    while bp.concrete and frame_num:
-        frame_num -= 1
-        # bp==0 means trace ends
-        if (bp == 0).is_true():
-            return result
-
-        ret_addr = state.memory.load(bp+8, 8, endness = 'Iend_LE').args[0]
-        bp = state.memory.load(bp, 8, endness = 'Iend_LE').args[0]
-        result.append((ret_addr, bp))
-
-        # We have set uninited memory to zero, and ret_addr shouldn't be zero.
-        if ret_addr == 0:
-            return result
-        if ret_addr > 0x7fffffffffff:
-            return result
-
-def printable_backtrace(bt):
-    result = ""
-    for i in range(len(bt)):
-        result += ("Frame %d: %s\tsp = %s\n" % (i, hex(bt[i][0]), hex(bt[i][1])))
-    return result
-
 def bp_constructor(ana, addr, size = 8, callback = None):
     """
     construct a bp before given addr is written, get its origin value and modified value.
@@ -110,7 +73,7 @@ def bp_constructor(ana, addr, size = 8, callback = None):
         if origin == modified:
             return
         print("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified) ))
-        printable_backtrace(bt)
+        print(printable_backtrace(bt))
         #print(state.callstack)
         return
     return write_bp
@@ -126,13 +89,23 @@ def call_args_x64(state):
     # a6 = regs.r9
     return {'rdi':a1, 'rsi':a2, 'rdx':a3}#, a4, a5, a6
 
+def __test_filter(s, value):
+    if s:
+        if '__gmon_start__' in s[0]:
+            s = list(s)
+            s[0] = 'sub_%x'% value
+            s[1] = 0
+    return s
+
 def ret_info(state):
     result = ""
     ret_src = state.history.bbl_addrs[-1]
     ret_dst = state.regs.rip.args[0]
     args = call_args_x64(state)
     dst_symbol = state.project.symbol_resolve.reverse_resolve(ret_dst)
+    dst_symbol = __test_filter(dst_symbol, ret_dst)
     src_symbol = state.project.symbol_resolve.reverse_resolve(ret_src)
+    src_symbol = __test_filter(src_symbol, ret_src)
 
     result += "From"
     if src_symbol:
@@ -156,6 +129,10 @@ def ret_info(state):
         result += s
         s = state.project.symbol_resolve.reverse_resolve(value)
         if s:
+            if '__gmon_start__' in s[0]:
+                s = list(s)
+                s[0] = 'sub_%x'% value.args[0]
+                s[1] = 0
             result += " (%s + %d)" % (s[0], s[1])
         result += '\n'
 

@@ -32,14 +32,14 @@ before_malloc = 0
 def full_init():
     global state, simgr, p, before_malloc
     p = Replayer("easyheap", "./sample.txt", "maps.8998")
-    p.do_track()
+    # p.do_track()
     # h = heap_analysis(p)
     # h.do_analysis()
 
-    leak_analy = leak_analysis(p)
-    leak_analy.do_analysis()
-    # c = call_analysis(p)
-    # c.do_analysis()
+    # leak_analy = leak_analysis(p)
+    # leak_analy.do_analysis()
+    c = call_analysis(p)
+    c.do_analysis()
     # p.do_track()
     # got_analy = got_analysis(p)
     # got_analy.do_analysis()

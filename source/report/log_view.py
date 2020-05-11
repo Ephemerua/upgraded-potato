@@ -1,45 +1,8 @@
 import re
 import copy
 from graphviz import Source
-from docx import Document
-from docx.shared import Inches
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from pydocx import PyDocX
-# import mammoth
-from os.path import basename
-from subprocess import call
 import os
-import xlwt
 
-
-# def set_style(name, height, bold=False, format_str='', align='center'):
-#     style = xlwt.XFStyle()  # 初始化样式
-#
-#     font = xlwt.Font()  # 为样式创建字体
-#     font.name = name  # 'Times New Roman'
-#     font.bold = bold
-#     font.height = height
-#
-#     borders = xlwt.Borders()  # 为样式创建边框
-#     borders.left = 2
-#     borders.right = 2
-#     borders.top = 0
-#     borders.bottom = 2
-#
-#     alignment = xlwt.Alignment()  # 设置排列
-#     if align == 'center':
-#         alignment.horz = xlwt.Alignment.HORZ_CENTER
-#         alignment.vert = xlwt.Alignment.VERT_CENTER
-#     else:
-#         alignment.horz = xlwt.Alignment.HORZ_LEFT
-#         alignment.vert = xlwt.Alignment.VERT_BOTTOM
-#
-#     style.font = font
-#     style.borders = borders
-#     style.num_format_str = format_str
-#     style.alignment = alignment
-#
-#     return style
 #
 # class Generate_excel(object):
 #     wbk = ""
@@ -69,62 +32,62 @@ import xlwt
 #             self.datasheet.write(rowNum, 1, val2)
 #             rowNum += 1
 
-class Generate_doc(object):
-    document = ""
-    got_log = ""
-    def __init__(self, got_log_path, heap_log_path):
-        self.document = Document()
-        head = self.document.add_heading('\t\t\tEXPLOIT REPORT', 0)
-        self.got_log = View_got_log(got_log_path).get_got_change()
-        View_heap_log(heap_log_path).gen_heap_change_png()
-
-    def docx2pdf(self, docx_path):
-        '''
-        tranfser docx to pdf
-        :param docx_path:
-        :return:
-        '''
-        if docx_path.endswith('.docx'):
-            order = 'libreoffice --invisible --convert-to pdf %s 1>/dev/null 2>&1' % docx_path
-        else:
-            print('Error, file type does not match!')
-            return
-        call(order, shell=True)
-
-    def save_report(self):
-        '''
-        save file
-        :return:
-        '''
-        self.document.save('./report.docx')
-        self.docx2pdf("./report.docx")
-        html = PyDocX.to_html("./report.docx")
-        f = open("./report.html", 'w', encoding="utf-8")
-        f.write(html)
-        f.close()
-
-
-    def heap_analy_report(self):
-        '''
-        add heap analysis content
-        :return:
-        '''
-        self.document.add_heading('heap analysis', 1)
-        self.document.add_heading('1.got analysis', 2)
-        self.document.add_paragraph("got change:")
-        got_table = self.document.add_table(rows=0, cols=2)
-        cells = got_table.add_row().cells
-        cells[0].text = "got mismatch"
-        cells[1].text = "which function"
-        for i in range(len(self.got_log)):
-            cells = got_table.add_row().cells
-            cells[0].text = self.got_log[i][0]
-            cells[1].text = self.got_log[i][1]
-
-        self.document.add_heading("2.heap analysis", 2)
-        self.document.add_paragraph("heap change graph")
-        pic = self.document.add_picture("./HeapChange.png", width=Inches(6.0))
-        # pic.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER.
+# class Generate_doc(object):
+#     document = ""
+#     got_log = ""
+#     def __init__(self, got_log_path, heap_log_path):
+#         self.document = Document()
+#         head = self.document.add_heading('\t\t\tEXPLOIT REPORT', 0)
+#         self.got_log = View_got_log(got_log_path).get_got_change()
+#         View_heap_log(heap_log_path).gen_heap_change_png()
+#
+#     def docx2pdf(self, docx_path):
+#         '''
+#         tranfser docx to pdf
+#         :param docx_path:
+#         :return:
+#         '''
+#         if docx_path.endswith('.docx'):
+#             order = 'libreoffice --invisible --convert-to pdf %s 1>/dev/null 2>&1' % docx_path
+#         else:
+#             print('Error, file type does not match!')
+#             return
+#         call(order, shell=True)
+#
+#     def save_report(self):
+#         '''
+#         save file
+#         :return:
+#         '''
+#         self.document.save('./report.docx')
+#         self.docx2pdf("./report.docx")
+#         html = PyDocX.to_html("./report.docx")
+#         f = open("./report.html", 'w', encoding="utf-8")
+#         f.write(html)
+#         f.close()
+#
+#
+#     def heap_analy_report(self):
+#         '''
+#         add heap analysis content
+#         :return:
+#         '''
+#         self.document.add_heading('heap analysis', 1)
+#         self.document.add_heading('1.got analysis', 2)
+#         self.document.add_paragraph("got change:")
+#         got_table = self.document.add_table(rows=0, cols=2)
+#         cells = got_table.add_row().cells
+#         cells[0].text = "got mismatch"
+#         cells[1].text = "which function"
+#         for i in range(len(self.got_log)):
+#             cells = got_table.add_row().cells
+#             cells[0].text = self.got_log[i][0]
+#             cells[1].text = self.got_log[i][1]
+#
+#         self.document.add_heading("2.heap analysis", 2)
+#         self.document.add_paragraph("heap change graph")
+#         pic = self.document.add_picture("./HeapChange.png", width=Inches(6.0))
+#         # pic.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER.
 
 
 class view_leak_log(object):
@@ -234,11 +197,34 @@ def free_heap_info(node_info, free_info):
     else:
         return node_info
 
+def extract_memory(f):
+    res = ""
+    while True:
+        line = f.readline()
+        if line is '\n':
+            break
+        res += line
+    return res
+
+def extract_stack(f):
+    res = ""
+    while True:
+        line = f.readline()
+        if line == 'Stack:\n':
+            break
+
+    while True:
+        line = f.readline()
+        if line is '\n':
+            break
+        res += line
+
+    return res if res is not "" else "None"
+
 class view_heap_log(object):
 
     def __init__(self, path):
         self.path = path
-
 
     def gen_heap_change_png(self):
         '''
@@ -260,9 +246,9 @@ class view_heap_log(object):
                 line = f.readline()
                 if not line:
                     break
+
                 mallocobj = re.match("Malloc called with size (.*), returns addr (.*)", line)
                 if mallocobj:
-                    # print("malloc:" + mallocobj.group(1) + " " + mallocobj.group(2))
                     malloc_info = [mallocobj.group(2), mallocobj.group(1), mallocobj.group()]
                     node_info.append(malloc_info)
                     heap_infos.append([mallocobj.group(), copy.deepcopy(node_info)])
@@ -270,7 +256,6 @@ class view_heap_log(object):
 
                 callocobj = re.match("Calloc called with size (.*), returns addr (.*)", line)
                 if callocobj:
-                    # print("calloc:" + callocobj.group(1) + " " + callocobj.group(2))
                     calloc_info = [callocobj.group(2), callocobj.group(1), callocobj.group()]
                     node_info.append(calloc_info)
                     heap_infos.append([callocobj.group(), copy.deepcopy(node_info)])
@@ -292,7 +277,13 @@ class view_heap_log(object):
                     overlength = f.readline()
                     overflow_info = [overflowobj.group(3), overflowobj.group(4), overflowobj.group() + overlength]
                     node_info = overflow_heap_info(node_info, overflow_info)
-                    heap_infos.append([overflowobj.group() + overlength, copy.deepcopy(node_info)])
+                    # add the memory info by extract_memory()
+                    heap_infos.append([overflowobj.group() + overlength, copy.deepcopy(node_info), extract_memory(f)])
+
+                memobj = re.match("Mem write to chunk header (.*) start at (.*) with size (.*): <(.*)>", line)
+                if memobj:
+                    heap_infos.append([memobj.group(),extract_memory(f), extract_stack(f)])
+
             f.close()
             # print(self.heap_infos)
             return heap_infos
@@ -306,24 +297,158 @@ class view_heap_log(object):
         index = 0
         for heap_info in heap_infos:
             index += 1
+
+            # when the node is empty
             if len(heap_info[1]) == 0:
                 label_dot += '''n%s[shape=record,label="......"]''' % (index)
                 edge_dot += '''n%s->n%s[label="%s"]''' % (index-1, index, heap_info[0])
                 continue
+
+            # table format
             content = '''n%s[shape=none, label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">''' % (index)
-            is_overflow = False
+
+            # when the node is the overflow one
+            if heap_info[0].startswith("Found overflow") and len(heap_info) == 3:
+                label_dot += '''n%s%s[shape=box,label="%s"]''' % (index, index, heap_info[2])
+                edge_dot += '''{rank = same; n%s->n%s%s[style=dotted label="%s"]}''' % (index, index, index, "memory content")
+
+            # when the node is the mem write one
+            if heap_info[0].startswith("Mem write"):
+                label_dot += '''n%s[shape=box,label="%s"]''' % (index, heap_info[1])
+                label_dot += '''n%s%s[shape=box,label="%s"]''' % (index, index, heap_info[2])
+                edge_dot += '''n%s->n%s[label="%s"]''' % (index-1, index, heap_info[0])
+                edge_dot += '''{rank = same; n%s->n%s%s[style=dotted label="%s"]}''' % (index, index, index, "Stack")
+                continue
+
+            # construct the heap node graph ande highlight the overflow part
             for info in heap_info[1]:
+                if len(info) < 3:
+                        break
                 if info[2].startswith("Found overflow"):
-                    content += '''<tr><td bgcolor="lightgrey"><font color="red">%s size:%s</font></td></tr>''' % (info[0], info[1])
-                    is_overflow = True
+                    content += '''<tr><td bgcolor="lightgrey"><font color="red">%s size:%s</font></td></tr>''' % (
+                        info[0], info[1])
                     continue
                 content += '''<tr><td>%s size:%s</td></tr>''' % (info[0], info[1])
+
             content += '''</table>>]'''
             label_dot += content
-            edge_dot += '''n%s->n%s[label="%s"]''' % (index-1, index, heap_info[0])
+            edge_dot += '''n%s->n%s[label="%s"]''' % (index - 1, index, heap_info[0])
+
 
         dot = head_dot + label_dot + edge_dot + tail_dot
         t = Source(dot)
         t.save("HeapChange.dot")
         os.system("dot ./HeapChange.dot -T png -o ./HeapChange.png")
         return os.path.join(os.getcwd(), 'HeapChange.png')
+
+
+def extract_strange_rop(headline, f):
+    '''
+    :param headline: the first line
+    :param f: file stream
+    :return:
+    '''
+    strange_info = {}
+    strange_info['situation'] = headline[:-2]
+    obj = re.match("From (.*) to (.*)", f.readline())
+    if obj:
+        strange_info['jump'] = (obj.group(1) + "->\n" + obj.group(2)).replace('\n', '<br>')
+
+    while not f.readline().startswith("Args:"):
+        pass
+
+    args = ""
+    while True:
+        line = f.readline()
+        if line is '\n':
+            break
+        args += line
+    strange_info['info'] = ("args:\n" + args[:-1]).replace('\n', '<br>')
+    return strange_info
+
+def extract_overflow_rop(headline, f):
+    '''
+    for overflow info, highlight with red color
+    :param headline: the first line
+    :param f: file stream
+    :return:
+    '''
+    overflow_info = {}
+    sitobj = re.match('(.*) changed from (.*) to (.*)', headline)
+    if sitobj:
+        overflow_info['situation'] = '''<font color="red">''' + \
+                                     sitobj.group(1) + \
+                                     '''</font>'''
+        overflow_info['jump'] = '''<font color="red">change:''' \
+                                + sitobj.group(2) + "-><br>" + sitobj.group(3) + \
+                                '''</font>'''
+
+    info = ""
+    while True:
+        line = f.readline()
+        if line is '\n':
+            break
+        info += line
+
+    overflow_info['info'] = '''<font color="red">''' + \
+                            info.replace('\n', '<br>') + \
+                            '''</font>'''
+    return overflow_info
+
+def extract_unrecord_rop(headline, f):
+    '''
+    for unrecord info, highligth with green color
+    :param headline: the first line
+    :param f: file stream
+    :return:
+    '''
+    unrecord_info = {}
+    unrecord_info['situation'] = '''<font color="green">''' + headline[:-1] + '''</font>'''
+    obj = re.match("From (.*) to (.*)", f.readline())
+    if obj:
+        unrecord_info['jump'] = '''<font color="green">''' + \
+                                (obj.group(1) + "->\n" + obj.group(2)).replace('\n', '<br>') + \
+                                '''</font>'''
+    while not f.readline().startswith("Args:"):
+        pass
+
+    args = ""
+    while True:
+        line = f.readline()
+        if line is '\n':
+            break
+        args += line
+    unrecord_info['info'] = '''<font color="green">''' + \
+                            ("args:\n" + args[:-1]).replace('\n', '<br>') + \
+                            '''</font>'''
+    return unrecord_info
+
+
+class view_call_log(object):
+
+    def __init__(self, path):
+        self.path = path
+
+    def get_rop_table(self):
+        '''
+        :return: a list whose format is for jinja2
+        '''
+        f = open(self.path, 'r')
+        rop_list = []
+        while True:
+            line = f.readline()
+            if not line:
+                break
+
+            if line.startswith("Strange return to"):
+                rop_list.append(copy.deepcopy(extract_strange_rop(line, f)))
+                continue
+
+            if line.startswith("address "):
+                rop_list.append(copy.deepcopy(extract_overflow_rop(line, f)))
+                continue
+
+            if line.startswith("Unrecorded return to"):
+                rop_list.append(copy.deepcopy(extract_unrecord_rop(line, f)))
+
+        return rop_list

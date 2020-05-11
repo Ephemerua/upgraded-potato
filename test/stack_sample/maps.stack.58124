@@ -1,7 +1,7 @@
 got bp: 0x7fffffffe530
-00400000-00401000 r-xp 00000000 00:4d 56674055                           /home/vis/Desktop/workplace/upgraded-potato/test/stack_sample/stack
-00600000-00601000 r--p 00000000 00:4d 56674055                           /home/vis/Desktop/workplace/upgraded-potato/test/stack_sample/stack
-00601000-00602000 rw-p 00001000 00:4d 56674055                           /home/vis/Desktop/workplace/upgraded-potato/test/stack_sample/stack
+00400000-00401000 r-xp 00000000 00:4d 56674055                           /home/vis/Desktop/workplace/upgraded-potato/test/stack_sample/stack1
+00600000-00601000 r--p 00000000 00:4d 56674055                           /home/vis/Desktop/workplace/upgraded-potato/test/stack_sample/stack1
+00601000-00602000 rw-p 00001000 00:4d 56674055                           /home/vis/Desktop/workplace/upgraded-potato/test/stack_sample/stack1
 7ffff7606000-7ffff7609000 r-xp 00000000 08:01 12036                      /lib/x86_64-linux-gnu/libdl-2.23.so
 7ffff7609000-7ffff7808000 ---p 00003000 08:01 12036                      /lib/x86_64-linux-gnu/libdl-2.23.so
 7ffff7808000-7ffff7809000 r--p 00002000 08:01 12036                      /lib/x86_64-linux-gnu/libdl-2.23.so
