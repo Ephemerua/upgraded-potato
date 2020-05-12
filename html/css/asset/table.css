@@ -19,14 +19,17 @@
 }
 
 .flick_table .table_style1 .table td,
-.flick_table .table_style1 .table th {
+.flick_table .table_style1 .table th,
+.flick_table .table_style3 .table th {
     padding: 12px 8px;
     text-align: center;
     color: #222222;
 }
 
+
+
 .flick_table .table_style3 .table td,
-.flick_table .table_style3 .table th {
+ {
     padding: 12px 8px;
     text-align: left;
     color: #222222;

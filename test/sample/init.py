@@ -11,6 +11,7 @@ from imp import reload
 from call_analysis import *
 from leak_analysis import *
 from got_analysis import *
+from report.gen_html import *
 
 def memory_sum(file):
     f = open(file, "r")
@@ -38,11 +39,12 @@ def full_init():
 
     # leak_analy = leak_analysis(p)
     # leak_analy.do_analysis()
-    c = call_analysis(p)
-    c.do_analysis()
+    # c = call_analysis(p)
+    # c.do_analysis()
     # p.do_track()
     # got_analy = got_analysis(p)
     # got_analy.do_analysis()
+    generate_report('./easyheap', 'template.html', 'report_test.html', got_log_path='./got_analy.log')
 
 def full_reload():
     reload(helpers)

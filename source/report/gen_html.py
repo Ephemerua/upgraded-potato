@@ -3,7 +3,7 @@ from report.log_view import *
 from report.env_view import *
 import time
 
-def generate_report(binary_path, template_path, report_path = "report.html", \
+def generate_report(binary_path, template_name="template.html", report_name = "report.html", \
                     got_log_path = "", heap_log_path = "", leak_log_path = "", \
                     call_log_path = ""):
     '''
@@ -40,11 +40,12 @@ def generate_report(binary_path, template_path, report_path = "report.html", \
         :param leak_table:
         :return:
         '''
-        env = Environment(loader=FileSystemLoader("../../html/"))
-        template = env.get_template(template_path)
+        html_path = os.path.join(os.getcwd(), "../../html/")
+        env = Environment(loader=FileSystemLoader(html_path))
+        template = env.get_template(template_name)
 
         report_time = time.strftime('%Y.%m.%d', time.localtime(time.time()))
-        with open("../../html/" + report_path, 'w+') as fout:
+        with open(os.path.join(html_path, report_name), 'w+') as fout:
             html_content = template.render(osinfo=os_info, \
                                            checksecinfo=checksec_info, \
                                            reporttime=report_time, \
