@@ -5,6 +5,7 @@ import sys
 import copy
 from time import time
 import claripy
+import os
 import networkx
 LOGGER_PROMPT = b"$LOGGER$"
 from parse_helpers import *
@@ -44,6 +45,8 @@ class Replayer(angr.project.Project):
         self.maps = parse_maps_from_file(map_path, plus = True)
         self.reverse_maps = reverse_maps(self.maps)
         self.target  = target_name
+        self.target_path = os.getcwd()
+        self.report_logger = 0
 
         self.cfg = 0
         self.cfg_recorded = 0

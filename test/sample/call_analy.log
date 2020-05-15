@@ -1,5 +1,4 @@
 
-
 Strange return to 0x400c56:
 From easyheap: sub_400c31 + 0 (0x400c31) to easyheap: sub_400c56 + 0 (0x400c56)
 Insns:
@@ -29295,8 +29294,4 @@ Args:
 	rdi: 0x0
 	rsi: 0x7fffffffe338
 	rdx: 0x7fffffffe2b0
-
-run into execve!
-found exploited state
-
 

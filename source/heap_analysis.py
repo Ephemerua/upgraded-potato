@@ -1,13 +1,9 @@
 import claripy
 import angr
+import os
 from structures import malloc_state
 from arena import Arena
 import logging
-
-heap_logger = logging.getLogger('heap_analy_log')
-heap_logger.setLevel(logging.INFO)
-heap_logger_file_handle = logging.FileHandler('heap_analy.log')
-heap_logger.addHandler(heap_logger_file_handle)
 
 """
 TODO: move this part to doc
@@ -38,22 +34,24 @@ For simple double free it is easy. TODO: any other case?
 """
 
 
+
 def _print_callstack(state):
     cs = state.callstack
-    print("\nStack:")
+    result = ""
+    result += "\nStack:"
     for frame in cs:
         if not frame.func_addr:
-            return 
+            return result + '\n'
         symbol  = state.project.symbol_resolve.reverse_resolve(frame.func_addr)
         if symbol:
             if '__gmon_start__' in symbol[0]:
                 symbol = list(symbol)
                 symbol[0] = 'sub_%x'% frame.func_addr
                 symbol[1] = 0
-            print('\t'+ symbol[0]+ "+ %d" % symbol[1])
+            result += '\t'+ symbol[0]+ "+ %d" % symbol[1]
         else:
-            print('\t'+ hex(frame.func_addr))
-    print('\n')
+            result += '\t'+ hex(frame.func_addr)
+    return result + '\n'
 
 
 # TODO: move this to other place
@@ -92,7 +90,7 @@ def printable_memory(state, start, size, warn_pos = 0, warn_size = 0, info_pos =
     return result
             
 
-def bp_overflow(start_addr, size, callback = None, debug = False):
+def bp_overflow(report_logger, start_addr, size, callback = None, debug = False):
     def write_bp(state):
         target_addr = state.inspect.mem_write_address
         target_size = state.inspect.mem_write_length
@@ -108,19 +106,28 @@ def bp_overflow(start_addr, size, callback = None, debug = False):
 
         
         if debug:
-            print("mem write to %s with length %s" % (hex(target_addr), hex(target_size)))
+            # print("mem write to %s with length %s" % (hex(target_addr), hex(target_size)))
+            report_logger.info("mem write to %s with length %s" % (hex(target_addr), hex(target_size)))
+
         if (target_addr + target_size > start_addr + size):
-            print("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
-             % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
+            # print("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
+            #  % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
+            report_logger.info("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
+                            % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
+            # report_logger.debug("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
+            #                    % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
+
             overflow_len = target_addr + target_size - (start_addr + size)
             #print("Overflow length: %s" % hex(overflow_len))
             overflow_content = state.inspect.mem_write_expr[overflow_len*8 - 1:0]
-            print("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
+            # print("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
+            report_logger.info("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
+            # report_logger.debug("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
             str = printable_memory(state, min(start_addr, target_addr), max(size,target_size)\
                 ,warn_pos = start_addr+size, warn_size  = overflow_len, info_pos = target_addr\
                     ,info_size = target_size)
-            print(str)
-            # heap_logger.info(str)
+            # print(str)
+            report_logger.info("\n"+str)
             # print(printable_memory(state, min(start_addr, target_addr), max(size,target_size)\
             #     ,warn_pos = start_addr+size, warn_size  = overflow_len, info_pos = target_addr\
             #         ,info_size = target_size))
@@ -129,7 +136,7 @@ def bp_overflow(start_addr, size, callback = None, debug = False):
 
 
 
-def bp_redzone(start_addr, size, callback = None, debug = False, allow_heap_ops = False, mtype = 'redzone'):
+def bp_redzone(report_logger, start_addr, size, callback = None, debug = False, allow_heap_ops = False, mtype = 'redzone'):
     def write_bp(state):
         nonlocal start_addr, size
         target_addr = state.inspect.mem_write_address
@@ -170,15 +177,24 @@ def bp_redzone(start_addr, size, callback = None, debug = False, allow_heap_ops 
         write_expr = state.inspect.mem_write_expr
         write_expr = write_expr[(target_size-offset)*8 - 1: (target_size-offset-write_size)*8]
 
-        print("Mem write to %s %s start at %s with size %s: %s" %(mtype, hex(start_addr), hex(target_addr),\
-             hex(write_size), write_expr))
+        # print("Mem write to %s %s start at %s with size %s: %s" %(mtype, hex(start_addr), hex(target_addr),\
+        #      hex(write_size), write_expr))
+        report_logger.info("Mem write to %s %s start at %s with size %s: %s" % (mtype, hex(start_addr), hex(target_addr), \
+                                                                             hex(write_size), write_expr))
+        # report_logger.debug(
+        #     "Mem write to %s %s start at %s with size %s: %s" % (mtype, hex(start_addr), hex(target_addr), \
+        #                                                          hex(write_size), write_expr))
         if size > 0x40:
             start_addr = (target_addr>>4)<<4 - 0x10
             size = (write_size>>4)<<4 + 0x10
-        print(printable_memory(state, min(start_addr, info_pos)\
+        str = printable_memory(state, min(start_addr, info_pos)\
             , max(size, info_size), warn_pos = target_addr,\
-                 warn_size  = write_size, info_pos = info_pos, info_size = info_size))
-        _print_callstack(state)
+                 warn_size  = write_size, info_pos = info_pos, info_size = info_size)
+        report_logger.info("\n"+str)
+
+        stackstr = _print_callstack(state)
+        report_logger.info(stackstr)
+        # report_logger.debug(stackstr)
         return
     return write_bp
     
@@ -214,11 +230,14 @@ def _malloc_hook(state):
         assert(rax.concrete)
         rax = rax.args[0]
         # TODO: do log
-        print("Malloc called with size %s, returns addr %s" % (hex(size), hex(rax)))
+        # print("Malloc called with size %s, returns addr %s" % (hex(size), hex(rax)))
+        state.project.report_logger.info("Malloc called with size %s, returns addr %s" % (hex(size), hex(rax)))
+        # report_logger.debug("Malloc called with size %s, returns addr %s" % (hex(size), hex(rax)))
         # TODO: check if return addr is sane. 
         symbol = state.project.symbol_resolve.reverse_resolve(rax) # dirty but easy
         if symbol:
-            print("Chunk address not in heap: %s + %d" % (hex(symbol[0], symbol[1])))
+            # print("Chunk address not in heap: %s + %d" % (hex(symbol[0], symbol[1])))
+            state.projectreport_logger.info("Chunk address not in heap: %s + %d" % (hex(symbol[0], symbol[1])))
 
         state.project.heap_analysis.add_chunk(rax, size)
         # # TEST
@@ -241,9 +260,9 @@ def _malloc_hook(state):
             state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bps[rax])
             state.project.heap_analysis.free_bps.pop(rax)
     
-        bp_content = state.inspect.b("mem_write", action = bp_overflow(rax, origin_size))
+        bp_content = state.inspect.b("mem_write", action = bp_overflow(state.project.report_logger, rax, origin_size))
         bp_metadata = state.inspect.b("mem_write", action = \
-            bp_redzone(rax-0x10, 0x10, allow_heap_ops = False, mtype = 'chunk header'))
+            bp_redzone(state.project.report_logger, rax-0x10, 0x10, allow_heap_ops = False, mtype = 'chunk header'))
         state.project.heap_analysis.inuse_bps[rax] = bp_content
         state.project.heap_analysis.inuse_bps[rax - 0x10] = bp_metadata
 
@@ -280,7 +299,9 @@ def _calloc_hook(state):
         assert(rax.concrete)
         #rax = rax.args[0]
         # TODO: do log
-        print("Calloc called with size %d, returns addr %s" % (size*count, hex(rax)))
+        # print("Calloc called with size %d, returns addr %s" % (size*count, hex(rax)))
+        state.project.report_logger.info("Calloc called with size %d, returns addr %s" % (size*count, hex(rax)))
+        # report_logger.debug("Calloc called with size %d, returns addr %s" % (size * count, hex(rax)))
         state.project.unhook(ret_addr)
 
     assert(not state.project.is_hooked(ret_addr))
@@ -300,7 +321,9 @@ def _free_hook(state):
     assert(size.concrete)
     size = size.args[0]
     size = (size >> 4)<<4
-    print("Free called to free %s with size %s" % (hex(addr), hex(size)))
+    # print("Free called to free %s with size %s" % (hex(addr), hex(size)))
+    state.project.report_logger.info("Free called to free %s with size %s" % (hex(addr), hex(size)))
+    # report_logger.debug("Free called to free %s with size %s" % (hex(addr), hex(size)))
 
     # get info for ret callback
     # stack frame haven't been created, so return address is in rsp
@@ -336,7 +359,7 @@ def _free_hook(state):
         chks = arena.get_all_chunks()
         for chk in chks:
             chk_size = (chk[1]>>4)<<4
-            bp = state.inspect.b('mem_write', when = angr.BP_AFTER,action=bp_redzone(chk[0], chk_size, allow_heap_ops = True, mtype = "freed chunk"))
+            bp = state.inspect.b('mem_write', when = angr.BP_AFTER,action=bp_redzone(state.project.report_logger, chk[0], chk_size, allow_heap_ops = True, mtype = "freed chunk"))
             state.project.heap_analysis.free_bps[chk[0]] = bp
 
 
@@ -372,6 +395,10 @@ class heap_analysis(object):
         self.arenas = []
         self.inuse_bps ={}
         self.free_bps = {}
+        # global report_logger
+        self.project.report_logger = logging.getLogger('heap_analysis')
+        self.project.report_logger.setLevel(logging.INFO)
+
     
     # FIXME: bull shit
     def _ptr_in_chunk(self, ptr):
@@ -461,6 +488,9 @@ class heap_analysis(object):
         """
         Do the job.
         """
+        file_handle = logging.FileHandler(os.path.join(self.project.target_path, "heap_analy.log"), mode="w+")
+        self.project.report_logger.addHandler(file_handle)
+
         self.enable_hook()
         state = self.project.get_entry_state()
         #state.options.discard("UNICORN")

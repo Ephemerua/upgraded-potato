@@ -3,91 +3,6 @@ import copy
 from graphviz import Source
 import os
 
-#
-# class Generate_excel(object):
-#     wbk = ""
-#     datasheet = ""
-#     head_title = ""
-#     got_log = ""
-#     def __init__(self, got_log_path, heap_log_path):
-#         self.wbk = xlwt.Workbook(encoding="utf-8")
-#         self.datasheet = self.wbk.add_sheet("sheet1",cell_overwrite_ok=True)
-#         self.datasheet.write_merge(0,3,0,9,'EXPORT REPORT',set_style("Times New Roman",640,True))
-#         # self.wbk.save('test.xls')
-#         self.got_log = View_got_log(got_log_path).get_got_change()
-#
-#     def save_excel(self):
-#         self.wbk.save('test.xls')
-#
-#     def add_got_analy(self):
-#         rowNum = self.datasheet.last_used_row
-#         self.datasheet.write_merge(rowNum+1,rowNum+3,0,9,"got analysis",set_style("Times New Roman",480,True,align="Left"))
-#         self.datasheet.write_merge(rowNum+4,rowNum+4,0,9,"")
-#         rowNum += 5
-#         self.datasheet.write(rowNum, 0, "got mismatch")
-#         self.datasheet.write(rowNum, 1, "which function")
-#         rowNum += 1
-#         for val1, val2 in (self.got_log):
-#             self.datasheet.write(rowNum, 0, val1)
-#             self.datasheet.write(rowNum, 1, val2)
-#             rowNum += 1
-
-# class Generate_doc(object):
-#     document = ""
-#     got_log = ""
-#     def __init__(self, got_log_path, heap_log_path):
-#         self.document = Document()
-#         head = self.document.add_heading('\t\t\tEXPLOIT REPORT', 0)
-#         self.got_log = View_got_log(got_log_path).get_got_change()
-#         View_heap_log(heap_log_path).gen_heap_change_png()
-#
-#     def docx2pdf(self, docx_path):
-#         '''
-#         tranfser docx to pdf
-#         :param docx_path:
-#         :return:
-#         '''
-#         if docx_path.endswith('.docx'):
-#             order = 'libreoffice --invisible --convert-to pdf %s 1>/dev/null 2>&1' % docx_path
-#         else:
-#             print('Error, file type does not match!')
-#             return
-#         call(order, shell=True)
-#
-#     def save_report(self):
-#         '''
-#         save file
-#         :return:
-#         '''
-#         self.document.save('./report.docx')
-#         self.docx2pdf("./report.docx")
-#         html = PyDocX.to_html("./report.docx")
-#         f = open("./report.html", 'w', encoding="utf-8")
-#         f.write(html)
-#         f.close()
-#
-#
-#     def heap_analy_report(self):
-#         '''
-#         add heap analysis content
-#         :return:
-#         '''
-#         self.document.add_heading('heap analysis', 1)
-#         self.document.add_heading('1.got analysis', 2)
-#         self.document.add_paragraph("got change:")
-#         got_table = self.document.add_table(rows=0, cols=2)
-#         cells = got_table.add_row().cells
-#         cells[0].text = "got mismatch"
-#         cells[1].text = "which function"
-#         for i in range(len(self.got_log)):
-#             cells = got_table.add_row().cells
-#             cells[0].text = self.got_log[i][0]
-#             cells[1].text = self.got_log[i][1]
-#
-#         self.document.add_heading("2.heap analysis", 2)
-#         self.document.add_paragraph("heap change graph")
-#         pic = self.document.add_picture("./HeapChange.png", width=Inches(6.0))
-#         # pic.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER.
 
 
 class view_leak_log(object):
@@ -201,9 +116,16 @@ def extract_memory(f):
     res = ""
     while True:
         line = f.readline()
+        if line is not '\n':
+            res += \
+                line.replace('[0m', '').replace('[33m', '').replace('[31m', '')
+            break
+    while True:
+        line = f.readline()
         if line is '\n':
             break
-        res += line
+        res += \
+            line.replace('[0m', '').replace('[33m', '').replace('[31m', '')
     return res
 
 def extract_stack(f):

@@ -6,6 +6,8 @@ in most situation :(
 
 import struct
 from source.symbol_resolve import symbol_resolve
+import logging
+import os
 
 class leak_analysis(object):
     """
@@ -28,6 +30,10 @@ class leak_analysis(object):
         self._prefixs = []
         self.leaked_addrs = []
         self._find_prefix()
+        self.report_logger = logging.getLogger('leak_analysis')
+        self.report_logger.setLevel(logging.DEBUG)
+        self.report_logger_handle = logging.FileHandler(os.path.join(project.target_path, "leak_analy.log"), mode="w+")
+        self.report_logger.addHandler(self.report_logger_handle)
         
 
 
@@ -70,14 +76,16 @@ class leak_analysis(object):
         for i in self.leaked_addrs:
             result = self.symbol_resolve.reverse_resolve(i)
             if result:
-                print("Found leaked addr: %s %x in lib %s" %(result[0], result[1], result[2]))
+                # print("Found leaked addr: %s %x in lib %s" %(result[0], result[1], result[2]))
+                self.report_logger.info("Found leaked addr: %s %x in lib %s" %(result[0], result[1], result[2]))
     
     def do_analysis(self):
         """
         do the job
         """
         if not self.project.exploited_state:
-            print("No exploited state to analyse!")
+            # print("No exploited state to analyse!")
+            self.report_logger.warning("No exploited state to analyse!")
             return
         output = self.project.exploited_state.posix.dumps(1)
         for prefix in self._prefixs:

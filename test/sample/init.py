@@ -36,7 +36,7 @@ def full_init():
     # p.do_track()
     # h = heap_analysis(p)
     # h.do_analysis()
-
+    #
     # leak_analy = leak_analysis(p)
     # leak_analy.do_analysis()
     # c = call_analysis(p)
@@ -44,7 +44,8 @@ def full_init():
     # p.do_track()
     # got_analy = got_analysis(p)
     # got_analy.do_analysis()
-    generate_report('./easyheap', 'template.html', 'report_test.html', got_log_path='./got_analy.log')
+    generate_report('./easyheap', 'template.html', 'report_test.html', heap_log_path='./heap_analy.log', \
+                    call_log_path='./call_analy.log')
 
 def full_reload():
     reload(helpers)
