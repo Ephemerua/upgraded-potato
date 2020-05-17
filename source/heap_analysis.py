@@ -237,7 +237,7 @@ def _malloc_hook(state):
         symbol = state.project.symbol_resolve.reverse_resolve(rax) # dirty but easy
         if symbol:
             # print("Chunk address not in heap: %s + %d" % (hex(symbol[0], symbol[1])))
-            state.projectreport_logger.info("Chunk address not in heap: %s + %d" % (hex(symbol[0], symbol[1])))
+            state.project.report_logger.info("Chunk address not in heap: %s + %d" % (hex(symbol[0], symbol[1])))
 
         state.project.heap_analysis.add_chunk(rax, size)
         # # TEST
@@ -420,7 +420,8 @@ class heap_analysis(object):
             else:
                 self.chunks_av[addr] = [sizes, size]
             self.abused_chunks.append({"addr":addr, "size":size, "type":"allocated mutiple times"})
-            print("Chunk at %s size %s : Already allocated!" % (hex(addr), hex(size)))
+            # print("Chunk at %s size %s : Already allocated!" % (hex(addr), hex(size)))
+            self.project.report_logger.info("Chunk at %s size %s : Already allocated!" % (hex(addr), hex(size)))
 
         else:
             self.chunks_av[addr] = size
@@ -446,7 +447,9 @@ class heap_analysis(object):
                         self.chunks_av.pop(addr)
                 else:
                     self.abused_chunks.append({"addr": addr, "size":size, "type":"freed with modified size"})
-                    print("Chunk at %s size %s : Freed with mofied size!" % (hex(addr), hex(size)))
+                    # print("Chunk at %s size %s : Freed with mofied size!" % (hex(addr), hex(size)))
+                    self.project.report_logger.info("Chunk at %s size %s : Freed with mofied size!" % \
+                                                    (hex(addr), hex(size)))
             # target chunk doesn't been allocated more than one time,
             # so sizes is an int
             elif size == sizes:
@@ -458,7 +461,9 @@ class heap_analysis(object):
         else:
             # this chunk is not allocated by c/m/relloc
             self.abused_chunks.append({"addr":addr, "size": size, "type":"chunk not allocated is freed"})
-            print("Chunk at %s size %s : Chunk haven't been allocated is freed!" % (hex(addr), hex(size)))
+            # print("Chunk at %s size %s : Chunk haven't been allocated is freed!" % (hex(addr), hex(size)))
+            self.project.report_logger.info("Chunk at %s size %s : Chunk haven't been allocated is freed!" % \
+                                            (hex(addr), hex(size)))
 
     
     def enable_hook(self):
