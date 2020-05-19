@@ -2,7 +2,7 @@ import claripy
 import angr
 from structures import malloc_state
 from arena import Arena
-from util.info_print import print_callstack
+from util.info_print import  stack_backtrace, printable_backtrace
 
 """
 TODO: move this part to doc
@@ -130,9 +130,9 @@ def bp_redzone(start_addr, size, callback = None, debug = False, allow_heap_ops 
         assert(write_size)
         # figure out if this write comes from heap operations
         if write_size < 0x20 and allow_heap_ops:
-            cs = state.callstack
-            for frame in cs:
-                symbol = state.project.symbol_resolve.reverse_resolve(frame.func_addr)
+            frames = stack_backtrace(state)
+            for frame in frames:
+                symbol = frame.symbol
                 if symbol:
                     name = symbol[0].split('.')[-1]
                     if name == 'malloc' or name == 'free' or name == 'calloc' or name == 'realloc':
@@ -150,7 +150,8 @@ def bp_redzone(start_addr, size, callback = None, debug = False, allow_heap_ops 
         print(printable_memory(state, min(start_addr, info_pos)\
             , max(size, info_size), warn_pos = target_addr,\
                  warn_size  = write_size, info_pos = info_pos, info_size = info_size))
-        print_callstack(state)
+        print("Stack:")
+        print(printable_backtrace(stack_backtrace(state)))
         return
     return write_bp
     

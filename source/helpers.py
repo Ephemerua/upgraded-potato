@@ -72,7 +72,7 @@ def parse_maps_plus(maps):
         bp = maps[0].split(" ")[-1].strip()
         bp = int(bp, 16)
     else:
-        puts("No stack pointer recorded?")
+        print("No stack pointer recorded?")
         exit(0)
     for line in maps[1:]:
         if line == "":

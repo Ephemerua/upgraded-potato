@@ -1,0 +1,34 @@
+got bp: 0x7fffffffe460
+555555554000-55555555b000 r-xp 00000000 00:51 58972013                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/stl_container
+55555575a000-55555575b000 r--p 00006000 00:51 58972013                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/stl_container
+55555575b000-55555575c000 rw-p 00007000 00:51 58972013                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/stl_container
+55555575c000-55555575d000 rw-p 00208000 00:51 58972013                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/stl_container
+55555575d000-55555577e000 rw-p 00000000 00:00 0                          [heap]
+7ffff70b1000-7ffff7245000 r-xp 00000000 08:01 2120599                    /glibc/2.27/64/lib/libm-2.27.so
+7ffff7245000-7ffff7444000 ---p 00194000 08:01 2120599                    /glibc/2.27/64/lib/libm-2.27.so
+7ffff7444000-7ffff7445000 r--p 00193000 08:01 2120599                    /glibc/2.27/64/lib/libm-2.27.so
+7ffff7445000-7ffff7446000 rw-p 00194000 08:01 2120599                    /glibc/2.27/64/lib/libm-2.27.so
+7ffff7446000-7ffff75bf000 r-xp 00000000 00:51 58973854                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libstdc++.so.6
+7ffff75bf000-7ffff77bf000 ---p 00179000 00:51 58973854                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libstdc++.so.6
+7ffff77bf000-7ffff77c9000 r--p 00179000 00:51 58973854                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libstdc++.so.6
+7ffff77c9000-7ffff77cb000 rw-p 00183000 00:51 58973854                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libstdc++.so.6
+7ffff77cb000-7ffff77cf000 rw-p 00000000 00:00 0 
+7ffff77cf000-7ffff77e6000 r-xp 00000000 00:51 58974252                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libgcc_s.so.1
+7ffff77e6000-7ffff79e5000 ---p 00017000 00:51 58974252                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libgcc_s.so.1
+7ffff79e5000-7ffff79e6000 r--p 00016000 00:51 58974252                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libgcc_s.so.1
+7ffff79e6000-7ffff79e7000 rw-p 00017000 00:51 58974252                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libgcc_s.so.1
+7ffff79e7000-7ffff7bce000 r-xp 00000000 00:51 58972012                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libc-2.27.so
+7ffff7bce000-7ffff7dce000 ---p 001e7000 00:51 58972012                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libc-2.27.so
+7ffff7dce000-7ffff7dd2000 r--p 001e7000 00:51 58972012                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libc-2.27.so
+7ffff7dd2000-7ffff7dd4000 rw-p 001eb000 00:51 58972012                   /ctf/work/playground/tmp/upgraded-potato/test/cpp_attachment/libc-2.27.so
+7ffff7dd4000-7ffff7dd8000 rw-p 00000000 00:00 0 
+7ffff7dd8000-7ffff7dfd000 r-xp 00000000 08:01 265861                     /tmp/ld-2.27.so
+7ffff7ff1000-7ffff7ff5000 rw-p 00000000 00:00 0 
+7ffff7ff6000-7ffff7ff8000 rw-p 00000000 00:00 0 
+7ffff7ff8000-7ffff7ffa000 r--p 00000000 00:00 0                          [vvar]
+7ffff7ffa000-7ffff7ffc000 r-xp 00000000 00:00 0                          [vdso]
+7ffff7ffc000-7ffff7ffd000 r--p 00024000 08:01 265861                     /tmp/ld-2.27.so
+7ffff7ffd000-7ffff7ffe000 rw-p 00025000 08:01 265861                     /tmp/ld-2.27.so
+7ffff7ffe000-7ffff7fff000 rw-p 00000000 00:00 0 
+7ffffffde000-7ffffffff000 rw-p 00000000 00:00 0                          [stack]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]

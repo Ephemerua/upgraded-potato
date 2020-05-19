@@ -13,7 +13,7 @@ then
     echo 'remember to turn on aslr later.'
 elif [ "$1" = "on" ]
 then
-    sudo sh -c "echo 1 > /proc/sys/kernel/randomize_va_space"
+    sudo sh -c "echo 2 > /proc/sys/kernel/randomize_va_space"
     echo 'aslr enabled.'
 else
     echo 'invalid argument'

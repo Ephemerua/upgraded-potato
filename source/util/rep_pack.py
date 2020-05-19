@@ -67,7 +67,6 @@ class rep_pack(object):
         abs_path = self._create_dir(path)
         # copy dependency
         self._copy_and_fix_path(abs_path)
-
         # copy log file
         self._copy(self._log_path, abs_path)
 
