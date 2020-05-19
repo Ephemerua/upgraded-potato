@@ -3,7 +3,8 @@ from pwnlib.elf.elf import ELF
 import copy
 import gc
 from symbol_resolve import symbol_resolve
-
+import logging
+import os
 
 # TODO: test this function
 class got_analysis(object):
@@ -14,6 +15,10 @@ class got_analysis(object):
     def __init__(self, project):
         self.project = project
         self.symbol_resolve = symbol_resolve(project)
+        self.report_logger = logging.getLogger('got_analysis')
+        self.report_logger.setLevel(logging.DEBUG)
+        self.report_logger_handle = logging.FileHandler(os.path.join(project.target_path, "got_analy.log"), mode="w+")
+        self.report_logger.addHandler(self.report_logger_handle)
     
     def _resolve_mismatch(self, addr):
         """
@@ -30,7 +35,8 @@ class got_analysis(object):
                     continue
         
         if found_obj == 0:
-            print("Cannot find symbol of addr %s." % hex(addr))
+            # print("Cannot find symbol of addr %s." % hex(addr))
+            self.report_logger.warning("Cannot find symbol of addr %s." % hex(addr))
             return None
         
         # now try to find the symbol name
@@ -49,14 +55,22 @@ class got_analysis(object):
         """
         # first we resolve all imported symbols' addr
         assert(self.project.exploited_state)
+<<<<<<< HEAD
         main = self.project.elfs[self.target]
+=======
+        main = self.project.elfs[self.project.target]
+>>>>>>> visual
         origin_got = {}
         exploited_got = {}
         for sym in main.got:
             # how to judge which file a symbol belongs to ??? 
             # XXX: now just iter over all objects
             for libname, obj in self.project.elfs.items():
+<<<<<<< HEAD
                 if libname == self.target:
+=======
+                if libname == self.project.target:
+>>>>>>> visual
                     continue
                 if sym in obj.symbols:
                     if sym in origin_got:
@@ -89,10 +103,12 @@ class got_analysis(object):
                     continue
                 else:
                     #TODO: do report
-                    print("Found got mismatch: symbol %s with addr %s" % (sym, hex(addr)) )
+                    # print("Found got mismatch: symbol %s with addr %s" % (sym, hex(addr)) )
+                    self.report_logger.info("Found got mismatch: symbol %s with addr %s" % (sym, hex(addr)))
                     resolve_result = self.symbol_resolve.reverse_resolve(addr)
                     if resolve_result:
-                        print("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
+                        # print("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
+                        self.report_logger.info("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
 
             
         

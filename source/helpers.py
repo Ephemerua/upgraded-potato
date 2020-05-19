@@ -7,7 +7,7 @@ XXX: Some system call stub related funcs still in this file, move to other place
 import claripy
 import angr
 from pwnlib import elf
-from SimPacketsC import SimPacketsC
+from source.SimPacketsC import SimPacketsC
 
 
 def parse_maps(maps, target):
