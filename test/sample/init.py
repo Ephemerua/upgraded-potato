@@ -32,12 +32,6 @@ before_malloc = 0
 
 def full_init():
     global state, simgr, p, before_malloc
-<<<<<<< HEAD
-    p = replayer.Replayer("easyheap", "./sample.txt", "maps.8998")
-
-    state = p.get_entry_state()
-    simgr = p.get_simgr()
-=======
     p = Replayer("easyheap", "./sample.txt", "maps.8998")
     # p.do_track()
     # h = heap_analysis(p)
@@ -52,7 +46,6 @@ def full_init():
     # got_analy.do_analysis()
     generate_report('./easyheap', 'template.html', 'report_test.html', heap_log_path='./heap_analy.log', \
                     call_log_path='./call_analy.log')
->>>>>>> visual
 
 def full_reload():
     reload(helpers)

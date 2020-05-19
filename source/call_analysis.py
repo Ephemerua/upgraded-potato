@@ -1,11 +1,8 @@
 import angr
 from replayer import fetch_str
 from  util.info_print import stack_backtrace, printable_backtrace
-<<<<<<< HEAD
-=======
 import logging
 import os
->>>>>>> visual
 """
 Set write bp on return address in stack.
 TODO: get rop chain info
@@ -77,15 +74,10 @@ def bp_constructor(ana, addr, size = 8, callback = None):
         state.memory.store(target_addr, backup, disable_actions=True, inspect = False)
         if origin == modified:
             return
-<<<<<<< HEAD
-        print("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified) ))
-        print(printable_backtrace(bt))
-=======
         # print("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified) ))
         state.project.report_logger.info("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified)))
         # print(printable_backtrace(bt))
         state.project.report_logger.info(printable_backtrace(bt))
->>>>>>> visual
         #print(state.callstack)
         return
     return write_bp
@@ -119,10 +111,6 @@ def ret_info(state):
     src_symbol = state.project.symbol_resolve.reverse_resolve(ret_src)
     src_symbol = __test_filter(src_symbol, ret_src)
 
-<<<<<<< HEAD
-
-=======
->>>>>>> visual
     result += "From"
     if src_symbol:
         result += " %s: %s + %d (%s)" %(src_symbol[2], src_symbol[0], src_symbol[1], hex(ret_src))
@@ -147,11 +135,7 @@ def ret_info(state):
         if s:
             if '__gmon_start__' in s[0]:
                 s = list(s)
-<<<<<<< HEAD
-                s[0] = 'sub_%x'% value
-=======
                 s[0] = 'sub_%x'% value.args[0]
->>>>>>> visual
                 s[1] = 0
             result += " (%s + %d)" % (s[0], s[1])
         result += '\n'
@@ -216,31 +200,12 @@ def ret_cb_constructor(ana, **kwargs):
                  
             else:
                 # FIXME: only reset _last_depth on mismatching????
-<<<<<<< HEAD
-                print("\nStrange return to 0x%x:" % ret_addr)
-=======
                 # print("\nStrange return to 0x%x:" % ret_addr)
                 state.project.report_logger.info("\nStrange return to 0x%x:" % ret_addr)
->>>>>>> visual
                 ana._last_depth = 0
                 ana.call_track = 1
                 ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"mismatch"})
                 #TODO: get rop info here
-<<<<<<< HEAD
-                print(ret_info(state))
-
-        else:
-            # no frame? must be rop
-            print("\nUnrecorded return to 0x%x" % ret_addr)
-            ana.call_track = 1
-            ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"unrecorded"})
-            #TODO: get rop info here
-            print(ret_info(state))
-
-
-        # remove the breakpoint
-        bp = state.project.call_analysis.ret_bps.pop(origin_rsp, None)
-=======
                 # print(ret_info(state))
                 state.project.report_logger.info(ret_info(state))
 
@@ -257,7 +222,6 @@ def ret_cb_constructor(ana, **kwargs):
 
         # remove the breakpoint
         bp = ana.ret_bps.pop(origin_rsp, None)
->>>>>>> visual
         if bp:
             state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bp)
         return
@@ -292,12 +256,9 @@ class call_analysis(object):
         self._last_depth = track_depth
         self.track_depth = track_depth
         self.overflow_pos = set()
-<<<<<<< HEAD
-=======
         self.project.report_logger = logging.getLogger('call_analysis')
         self.project.report_logger.setLevel(logging.INFO)
 
->>>>>>> visual
 
 
     def do_analysis(self):

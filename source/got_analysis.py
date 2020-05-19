@@ -55,22 +55,14 @@ class got_analysis(object):
         """
         # first we resolve all imported symbols' addr
         assert(self.project.exploited_state)
-<<<<<<< HEAD
         main = self.project.elfs[self.target]
-=======
-        main = self.project.elfs[self.project.target]
->>>>>>> visual
         origin_got = {}
         exploited_got = {}
         for sym in main.got:
             # how to judge which file a symbol belongs to ??? 
             # XXX: now just iter over all objects
             for libname, obj in self.project.elfs.items():
-<<<<<<< HEAD
                 if libname == self.target:
-=======
-                if libname == self.project.target:
->>>>>>> visual
                     continue
                 if sym in obj.symbols:
                     if sym in origin_got:

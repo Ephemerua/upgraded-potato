@@ -53,11 +53,8 @@ class Replayer(angr.project.Project):
         self.maps = parse_maps_from_file(map_path, plus = True)
         self.reverse_maps = reverse_maps(self.maps)
         self.target  = target_name
-<<<<<<< HEAD
-=======
         self.target_path = os.getcwd()
         self.report_logger = 0
->>>>>>> visual
 
         self.cfg = 0
         self.cfg_recorded = 0
@@ -74,20 +71,12 @@ class Replayer(angr.project.Project):
         # construct the project, load objects with recorded base addr
         skip_libs = ['mmap_dump.so']
         force_load_libs = [ lib for lib in lib_opts if lib.split("/")[-1] not in skip_libs ]
-<<<<<<< HEAD
         super().__init__(binary_path, main_opts = main_opts, lib_opts = lib_opts, \
-=======
-        super().__init__(binary, main_opts = main_opts, lib_opts = lib_opts, \
->>>>>>> visual
             auto_load_libs=False, use_sim_procedures=False , preload_libs = force_load_libs)
 
         # use pwnlib's ELF to save all objects
         # XXX: angr.loader has loaded all objects...
-<<<<<<< HEAD
         self.elfs = {self.target:ELF(binary_path, checksec=False)}
-=======
-        self.elfs = {self.target:ELF(binary, checksec=False)}
->>>>>>> visual
         self.elfs[self.target].address = self._main_opts["base_addr"]
         for k, v in self._lib_opts.items():
             f = ELF(k, checksec=False)
