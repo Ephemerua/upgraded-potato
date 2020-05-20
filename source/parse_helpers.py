@@ -57,7 +57,7 @@ def parse_maps(maps, target):
             # don't parse misc segs like [heap]
             if path[0] == "[":
                 continue
-            lib_opts[path] = {"base_addr":start_addr}
+            lib_opts[path.split('/')[-1]] = {"base_addr":start_addr}
     return main_opts, lib_opts, bp
 
 def _parse_mod(mod):

@@ -34,7 +34,7 @@ class rep_pack(object):
             os.system("mkdir %s" % path)
         
         if os.access(path, os.F_OK):
-            return os.path.abspath(path)
+            return path
         else:
             raise(FileNotFoundError("Cannot create pack dir."))
             return 
@@ -54,7 +54,7 @@ class rep_pack(object):
                     continue
                 if os.access(obj_path, os.F_OK):
                     if(self._copy(obj_path, path)):
-                        line = line.replace(obj_path, path+'/'+obj_path.split('/')[-1])
+                        line = line.replace(obj_path, './'+obj_path.split('/')[-1])
                 f.write(line)
                 f.write('\n')
         
@@ -64,11 +64,11 @@ class rep_pack(object):
         if not path:
             path = 'packed_' + self._binary_path.split("/")[-1]+'_'+ self._maps_path.split(".")[-1]
         # create dir
-        abs_path = self._create_dir(path)
+        path = self._create_dir(path)
         # copy dependency
-        self._copy_and_fix_path(abs_path)
+        self._copy_and_fix_path(path)
         # copy log file
-        self._copy(self._log_path, abs_path)
+        self._copy(self._log_path, path)
 
 
 

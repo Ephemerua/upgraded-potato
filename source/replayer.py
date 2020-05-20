@@ -70,7 +70,16 @@ class Replayer(angr.project.Project):
 
         # construct the project, load objects with recorded base addr
         skip_libs = ['mmap_dump.so']
-        force_load_libs = [ lib for lib in lib_opts if lib.split("/")[-1] not in skip_libs ]
+        force_load_libs = []
+        for i in self.maps:
+            if not os.access(i, os.X_OK):
+                continue
+            if i.split('/')[-1] in skip_libs:
+                continue
+            else:
+                force_load_libs.append(i)
+
+
         super().__init__(binary_path, main_opts = main_opts, lib_opts = lib_opts, \
             auto_load_libs=False, use_sim_procedures=False , preload_libs = force_load_libs)
 

@@ -1,27 +1,27 @@
 got bp: 0x7fffffffe540
-00400000-00402000 r-xp 00000000 00:4d 54149749                           /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/easyheap
-00601000-00602000 r--p 00001000 00:4d 54149749                           /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/easyheap
-00602000-00603000 rw-p 00002000 00:4d 54149749                           /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/easyheap
-7ffff7606000-7ffff7609000 r-xp 00000000 08:01 12036                      /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/libdl-2.23.so
-7ffff7609000-7ffff7808000 ---p 00003000 08:01 12036                      /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/libdl-2.23.so
-7ffff7808000-7ffff7809000 r--p 00002000 08:01 12036                      /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/libdl-2.23.so
-7ffff7809000-7ffff780a000 rw-p 00003000 08:01 12036                      /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/libdl-2.23.so
-7ffff780a000-7ffff79ca000 r-xp 00000000 08:01 11988                      /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/libc-2.23.so
-7ffff79ca000-7ffff7bca000 ---p 001c0000 08:01 11988                      /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/libc-2.23.so
-7ffff7bca000-7ffff7bce000 r--p 001c0000 08:01 11988                      /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/libc-2.23.so
-7ffff7bce000-7ffff7bd0000 rw-p 001c4000 08:01 11988                      /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/libc-2.23.so
+00400000-00402000 r-xp 00000000 00:4d 54149749                           ./easyheap
+00601000-00602000 r--p 00001000 00:4d 54149749                           ./easyheap
+00602000-00603000 rw-p 00002000 00:4d 54149749                           ./easyheap
+7ffff7606000-7ffff7609000 r-xp 00000000 08:01 12036                      ./libdl-2.23.so
+7ffff7609000-7ffff7808000 ---p 00003000 08:01 12036                      ./libdl-2.23.so
+7ffff7808000-7ffff7809000 r--p 00002000 08:01 12036                      ./libdl-2.23.so
+7ffff7809000-7ffff780a000 rw-p 00003000 08:01 12036                      ./libdl-2.23.so
+7ffff780a000-7ffff79ca000 r-xp 00000000 08:01 11988                      ./libc-2.23.so
+7ffff79ca000-7ffff7bca000 ---p 001c0000 08:01 11988                      ./libc-2.23.so
+7ffff7bca000-7ffff7bce000 r--p 001c0000 08:01 11988                      ./libc-2.23.so
+7ffff7bce000-7ffff7bd0000 rw-p 001c4000 08:01 11988                      ./libc-2.23.so
 7ffff7bd0000-7ffff7bd4000 rw-p 00000000 00:00 0 
-7ffff7bd4000-7ffff7bd6000 r-xp 00000000 00:4d 54152184                   /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/mmap_dump.so
-7ffff7bd6000-7ffff7dd5000 ---p 00002000 00:4d 54152184                   /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/mmap_dump.so
-7ffff7dd5000-7ffff7dd6000 r--p 00001000 00:4d 54152184                   /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/mmap_dump.so
-7ffff7dd6000-7ffff7dd7000 rw-p 00002000 00:4d 54152184                   /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/mmap_dump.so
-7ffff7dd7000-7ffff7dfd000 r-xp 00000000 08:01 11929                      /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/ld-2.23.so
+7ffff7bd4000-7ffff7bd6000 r-xp 00000000 00:4d 54152184                   ./mmap_dump.so
+7ffff7bd6000-7ffff7dd5000 ---p 00002000 00:4d 54152184                   ./mmap_dump.so
+7ffff7dd5000-7ffff7dd6000 r--p 00001000 00:4d 54152184                   ./mmap_dump.so
+7ffff7dd6000-7ffff7dd7000 rw-p 00002000 00:4d 54152184                   ./mmap_dump.so
+7ffff7dd7000-7ffff7dfd000 r-xp 00000000 08:01 11929                      ./ld-2.23.so
 7ffff7fe8000-7ffff7feb000 rw-p 00000000 00:00 0 
 7ffff7ff7000-7ffff7ff8000 rw-p 00000000 00:00 0 
 7ffff7ff8000-7ffff7ffa000 r--p 00000000 00:00 0                          [vvar]
 7ffff7ffa000-7ffff7ffc000 r-xp 00000000 00:00 0                          [vdso]
-7ffff7ffc000-7ffff7ffd000 r--p 00025000 08:01 11929                      /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/ld-2.23.so
-7ffff7ffd000-7ffff7ffe000 rw-p 00026000 08:01 11929                      /ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/ld-2.23.so
+7ffff7ffc000-7ffff7ffd000 r--p 00025000 08:01 11929                      ./ld-2.23.so
+7ffff7ffd000-7ffff7ffe000 rw-p 00026000 08:01 11929                      ./ld-2.23.so
 7ffff7ffe000-7ffff7fff000 rw-p 00000000 00:00 0 
 7ffffffde000-7ffffffff000 rw-p 00000000 00:00 0                          [stack]
 ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]

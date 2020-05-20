@@ -5,7 +5,7 @@ in most situation :(
 """
 
 import struct
-from source.symbol_resolve import symbol_resolve
+from symbol_resolve import symbol_resolve
 import logging
 import os
 
