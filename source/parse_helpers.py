@@ -47,7 +47,7 @@ def parse_maps(maps, target):
                 continue
         #than lib opts
             # use first addr as base
-        if path not in lib_opts:
+        if path.split('/')[-1] not in lib_opts:
             # don't parse other segments of target
             if path.split("/")[-1] == target:
                 continue

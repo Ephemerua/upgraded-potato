@@ -31,7 +31,7 @@ before_malloc = 0
 
 def full_init():
     global state, simgr, p, before_malloc
-    p = replayer.Replayer("easyheap", "./sample.txt", "maps.8998.new")
+    p = replayer.Replayer("easyheap", "./sample.txt", "maps.8998")
 
     state = p.get_entry_state()
     simgr = p.get_simgr()
