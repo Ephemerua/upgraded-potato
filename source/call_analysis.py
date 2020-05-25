@@ -1,8 +1,8 @@
 import angr
 from replayer import fetch_str
 from  util.info_print import stack_backtrace, printable_backtrace
-import logging
 import os
+import logger
 """
 Set write bp on return address in stack.
 TODO: get rop chain info
@@ -74,10 +74,7 @@ def bp_constructor(ana, addr, size = 8, callback = None):
         state.memory.store(target_addr, backup, disable_actions=True, inspect = False)
         if origin == modified:
             return
-        # print("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified) ))
-        state.project.report_logger.info("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified)))
-        # print(printable_backtrace(bt))
-        state.project.report_logger.info(printable_backtrace(bt))
+        state.project.report_logger.info("Return address overwritten", addr = addr, origin = origin, modified = modified, backtrace = printable_backtrace(bt))
         #print(state.callstack)
         return
     return write_bp
@@ -200,24 +197,17 @@ def ret_cb_constructor(ana, **kwargs):
                  
             else:
                 # FIXME: only reset _last_depth on mismatching????
-                # print("\nStrange return to 0x%x:" % ret_addr)
-                state.project.report_logger.info("\nStrange return to 0x%x:" % ret_addr)
                 ana._last_depth = 0
                 ana.call_track = 1
                 ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"mismatch"})
                 #TODO: get rop info here
-                # print(ret_info(state))
-                state.project.report_logger.info(ret_info(state))
-
+                state.project.report_logger.info("Strange return", ret_addr = ret_addr, ret_info = ret_info(state))
         else:
             # no frame? must be rop
-            # print("\nUnrecorded return to 0x%x" % ret_addr)
-            state.project.report_logger.info("\nUnrecorded return to 0x%x" % ret_addr)
             ana.call_track = 1
             ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"unrecorded"})
             #TODO: get rop info here
-            # print(ret_info(state))
-            state.project.report_logger.info(ret_info(state))
+            state.project.report_logger.info("Unrecorded return", ret_addr = ret_addr, ret_info = ret_info(state))
 
 
         # remove the breakpoint
@@ -256,18 +246,13 @@ class call_analysis(object):
         self._last_depth = track_depth
         self.track_depth = track_depth
         self.overflow_pos = set()
-        self.project.report_logger = logging.getLogger('call_analysis')
-        self.project.report_logger.setLevel(logging.INFO)
-
-
+        self.project.report_logger = logger.get_logger(__name__)
 
     def do_analysis(self):
         """
         do the job
         XXX: could we merge this to avoid simgr.run() again?
         """
-        file_handle = logging.FileHandler(os.path.join(self.project.target_path, "call_analy.log"), mode="w+")
-        self.project.report_logger.addHandler(file_handle)
 
         state = self.project.get_entry_state()
         # XXX: unicorn engine at present cannot handle call/return breakpoint...

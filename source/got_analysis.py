@@ -3,8 +3,8 @@ from pwnlib.elf.elf import ELF
 import copy
 import gc
 from symbol_resolve import symbol_resolve
-import logging
 import os
+import logger
 
 # TODO: test this function
 class got_analysis(object):
@@ -15,10 +15,7 @@ class got_analysis(object):
     def __init__(self, project):
         self.project = project
         self.symbol_resolve = symbol_resolve(project)
-        self.report_logger = logging.getLogger('got_analysis')
-        self.report_logger.setLevel(logging.DEBUG)
-        self.report_logger_handle = logging.FileHandler(os.path.join(project.target_path, "got_analy.log"), mode="w+")
-        self.report_logger.addHandler(self.report_logger_handle)
+        self.report_logger = logger.get_logger(__name__)
     
     def _resolve_mismatch(self, addr):
         """
@@ -94,13 +91,11 @@ class got_analysis(object):
                 if main.plt[sym] == addr:
                     continue
                 else:
-                    #TODO: do report
-                    # print("Found got mismatch: symbol %s with addr %s" % (sym, hex(addr)) )
-                    self.report_logger.info("Found got mismatch: symbol %s with addr %s" % (sym, hex(addr)))
                     resolve_result = self.symbol_resolve.reverse_resolve(addr)
                     if resolve_result:
-                        # print("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
-                        self.report_logger.info("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
+                        self.report_logger.info("GOT mismatch", name = sym, addr = addr, func = resolve_result[0], file = resolve_result[2])
+                    else:
+                        self.report_logger.info("GOT mismatch", name = sym, addr = addr)
 
             
         

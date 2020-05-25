@@ -4,7 +4,7 @@ import os
 from structures import malloc_state
 from arena import Arena
 from util.info_print import  stack_backtrace, printable_backtrace
-import logging
+import logger
 
 """
 TODO: move this part to doc
@@ -86,31 +86,15 @@ def bp_overflow(report_logger, start_addr, size, callback = None, debug = False)
 
         
         if debug:
-            # print("mem write to %s with length %s" % (hex(target_addr), hex(target_size)))
-            report_logger.info("mem write to %s with length %s" % (hex(target_addr), hex(target_size)))
+            report_logger.debug("mem write to %s with length %s" % (hex(target_addr), hex(target_size)))
 
         if (target_addr + target_size > start_addr + size):
-            # print("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
-            #  % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
-            report_logger.info("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
-                            % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
-            # report_logger.debug("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
-            #                    % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
-
             overflow_len = target_addr + target_size - (start_addr + size)
-            #print("Overflow length: %s" % hex(overflow_len))
             overflow_content = state.inspect.mem_write_expr[overflow_len*8 - 1:0]
-            # print("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
-            report_logger.info("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
-            # report_logger.debug("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
-            str = printable_memory(state, min(start_addr, target_addr), max(size,target_size)\
+            memory = printable_memory(state, min(start_addr, target_addr), max(size,target_size)\
                 ,warn_pos = start_addr+size, warn_size  = overflow_len, info_pos = target_addr\
                     ,info_size = target_size)
-            # print(str)
-            report_logger.info("\n"+str)
-            # print(printable_memory(state, min(start_addr, target_addr), max(size,target_size)\
-            #     ,warn_pos = start_addr+size, warn_size  = overflow_len, info_pos = target_addr\
-            #         ,info_size = target_size))
+            report_logger.info("Chunk overflow", start_addr = start_addr, size = size, target_addr = target_addr, target_size = target_size, overflow_len = overflow_len, overflow_content = overflow_content, memory = memory)
         return
     return write_bp
 
@@ -157,24 +141,16 @@ def bp_redzone(report_logger, start_addr, size, callback = None, debug = False, 
         write_expr = state.inspect.mem_write_expr
         write_expr = write_expr[(target_size-offset)*8 - 1: (target_size-offset-write_size)*8]
 
-        # print("Mem write to %s %s start at %s with size %s: %s" %(mtype, hex(start_addr), hex(target_addr),\
-        #      hex(write_size), write_expr))
-        report_logger.info("Mem write to %s %s start at %s with size %s: %s" % (mtype, hex(start_addr), hex(target_addr), \
-                                                                             hex(write_size), write_expr))
-        # report_logger.debug(
-        #     "Mem write to %s %s start at %s with size %s: %s" % (mtype, hex(start_addr), hex(target_addr), \
-        #                                                          hex(write_size), write_expr))
         if size > 0x40:
             start_addr = (target_addr>>4)<<4 - 0x10
             size = (write_size>>4)<<4 + 0x10
-        str = printable_memory(state, min(start_addr, info_pos)\
+
+        memory = printable_memory(state, min(start_addr, info_pos)\
             , max(size, info_size), warn_pos = target_addr,\
                  warn_size  = write_size, info_pos = info_pos, info_size = info_size)
-        report_logger.info("\n"+str)
 
-        stackstr = printable_backtrace(stack_backtrace(state))
-        report_logger.info(stackstr)
-        # report_logger.debug(stackstr)
+        backtrace = printable_backtrace(stack_backtrace(state))
+        report_logger.info("Chunk memory overwritten", mtype = mtype, start_addr = start_addr, target_addr = target_addr, write_size = write_size, write_expr = write_expr, backtrace = backtrace, memory = memory)
         return
     return write_bp
     
@@ -209,15 +185,11 @@ def _malloc_hook(state):
         rax = state.regs.rax
         assert(rax.concrete)
         rax = rax.args[0]
-        # TODO: do log
-        # print("Malloc called with size %s, returns addr %s" % (hex(size), hex(rax)))
-        state.project.report_logger.info("Malloc called with size %s, returns addr %s" % (hex(size), hex(rax)))
-        # report_logger.debug("Malloc called with size %s, returns addr %s" % (hex(size), hex(rax)))
+        state.project.report_logger.info("Malloc", size = size, ret_addr = rax)
         # TODO: check if return addr is sane. 
         symbol = state.project.symbol_resolve.reverse_resolve(rax) # dirty but easy
         if symbol:
-            # print("Chunk address not in heap: %s + %d" % (hex(symbol[0], symbol[1])))
-            state.project.report_logger.info("Chunk address not in heap: %s + %d" % (hex(symbol[0], symbol[1])))
+            state.project.report_logger.info("Allocated chunk is not in heap", name = symbol[0], offset = symbol[1])
 
         state.project.heap_analysis.add_chunk(rax, size)
         # # TEST
@@ -278,10 +250,7 @@ def _calloc_hook(state):
         rax = state.regs.rax
         assert(rax.concrete)
         #rax = rax.args[0]
-        # TODO: do log
-        # print("Calloc called with size %d, returns addr %s" % (size*count, hex(rax)))
-        state.project.report_logger.info("Calloc called with size %d, returns addr %s" % (size*count, hex(rax)))
-        # report_logger.debug("Calloc called with size %d, returns addr %s" % (size * count, hex(rax)))
+        state.project.report_logger.info("Calloc",  size = size*count, ret_addr = rax)
         state.project.unhook(ret_addr)
 
     assert(not state.project.is_hooked(ret_addr))
@@ -375,10 +344,7 @@ class heap_analysis(object):
         self.arenas = []
         self.inuse_bps ={}
         self.free_bps = {}
-        # global report_logger
-        self.project.report_logger = logging.getLogger('heap_analysis')
-        self.project.report_logger.setLevel(logging.INFO)
-
+        self.project.report_logger = logger.get_logger(__name__)
     
     # FIXME: bull shit
     def _ptr_in_chunk(self, ptr):
@@ -400,8 +366,7 @@ class heap_analysis(object):
             else:
                 self.chunks_av[addr] = [sizes, size]
             self.abused_chunks.append({"addr":addr, "size":size, "type":"allocated mutiple times"})
-            # print("Chunk at %s size %s : Already allocated!" % (hex(addr), hex(size)))
-            self.project.report_logger.info("Chunk at %s size %s : Already allocated!" % (hex(addr), hex(size)))
+            self.project.report_logger.info("Double allocated chunk", addr = addr, size = size)
 
         else:
             self.chunks_av[addr] = size
@@ -427,9 +392,7 @@ class heap_analysis(object):
                         self.chunks_av.pop(addr)
                 else:
                     self.abused_chunks.append({"addr": addr, "size":size, "type":"freed with modified size"})
-                    # print("Chunk at %s size %s : Freed with mofied size!" % (hex(addr), hex(size)))
-                    self.project.report_logger.info("Chunk at %s size %s : Freed with mofied size!" % \
-                                                    (hex(addr), hex(size)))
+                    self.project.report_logger.info("Chunk freed with modified size", addr = addr, size = size)
             # target chunk doesn't been allocated more than one time,
             # so sizes is an int
             elif size == sizes:
@@ -441,9 +404,7 @@ class heap_analysis(object):
         else:
             # this chunk is not allocated by c/m/relloc
             self.abused_chunks.append({"addr":addr, "size": size, "type":"chunk not allocated is freed"})
-            # print("Chunk at %s size %s : Chunk haven't been allocated is freed!" % (hex(addr), hex(size)))
-            self.project.report_logger.info("Chunk at %s size %s : Chunk haven't been allocated is freed!" % \
-                                            (hex(addr), hex(size)))
+            self.project.report_logger.info("Unallocated chunk is freed", addr = addr, size = size)
 
     
     def enable_hook(self):
@@ -473,9 +434,6 @@ class heap_analysis(object):
         """
         Do the job.
         """
-        file_handle = logging.FileHandler(os.path.join(self.project.target_path, "heap_analy.log"), mode="w+")
-        self.project.report_logger.addHandler(file_handle)
-
         self.enable_hook()
         state = self.project.get_entry_state()
         #state.options.discard("UNICORN")

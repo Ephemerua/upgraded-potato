@@ -6,8 +6,8 @@ in most situation :(
 
 import struct
 from symbol_resolve import symbol_resolve
-import logging
 import os
+import logger
 
 class leak_analysis(object):
     """
@@ -30,11 +30,7 @@ class leak_analysis(object):
         self._prefixs = []
         self.leaked_addrs = []
         self._find_prefix()
-        self.report_logger = logging.getLogger('leak_analysis')
-        self.report_logger.setLevel(logging.DEBUG)
-        self.report_logger_handle = logging.FileHandler(os.path.join(project.target_path, "leak_analy.log"), mode="w+")
-        self.report_logger.addHandler(self.report_logger_handle)
-        
+        self.report_logger = logger.get_logger(__name__)
 
 
     def _find_prefix(self):
@@ -76,8 +72,7 @@ class leak_analysis(object):
         for i in self.leaked_addrs:
             result = self.symbol_resolve.reverse_resolve(i)
             if result:
-                # print("Found leaked addr: %s %x in lib %s" %(result[0], result[1], result[2]))
-                self.report_logger.info("Found leaked addr: %s %x in lib %s" %(result[0], result[1], result[2]))
+                self.report_logger.info("Leaked address", name = result[0], addr = result[1], lib = result[2])
     
     def do_analysis(self):
         """
