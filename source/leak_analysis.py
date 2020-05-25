@@ -8,6 +8,7 @@ import struct
 from symbol_resolve import symbol_resolve
 import logging
 import os
+from analysis import register_ana
 
 class leak_analysis(object):
     """
@@ -31,8 +32,9 @@ class leak_analysis(object):
         self.leaked_addrs = []
         self._find_prefix()
         self.report_logger = logging.getLogger('leak_analysis')
-        self.report_logger.setLevel(logging.DEBUG)
-        self.report_logger_handle = logging.FileHandler(os.path.join(project.target_path, "leak_analy.log"), mode="w+")
+        self.report_logger.setLevel(logging.INFO)
+        self.log_path = os.path.join(project.target_path, "leak_analy.log")
+        self.report_logger_handle = logging.FileHandler(self.log_path, mode="w+")
         self.report_logger.addHandler(self.report_logger_handle)
         
 
@@ -91,4 +93,4 @@ class leak_analysis(object):
         for prefix in self._prefixs:
             self._match_output(prefix, output)
     
-
+register_ana('leak_analysis', leak_analysis)

@@ -5,6 +5,8 @@ from structures import malloc_state
 from arena import Arena
 from util.info_print import  stack_backtrace, printable_backtrace
 import logging
+from analysis import register_ana
+
 
 """
 TODO: move this part to doc
@@ -376,8 +378,12 @@ class heap_analysis(object):
         self.inuse_bps ={}
         self.free_bps = {}
         # global report_logger
+        self.log_path = os.path.join(project.target_path, "heap_analy.log")
+        file_handle = logging.FileHandler(self.log_path, mode="w+")
         self.project.report_logger = logging.getLogger('heap_analysis')
         self.project.report_logger.setLevel(logging.INFO)
+        self.project.report_logger.addHandler(file_handle)
+
 
     
     # FIXME: bull shit
@@ -428,7 +434,7 @@ class heap_analysis(object):
                 else:
                     self.abused_chunks.append({"addr": addr, "size":size, "type":"freed with modified size"})
                     # print("Chunk at %s size %s : Freed with mofied size!" % (hex(addr), hex(size)))
-                    self.project.report_logger.info("Chunk at %s size %s : Freed with mofied size!" % \
+                    self.project.report_logger.warn("Chunk at %s size %s : Freed with mofied size!" % \
                                                     (hex(addr), hex(size)))
             # target chunk doesn't been allocated more than one time,
             # so sizes is an int
@@ -442,7 +448,7 @@ class heap_analysis(object):
             # this chunk is not allocated by c/m/relloc
             self.abused_chunks.append({"addr":addr, "size": size, "type":"chunk not allocated is freed"})
             # print("Chunk at %s size %s : Chunk haven't been allocated is freed!" % (hex(addr), hex(size)))
-            self.project.report_logger.info("Chunk at %s size %s : Chunk haven't been allocated is freed!" % \
+            self.project.report_logger.warn("Chunk at %s size %s : Chunk haven't been allocated is freed!" % \
                                             (hex(addr), hex(size)))
 
     
@@ -473,8 +479,6 @@ class heap_analysis(object):
         """
         Do the job.
         """
-        file_handle = logging.FileHandler(os.path.join(self.project.target_path, "heap_analy.log"), mode="w+")
-        self.project.report_logger.addHandler(file_handle)
 
         self.enable_hook()
         state = self.project.get_entry_state()
@@ -483,5 +487,5 @@ class heap_analysis(object):
         simgr.run()
         self.disable_hook()
         
-
+register_ana('heap_analysis', heap_analysis)
 

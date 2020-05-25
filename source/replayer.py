@@ -11,10 +11,12 @@ LOGGER_PROMPT = b"$LOGGER$"
 from parse_helpers import *
 from exploited_state_hook import exploited_execve
 from pwnlib.elf.elf import ELF
-from heap_analysis import heap_analysis
 from symbol_resolve import symbol_resolve
 
 from util.rep_pack import rep_pack
+from report.gen_html import generate_report
+
+from analysis import visualize_analysis
 
 #p = angr.Project("./aa", main_opts = main_opts, lib_opts = lib_opts,auto_load_libs=True, use_sim_procedures=False )
 #state = p.factory.entry_state(mode="tracing", stdin=sim_file)
@@ -67,6 +69,8 @@ class Replayer(angr.project.Project):
         self._lib_opts = lib_opts
         self._bp = bp
         self.exploited_state = 0
+        self.enabled_anas = {}
+
 
         # construct the project, load objects with recorded base addr
         skip_libs = ['mmap_dump.so']
@@ -105,7 +109,6 @@ class Replayer(angr.project.Project):
         self.set_exploited_syscall("execve", exploited_execve())
 
         # TEST: set heap analysis
-        self.heap_analysis = heap_analysis(self)
         self.symbol_resolve = symbol_resolve(self)
 
         # TEST: serialize the project
@@ -200,45 +203,32 @@ class Replayer(angr.project.Project):
         self.hook(addr, hook_func(self))
         self.hooked_addr.append(addr)
 
+    def enable_analysis(self, anas):
+        for name in anas:
+            if name in visualize_analysis:
+                ana = visualize_analysis[name]
+                inited_ana = ana(self)
+                print("%s enabled." % name)
+                dirty_s = "self.%s=inited_ana" % name
+                exec(dirty_s)
+                self.enabled_anas[name] = inited_ana
 
+    def do_analysis(self):
+        for ana_name in self.enabled_anas:
+            exec("self.%s.do_analysis()" % ana_name)
 
+    def generate_report(self):
+        kwargs = {}
+        for name, ana in self.enabled_anas.items():
+            name = name.split("_")[0] + "_log_path"
+            kwargs[name] = ana.log_path
+        generate_report(self.__binary_path, **kwargs)
 
 
 def state_timestamp(state):
     return len(state.history.bbl_addrs)
 
-PROT_READ = 1
-PROT_WRITE = 2
-PROT_EXEC = 4
 
-def fetch_str(state, addr):
-    try:
-        prots = state.memory.permissions(addr)
-    except angr.errors.SimMemoryMissingError:
-        return ""
-    prots = prots.args[0]
-    result = ""
-    is_str = 1
-    # TODO: move prots definition to other place
-    if not (prots & PROT_READ):
-        return ""
-    while is_str:
-        m = state.memory.load(addr, 8)
-        assert(m.concrete)
-        m = m.args[0]
-        addr += 8
-
-        for i in range(8):
-            c = (m >> (7-i)*8) & 0xff
-            if c > 126 or c < 32:
-                is_str = False
-                break
-            else:
-                result += chr(c)
-    if result:
-        result = ' -> "'+result+'"'
-
-    return result
 
 
     

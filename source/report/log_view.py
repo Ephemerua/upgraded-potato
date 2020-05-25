@@ -132,12 +132,12 @@ def extract_stack(f):
     res = ""
     while True:
         line = f.readline()
-        if line == 'Stack:\n':
+        if "stack:" in line or line=="":
             break
 
     while True:
         line = f.readline()
-        if line is '\n':
+        if line == '\n'or line=="":
             break
         res += line
 

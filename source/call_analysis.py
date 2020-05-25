@@ -1,8 +1,9 @@
 import angr
-from replayer import fetch_str
-from  util.info_print import stack_backtrace, printable_backtrace
+from  util.info_print import stack_backtrace, printable_backtrace, fetch_str
 import logging
 import os
+from analysis import register_ana
+
 """
 Set write bp on return address in stack.
 TODO: get rop chain info
@@ -256,8 +257,12 @@ class call_analysis(object):
         self._last_depth = track_depth
         self.track_depth = track_depth
         self.overflow_pos = set()
+
+        self.log_path = os.path.join(project.target_path, "call_analy.log")
         self.project.report_logger = logging.getLogger('call_analysis')
         self.project.report_logger.setLevel(logging.INFO)
+        file_handle = logging.FileHandler(self.log_path, mode="w")
+        self.project.report_logger.addHandler(file_handle)
 
 
 
@@ -266,8 +271,6 @@ class call_analysis(object):
         do the job
         XXX: could we merge this to avoid simgr.run() again?
         """
-        file_handle = logging.FileHandler(os.path.join(self.project.target_path, "call_analy.log"), mode="w+")
-        self.project.report_logger.addHandler(file_handle)
 
         state = self.project.get_entry_state()
         # XXX: unicorn engine at present cannot handle call/return breakpoint...
@@ -277,5 +280,5 @@ class call_analysis(object):
         simgr = self.project.get_simgr(state)
         simgr.run()
 
-
+register_ana('call_analysis', call_analysis)
 

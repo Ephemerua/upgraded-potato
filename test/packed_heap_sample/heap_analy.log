@@ -1,0 +1,73 @@
+Malloc called with size 0x20, returns addr 0x603010
+Malloc called with size 0x190, returns addr 0x603030
+Malloc called with size 0x20, returns addr 0x6031c0
+Malloc called with size 0x20, returns addr 0x6031e0
+Free called to free 0x6031e0 with size 0x20
+Free called to free 0x6031c0 with size 0x20
+Free called to free 0x603030 with size 0x190
+Free called to free 0x603010 with size 0x20
+Malloc called with size 0x20, returns addr 0x603010
+Malloc called with size 0x20, returns addr 0x6031c0
+Malloc called with size 0x20, returns addr 0x6031e0
+Found overflow in chunk at 0x6031c0, size 0x10 with write starts at 0x6031b0, size 0x21!
+Overflow length: 0x1, content: <BV8 10>
+
+0x6031b0| [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m01[0m[33m90[0m  [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m20[0m
+0x6031c0| [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m60[0m[33m31[0m[33me0[0m  [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m08[0m
+0x6031d0| 00000000000000[33m[31m00[0m[0m  0000000000000021
+
+Mem write to chunk header 0x6031b0 start at 0x6031b0 with size 0x10: <BV128 0x90010000000000002000000000000000>
+
+0x6031b0| [33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m01[0m[0m[33m[31m90[0m[0m  [33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m20[0m[0m
+0x6031c0| [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m60[0m[33m31[0m[33me0[0m  [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m08[0m
+0x6031d0| 00000000000000[33m00[0m  0000000000000021
+
+Callstack:
+Frame 0:          0x3000181 in read_syscall	bp: 0x7fffffffe420
+Frame 1:           0x400bdd in sub_4010ca	bp: 0x7fffffffe460
+Frame 2:     0x7ffff782a830 in __libc_start_main+240	bp: 0x400c00
+Frame 3: 0x11fe258d4c544155			bp: 0x41ff894156415741
+
+Mem write to chunk header 0x6031d0 start at 0x6031d0 with size 0x1: <BV8 10>
+
+0x6031b0| [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m01[0m[33m90[0m  [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m20[0m
+0x6031c0| [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m60[0m[33m31[0m[33me0[0m  [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m08[0m
+0x6031d0| 00000000000000[33m[31m00[0m[0m  0000000000000021
+
+Callstack:
+Frame 0:          0x3000181 in read_syscall	bp: 0x7fffffffe420
+Frame 1:           0x400bdd in sub_4010ca	bp: 0x7fffffffe460
+Frame 2:     0x7ffff782a830 in __libc_start_main+240	bp: 0x400c00
+Frame 3: 0x11fe258d4c544155			bp: 0x41ff894156415741
+
+Found overflow in chunk at 0x6031c0, size 0x10 with write starts at 0x6031b0, size 0x21!
+Overflow length: 0x1, content: <BV8 10>
+
+0x6031b0| [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m01[0m[33m90[0m  [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m20[0m
+0x6031c0| [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m60[0m[33m20[0m[33m88[0m  [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m10[0m[33m00[0m
+0x6031d0| 00000000000000[33m[31m0a[0m[0m  0000000000000021
+
+Mem write to chunk header 0x6031b0 start at 0x6031b0 with size 0x10: <BV128 0x90010000000000002000000000000000>
+
+0x6031b0| [33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m01[0m[0m[33m[31m90[0m[0m  [33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m00[0m[0m[33m[31m20[0m[0m
+0x6031c0| [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m60[0m[33m20[0m[33m88[0m  [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m10[0m[33m00[0m
+0x6031d0| 00000000000000[33m0a[0m  0000000000000021
+
+Callstack:
+Frame 0:          0x3000181 in read_syscall	bp: 0x7fffffffe420
+Frame 1:           0x400bdd in sub_4010ca	bp: 0x7fffffffe460
+Frame 2:     0x7ffff782a830 in __libc_start_main+240	bp: 0x400c00
+Frame 3: 0x11fe258d4c544155			bp: 0x41ff894156415741
+
+Mem write to chunk header 0x6031d0 start at 0x6031d0 with size 0x1: <BV8 10>
+
+0x6031b0| [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m01[0m[33m90[0m  [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m20[0m
+0x6031c0| [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m60[0m[33m20[0m[33m88[0m  [33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m00[0m[33m10[0m[33m00[0m
+0x6031d0| 00000000000000[33m[31m0a[0m[0m  0000000000000021
+
+Callstack:
+Frame 0:          0x3000181 in read_syscall	bp: 0x7fffffffe420
+Frame 1:           0x400bdd in sub_4010ca	bp: 0x7fffffffe460
+Frame 2:     0x7ffff782a830 in __libc_start_main+240	bp: 0x400c00
+Frame 3: 0x11fe258d4c544155			bp: 0x41ff894156415741
+

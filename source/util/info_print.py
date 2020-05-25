@@ -91,9 +91,38 @@ def printable_backtrace(bt):
 
     :param bt: result of stack_backtrace
     """
-    result = ""
+    result = "Callstack:\n"
     for i in bt:
         result += str(i)
     return result
 
+
+def fetch_str(state, addr):
+    try:
+        prots = state.memory.permissions(addr)
+    except angr.errors.SimMemoryMissingError:
+        return ""
+    prots = prots.args[0]
+    result = ""
+    is_str = 1
+    # TODO: move prots definition to other place
+    if not (prots & PROT_READ):
+        return ""
+    while is_str:
+        m = state.memory.load(addr, 8)
+        assert(m.concrete)
+        m = m.args[0]
+        addr += 8
+
+        for i in range(8):
+            c = (m >> (7-i)*8) & 0xff
+            if c > 126 or c < 32:
+                is_str = False
+                break
+            else:
+                result += chr(c)
+    if result:
+        result = ' -> "'+result+'"'
+
+    return result
 
