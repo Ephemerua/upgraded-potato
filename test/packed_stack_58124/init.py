@@ -34,7 +34,7 @@ before_malloc = 0
 
 def full_init():
     global state, simgr, p, before_malloc
-    p = replayer.Replayer("stack1", "./sample.txt", "maps.stack.58124")
+    p = replayer.Replayer("stack", "./sample.txt", "maps.stack.58124")
     # p.do_track()
     # g = got_analysis(p)
     # g.do_analysis()
