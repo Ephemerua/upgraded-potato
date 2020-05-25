@@ -1,5 +1,4 @@
 Got analysis started.
-Exploited state haven't been set! Do replay now...?
 Found got mismatch: symbol atoi with addr 0x7ffff784f390
 which is func system in file libc-2.23.so
 Got analysis ended.

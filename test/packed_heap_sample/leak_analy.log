@@ -1,0 +1,7 @@
+Found leaked addr: _IO_file_jumps 0 in lib libc-2.23.so
+Found leaked addr: _IO_2_1_stdout_ -20 in lib libc-2.23.so
+Found leaked addr: got._IO_2_1_stderr_ -5d in lib libc-2.23.so
+Found leaked addr: got._IO_2_1_stderr_ -5d in lib libc-2.23.so
+Found leaked addr: got._IO_2_1_stderr_ -5d in lib libc-2.23.so
+Found leaked addr: got._IO_2_1_stderr_ -5c in lib libc-2.23.so
+Found leaked addr: _IO_2_1_stdin_ 0 in lib libc-2.23.so

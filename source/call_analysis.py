@@ -76,7 +76,7 @@ def bp_constructor(ana, addr, size = 8, callback = None):
         if origin == modified:
             return
         # print("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified) ))
-        state.project.report_logger.info("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified)))
+        state.project.report_logger.warn("Return address changed by user:\naddress %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified)))
         # print(printable_backtrace(bt))
         state.project.report_logger.info(printable_backtrace(bt))
         #print(state.callstack)
@@ -202,18 +202,18 @@ def ret_cb_constructor(ana, **kwargs):
             else:
                 # FIXME: only reset _last_depth on mismatching????
                 # print("\nStrange return to 0x%x:" % ret_addr)
-                state.project.report_logger.info("\nStrange return to 0x%x:" % ret_addr)
+                state.project.report_logger.warn("\nStrange return to 0x%x:" % ret_addr)
                 ana._last_depth = 0
                 ana.call_track = 1
                 ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"mismatch"})
                 #TODO: get rop info here
                 # print(ret_info(state))
-                state.project.report_logger.info(ret_info(state))
+                state.project.report_logger.info("Ret info:\n"+ret_info(state))
 
         else:
             # no frame? must be rop
             # print("\nUnrecorded return to 0x%x" % ret_addr)
-            state.project.report_logger.info("\nUnrecorded return to 0x%x" % ret_addr)
+            state.project.report_logger.warn("\nUnrecorded return to 0x%x" % ret_addr)
             ana.call_track = 1
             ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"unrecorded"})
             #TODO: get rop info here
@@ -260,7 +260,7 @@ class call_analysis(object):
 
         self.log_path = os.path.join(project.target_path, "call_analy.log")
         self.project.report_logger = logging.getLogger('call_analysis')
-        self.project.report_logger.setLevel(logging.INFO)
+        self.project.report_logger.setLevel(logging.DEBUG)
         file_handle = logging.FileHandler(self.log_path, mode="w")
         self.project.report_logger.addHandler(file_handle)
 

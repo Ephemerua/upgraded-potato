@@ -3,7 +3,7 @@ import angr
 import os
 from structures import malloc_state
 from arena import Arena
-from util.info_print import  stack_backtrace, printable_backtrace
+from util.info_print import  stack_backtrace, printable_backtrace, printable_memory
 import logging
 from analysis import register_ana
 
@@ -37,41 +37,8 @@ For simple double free it is easy. TODO: any other case?
 """
 
 
-from termcolor import colored
-def printable_memory(state, start, size, warn_pos = 0, warn_size = 0, info_pos = 0, info_size = 0):
-    result = ""
-    # align
-    size = ((size >>3) <<3) + 0x10
-    endl = -1
-    warn = 0
-    for addr in range(start, start+size, 8):
-        mem = state.memory.load(addr, 8, endness = "Iend_LE")
-        assert(mem.concrete)
-        mem = mem.args[0]
-        if endl:
-            result += "%s| " %(hex(addr))
-            endl = ~endl
-        else:
-            result += '  ' 
-            endl = ~endl
-        mem = "%016x" % mem
-        colored_mem = ["" for i in range(8)]
-        j = 0
-        for i in range(14, -2, -2):
-            bt = mem[i:i+2]
-            if addr + j in range(warn_pos, warn_pos+warn_size):
-                bt = colored(bt, 'red')
-            if addr + j in range(info_pos, info_pos+info_size):
-                bt = colored(bt, 'yellow')
-            colored_mem[7-j] = bt
-            j += 1
 
-        result += "".join(colored_mem) 
-        if endl:
-            result += '\n'
-    return result
-            
-
+        
 def bp_overflow(report_logger, start_addr, size, callback = None, debug = False):
     def write_bp(state):
         target_addr = state.inspect.mem_write_address
@@ -94,7 +61,7 @@ def bp_overflow(report_logger, start_addr, size, callback = None, debug = False)
         if (target_addr + target_size > start_addr + size):
             # print("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
             #  % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
-            report_logger.info("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
+            report_logger.warn("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
                             % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
             # report_logger.debug("Found overflow in chunk at %s, size %s with write starts at %s, size %s!"
             #                    % (hex(start_addr), hex(size), hex(target_addr), hex(target_size)))
@@ -103,13 +70,13 @@ def bp_overflow(report_logger, start_addr, size, callback = None, debug = False)
             #print("Overflow length: %s" % hex(overflow_len))
             overflow_content = state.inspect.mem_write_expr[overflow_len*8 - 1:0]
             # print("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
-            report_logger.info("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
+            report_logger.warn("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
             # report_logger.debug("Overflow length: %s, content: %s" % (hex(overflow_len), overflow_content))
             str = printable_memory(state, min(start_addr, target_addr), max(size,target_size)\
                 ,warn_pos = start_addr+size, warn_size  = overflow_len, info_pos = target_addr\
                     ,info_size = target_size)
             # print(str)
-            report_logger.info("\n"+str)
+            report_logger.warn("\n"+str)
             # print(printable_memory(state, min(start_addr, target_addr), max(size,target_size)\
             #     ,warn_pos = start_addr+size, warn_size  = overflow_len, info_pos = target_addr\
             #         ,info_size = target_size))
@@ -161,7 +128,7 @@ def bp_redzone(report_logger, start_addr, size, callback = None, debug = False, 
 
         # print("Mem write to %s %s start at %s with size %s: %s" %(mtype, hex(start_addr), hex(target_addr),\
         #      hex(write_size), write_expr))
-        report_logger.info("Mem write to %s %s start at %s with size %s: %s" % (mtype, hex(start_addr), hex(target_addr), \
+        report_logger.warn("Mem write to %s %s start at %s with size %s: %s" % (mtype, hex(start_addr), hex(target_addr), \
                                                                              hex(write_size), write_expr))
         # report_logger.debug(
         #     "Mem write to %s %s start at %s with size %s: %s" % (mtype, hex(start_addr), hex(target_addr), \
@@ -479,7 +446,7 @@ class heap_analysis(object):
         """
         Do the job.
         """
-
+        
         self.enable_hook()
         state = self.project.get_entry_state()
         #state.options.discard("UNICORN")

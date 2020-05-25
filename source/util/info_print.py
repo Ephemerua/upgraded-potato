@@ -1,3 +1,10 @@
+import angr
+
+PROT_READ = 1
+PROT_WRITE = 2
+PROT_EXEC = 4
+
+
 def print_callstack(state):
     cs = state.callstack
     print("\nStack:")
@@ -126,3 +133,37 @@ def fetch_str(state, addr):
 
     return result
 
+
+from termcolor import colored
+def printable_memory(state, start, size, warn_pos = 0, warn_size = 0, info_pos = 0, info_size = 0):
+    result = ""
+    # align
+    size = ((size >>3) <<3) + 0x10
+    endl = -1
+    warn = 0
+    for addr in range(start, start+size, 8):
+        mem = state.memory.load(addr, 8, endness = "Iend_LE")
+        assert(mem.concrete)
+        mem = mem.args[0]
+        if endl:
+            result += "%s| " %(hex(addr))
+            endl = ~endl
+        else:
+            result += '  ' 
+            endl = ~endl
+        mem = "%016x" % mem
+        colored_mem = ["" for i in range(8)]
+        j = 0
+        for i in range(14, -2, -2):
+            bt = mem[i:i+2]
+            if addr + j in range(warn_pos, warn_pos+warn_size):
+                bt = colored(bt, 'red')
+            if addr + j in range(info_pos, info_pos+info_size):
+                bt = colored(bt, 'yellow')
+            colored_mem[7-j] = bt
+            j += 1
+
+        result += "".join(colored_mem) 
+        if endl:
+            result += '\n'
+    return result

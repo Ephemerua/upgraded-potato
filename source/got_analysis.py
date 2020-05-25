@@ -105,8 +105,12 @@ class got_analysis(object):
         for sym, addr in exploited_got.items():
             # check if addr matched, or the symbol haven't been resolved 
             # don't track 0 addr
+            if sym == "__gmon_start__":
+                # this func could only be called on time
+                continue
             if addr == 0:
                 continue
+
             if addr in origin_got[sym]:
                 continue
             elif sym in main.plt:
@@ -122,11 +126,15 @@ class got_analysis(object):
                         self.mismatch[sym]["sym"] = resolve_result[0]
                         # print("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
                         self.report_logger.warn("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
-        self.report_logger.info("Got analysis ended.")
+        
         if self.mismatch:
             log_str = "\nFound %d mismatch entry: \n" % len(self.mismatch)
             log_str += self.result_str()
             self.report_logger.info(log_str)
+        else:
+            self.report_logger.info("Everything OK in exploited state's got.")
+        self.report_logger.info("Got analysis ended.")
+
         
             
 

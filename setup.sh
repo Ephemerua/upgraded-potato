@@ -20,7 +20,7 @@ gcc ./test/replay_test/get_bp.c -o ./bin/get_bp_test
 python3 -m pip show angr 1>/dev/null
 if [ $? -ne 0  ]
 then
-    python3 -m pip install angr
+    python3 -m pip install angr graphviz jinja2 termcolor
 fi
 python3 -m pip show pwn 1>/dev/null
 if [ $? -ne 0  ]
@@ -39,4 +39,6 @@ if [ $? -ne 0  ]
 then
     python3 -m pip install cstruct
 fi
+
+
 
