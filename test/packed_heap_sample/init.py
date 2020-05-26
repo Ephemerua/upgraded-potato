@@ -23,6 +23,5 @@ simgr = p.get_simgr()
 if __name__=="__main__":
     p.enable_analysis(["heap_analysis", "got_analysis", "leak_analysis"])
     p.do_analysis()
-    p.generate_report()
     
 

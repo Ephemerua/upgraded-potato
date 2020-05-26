@@ -217,14 +217,6 @@ class Replayer(angr.project.Project):
         for ana_name in self.enabled_anas:
             exec("self.%s.do_analysis()" % ana_name)
 
-    def generate_report(self):
-        kwargs = {}
-        for name, ana in self.enabled_anas.items():
-            name = name.split("_")[0] + "_log_path"
-            kwargs[name] = ana.log_path
-        generate_report(self.__binary_path, **kwargs)
-
-
 def state_timestamp(state):
     return len(state.history.bbl_addrs)
 
