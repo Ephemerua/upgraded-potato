@@ -3,9 +3,9 @@ from pwnlib.elf.elf import ELF
 import copy
 import gc
 from symbol_resolve import symbol_resolve
-import logging
 import os
 from analysis import register_ana
+import logger
 
 # TODO: test this function
 class got_analysis(object):
@@ -16,13 +16,8 @@ class got_analysis(object):
     def __init__(self, project):
         self.project = project
         self.symbol_resolve = symbol_resolve(project)
+        self.report_logger = logger.get_logger(__name__)
         self.mismatch = {}
-
-        self.log_path = os.path.join(project.target_path, "got_analy.log")
-        self.report_logger = logging.getLogger('got_analysis')
-        self.report_logger.setLevel(logging.DEBUG)
-        self.report_logger_handle = logging.FileHandler(self.log_path, mode="w")
-        self.report_logger.addHandler(self.report_logger_handle)
     
     def _resolve_mismatch(self, addr):
         """
@@ -113,21 +108,13 @@ class got_analysis(object):
                 if main.plt[sym] == addr:
                     continue
                 else:
-                    #TODO: do report
-                    # print("Found got mismatch: symbol %s with addr %s" % (sym, hex(addr)) )
-                    self.report_logger.warn("Found got mismatch: symbol %s with addr %s" % (sym, hex(addr)))
                     resolve_result = self.symbol_resolve.reverse_resolve(addr)
                     self.mismatch[sym] = {"addr":addr}
                     if resolve_result:
-                        self.mismatch[sym]["sym"] = resolve_result[0]
-                        # print("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
-                        self.report_logger.warn("which is func %s in file %s" % (resolve_result[0], resolve_result[2]))
-        self.report_logger.info("Got analysis ended.")
-        if self.mismatch:
-            log_str = "\nFound %d mismatch entry: \n" % len(self.mismatch)
-            log_str += self.result_str()
-            self.report_logger.info(log_str)
-        
+                        self.report_logger.info("GOT mismatch", symbol = sym, addr = addr, func = resolve_result[0], file = resolve_result[2])
+                    else:
+                        self.report_logger.info("GOT mismatch", symbol = sym, addr = addr)
+
             
 
 register_ana('got_analysis', got_analysis)            

@@ -1,3 +1,9 @@
+import angr
+
+PROT_READ = 1
+PROT_WRITE = 2
+PROT_EXEC = 4
+
 def print_callstack(state):
     cs = state.callstack
     print("\nStack:")

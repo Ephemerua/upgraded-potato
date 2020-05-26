@@ -269,7 +269,7 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>got mismatch</th>
+                                    <th>what the fuckgot mismatch</th>
                                     <th>which function</th>
                                 </tr>
                             </thead>
@@ -307,6 +307,43 @@
                 <div class="col-md-12">
                     <h3 class="fw_300">heap transfer graph</h3>
                     <a><img src="{{img_path}}"></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="heapMemError">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="fw_300">Heap memory errors</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="flick_table">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="table_style1 table_style2 table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>123</th>
+                                    <th>123</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in gottable %}
+                                <tr>
+                                    <td>{{ item.mismatch }}</td>
+                                    <td>{{ item.function }}</td>
+                                </tr>
+                                {% endfor%}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
