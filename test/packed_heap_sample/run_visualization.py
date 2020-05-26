@@ -1,6 +1,7 @@
 #usr/local/env python3
 
 import sys
+import os
 
 sys.path.append("../../source/")
 
@@ -10,14 +11,7 @@ import angr
 import claripy
 from imp import reload
 
-
-
-
-state = 0
-simgr = 0
-p = 0
-before_malloc = 0
-
+os.system("../../set-aslr.sh off")
 
 
 p = replayer.Replayer("easyheap", "./sample.txt", "maps.8998")

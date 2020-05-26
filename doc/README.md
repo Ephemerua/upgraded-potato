@@ -1,70 +1,121 @@
-# README
+# 漏洞攻击可视化
 
-## 目标
-（半）自动化地分析漏洞利用的方法、过程，最终形成一份报告。
-
-## 配置环境
-[setup](./Setup.md)
-运行setup.sh即可。目前只需要pwnlib和angr两个python库。
-
+自动化分析二进制漏洞攻击过程。
 ## 使用说明
-目前只做了记录和重放，功能还不完全。  
+### 适用目标
+Linux下应用层的x86_64程序。不适用于与硬件设备高度相关的程序。  
 
-### 记录
+### example
+测试样例可见`test/packed_*`，其中`run_visualization.py`将直接运行一次完整的分析。  
+使用方法可参照`run_visualization.py`的内容。
+
+### 记录功能
+运行记录前，首先需要关闭系统的内存地址随机化。在项目根目录中运行该脚本即可。
 
 ```bash
-./set-aslr.sh off # 关闭aslr去掉内存随机化，建议在docker/vm里面跑
-./bin/tee output.txt | LD_PRELOAD=./bin/mmap_dump.so <path-to-target> # 记录初始状态和输入
+./set-aslr.sh off
 ```
 
-+ tee无法确定管道是否被关闭，需要在下一次read时读到eof才能结束进程，在运行记录的命令时，如果发生目标程序已经退出但tee还在运行的情况，用Ctrl-D或者敲回车解决，如果输入了其他字符，可能在重放时导致问题。
-+ google coredumper产生的coredump不完整，修改了一下发现会破坏栈，暂时弃用。gcore的方案还没测试，但angr的elfcore的后端也存在问题。(原本想要应用的[coredumper](https://github.com/madscientist/google-coredumper.git))
-+ **注意⚠️：现在只能在录制的环境下进行重放，正在准备添加打包动态链接库的功能😢**
+记录操作可以通过运行以下脚本完成：
 
-### 重放
-**迁移相关：maps文件的内容涉及到运行记录模块的设备的绝对路径，请手动修改至自己机器的路径，并保证依赖库版本一致**
+```bash
+./record.sh  target_binary
+```
+该脚本会应用装载器运行目标程序，以bash为例，可以通过以下方式记录一次运行：
+
+```bash
+./record.sh /bin/bash # 对/bin/bash进行记录
+Writing logged output to bash_log
+ls	#输入ls命令
+bash_log  bin  doc  html  ls_log  maps.bash.98687  maps.ls.98675  maps.ls.98689  preeny  record.sh  set-aslr.sh  setup.sh  socat_stage.py  source  test
+#ctrl^D 退出
+```
+在当前文件夹下会产生`maps.target_name.pid`与`target_log`文件，分别为记录的初始内存布局与外部输入。
+
+### 重放功能
+重放与分析部分建议在ipython的交互式环境下运行。
+
+重放功能由`source.replayer.Replayer`实现。以下为以`test/packed_heap_sample`文件夹下的测试样例为例，导入包并根据记录的数据建立项目，并获取初始状态与模拟运行管理器。
 
 ```python
-r = Replayer(...)
-state = r.get_entry_state() # 这个state是设置好了内存布局、寄存器和输入流的entry_state，ip在目标程序的入口点。 主要用来分析的对象。
-simgr = r.get_simgr() # 使用entry_state的simgr。
+# 首先导入文件
+import sys
+import os
+sys.path.append("../../source/")
+import parse_helpers
+import replayer
+import angr
+import claripy
+from imp import reload
 
-# 接下来就可以玩耍了，程序的行为应当和记录时一致，因此我们能够到达一次执行的任意状态。
-simgr.step()
-simgr.run()
+# 根据记录的数据建立project
+p = replayer.Replayer("easyheap", "./sample.txt", "maps.8998")
+
+state = p.get_entry_state() # 获取初始状态
+simgr = p.get_simgr() # 获取模拟运行管理器
+
+simgr.run() # 进行一次完整的重放
 ```
 
+重放时支持指定的攻击成功状态。以下为默认设置的execve钩子，目标程序调用execve系统调用，且第一个参数为`/bin/sh`时触发，成功触发设置的钩子时`exploited_state`会被设置，此状态表示攻击成功与结束，后续的所有分析均作用于程序启动到`exploited_state`之间。该钩子适用于大部分目标为getshell的攻击。
 
-### 分析
-#### 已经实现
-1. got表分析
-2. 堆分析（部分）
-3. 信息泄露分析
-4. 函数调用分析（部分）
-5. 控制流分析
+同样可以自定义一个钩子函数将任意的状态指定为攻击成功的标志，可钩取的目标有函数调用、系统调用、某指令地址或某部分内存被访问。可以根据`state.regs`与`state.memory`获取寄存器与内存信息。
 
-#### 使用方法
-还没有在replayer.py里面添加binding, 直接导入然后实例化，调用`do_analysis`即可。  
-部分结果记录在类的变量中，暂时还没有确定最终可视化的表现形式。
+```python
+class exploited_execve(angr.SimProcedure):
+    """
+    Sample hook procedure to check if the programme is going to do `execve("/bin/sh"...)`
+    If the check pass, project.exploited_state will be set.
+    """
+    def run(self, filename, args, envp):
+        print("run into execve!") 
 
+        # check if the first arg is like '/bin/sh'
+        fname = self.state.memory.load(filename, 8)
+        assert(fname.concrete)
+        if b"sh" in hex2str(fname.args[0]):
+            print("found exploited state")
 
-### TODO
-1. dwarf解析  （用pyelftools或别的工具，通过地址解析符号，通过调试\符号信息获取可读的信息）
-    + 追踪一次内存修改
-2. 一个stage，把目标程序绑定到某个端口（这样我们就可以分析ftp，webserver等等不使用stdio作为输入输出的程序）
-3. desocket + stage测试
-    目标：用这个模式正常运行tftp server，然后可以取得他的输入
-4. logging （目前只是用print输出报告）  
-暂定记录内容：
-    + 日志级别（debug, info, critical等那一套）
-    + 时序（使用state.history.bbl_addr可以表示）
-    + 内容（主要的记录内容）
-5. 可视化的表现形式（xml? html? 图表？）  
-logging to html/xml
-可以先转换为一些中间表示（json/yaml等）再转换为可读性高的文件
+            # set exploited_state, so we can get the final state from project
+            assert(self.project and self.state)
+            self.project.exploited_state = self.state
+            # we don't need to continue
+            self.exit(0)
+        else:
+            return claripy.BVV(0, 64)
 
+    def __repr__(self):
+        return '<exploited execve stub>'      
+```
+ 
 
-## 设计思路
-1. 去随机化，使程序的运行结果固定不变。但是即使每次运行中的同一时刻其状态（寄存器、内存）都是固定不变的，我们也很难对他做分析，唯一方法是用调试器获得上下文，分析中的数据不好保存，实现起来也未必比记录+重放简单，再加上分析时几乎必须中止程序运行，可能导致问题。
-2. 记录程序的外部输入和初始状态，用于重放。使用angr+unicorn进行重放。
-3. 此时我们能够到达记录的那一次执行中的任意状态。到达目标状态然后获取数据，即可分析。
+### 分析功能  
+可供选择的分析子模块有：  
+
++ 函数调用分析：跟踪ROP攻击，以及捕获栈返回地址的溢出
++ 堆内存分析：捕获堆中溢出以及堆上的异常操作
++ got表分析：检查got表中函数指针是否存在异常（异常溯源将在之后的版本中实现），给出符号解析结果
++ 信息泄漏分析：检查程序输出中是否存在内存地址信息，给出符号解析结果
+
+分析子模块可根据目标程序的特点任意组合。可视化报告目前直接在终端中输出，堆变化图则生成在当前文件夹下。
+
+ ```python
+ # 设置需要启动的分析模块
+ p.enable(["call_analysis", "heap_analysis", "leak_analysis", "got_analysis"])
+ # 开始分析
+ p.do_analysis()
+ ```
+
+## 开发接口
+新增分析子模块只需要实现一个新类并为其实现`do_analysis`方法即可。
+
+```python
+class X_analysis(analysis):
+	def __init__(self, ):
+		# do init
+	def do_analysis(self):
+		# do the work
+		
+register_analysis(X_analysis)
+
+```

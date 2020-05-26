@@ -1,0 +1,32 @@
+got bp: 0x7fffffffe4b0
+00400000-004f4000 r-xp 00000000 08:01 3276869                            /bin/bash
+006f3000-006f4000 r--p 000f3000 08:01 3276869                            /bin/bash
+006f4000-006fd000 rw-p 000f4000 08:01 3276869                            /bin/bash
+006fd000-00703000 rw-p 00000000 00:00 0                                  [heap]
+7ffff73dd000-7ffff759d000 r-xp 00000000 08:01 11988                      /lib/x86_64-linux-gnu/libc-2.23.so
+7ffff759d000-7ffff779d000 ---p 001c0000 08:01 11988                      /lib/x86_64-linux-gnu/libc-2.23.so
+7ffff779d000-7ffff77a1000 r--p 001c0000 08:01 11988                      /lib/x86_64-linux-gnu/libc-2.23.so
+7ffff77a1000-7ffff77a3000 rw-p 001c4000 08:01 11988                      /lib/x86_64-linux-gnu/libc-2.23.so
+7ffff77a3000-7ffff77a7000 rw-p 00000000 00:00 0 
+7ffff77a7000-7ffff77aa000 r-xp 00000000 08:01 12036                      /lib/x86_64-linux-gnu/libdl-2.23.so
+7ffff77aa000-7ffff79a9000 ---p 00003000 08:01 12036                      /lib/x86_64-linux-gnu/libdl-2.23.so
+7ffff79a9000-7ffff79aa000 r--p 00002000 08:01 12036                      /lib/x86_64-linux-gnu/libdl-2.23.so
+7ffff79aa000-7ffff79ab000 rw-p 00003000 08:01 12036                      /lib/x86_64-linux-gnu/libdl-2.23.so
+7ffff79ab000-7ffff79d0000 r-xp 00000000 08:01 3277830                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7ffff79d0000-7ffff7bcf000 ---p 00025000 08:01 3277830                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7ffff7bcf000-7ffff7bd3000 r--p 00024000 08:01 3277830                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7ffff7bd3000-7ffff7bd4000 rw-p 00028000 08:01 3277830                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7ffff7bd4000-7ffff7bd6000 r-xp 00000000 00:51 58979044                   /ctf/work/playground/tmp/upgraded-potato/bin/mmap_dump.so
+7ffff7bd6000-7ffff7dd5000 ---p 00002000 00:51 58979044                   /ctf/work/playground/tmp/upgraded-potato/bin/mmap_dump.so
+7ffff7dd5000-7ffff7dd6000 r--p 00001000 00:51 58979044                   /ctf/work/playground/tmp/upgraded-potato/bin/mmap_dump.so
+7ffff7dd6000-7ffff7dd7000 rw-p 00002000 00:51 58979044                   /ctf/work/playground/tmp/upgraded-potato/bin/mmap_dump.so
+7ffff7dd7000-7ffff7dfd000 r-xp 00000000 08:01 11929                      /lib/x86_64-linux-gnu/ld-2.23.so
+7ffff7fe4000-7ffff7fe8000 rw-p 00000000 00:00 0 
+7ffff7ff7000-7ffff7ff8000 rw-p 00000000 00:00 0 
+7ffff7ff8000-7ffff7ffa000 r--p 00000000 00:00 0                          [vvar]
+7ffff7ffa000-7ffff7ffc000 r-xp 00000000 00:00 0                          [vdso]
+7ffff7ffc000-7ffff7ffd000 r--p 00025000 08:01 11929                      /lib/x86_64-linux-gnu/ld-2.23.so
+7ffff7ffd000-7ffff7ffe000 rw-p 00026000 08:01 11929                      /lib/x86_64-linux-gnu/ld-2.23.so
+7ffff7ffe000-7ffff7fff000 rw-p 00000000 00:00 0 
+7ffffffde000-7ffffffff000 rw-p 00000000 00:00 0                          [stack]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]

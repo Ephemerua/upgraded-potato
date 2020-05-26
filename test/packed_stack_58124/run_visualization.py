@@ -16,6 +16,7 @@ from imp import reload
 
 
 
+os.system("../../set-aslr.sh off")
 
 
 p = replayer.Replayer("stack", "./sample.txt", "maps.stack.58124")
