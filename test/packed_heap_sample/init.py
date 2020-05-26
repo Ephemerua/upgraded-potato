@@ -1,6 +1,7 @@
 #usr/local/env python3
 
 import sys
+import os
 
 sys.path.append("../../source/")
 
@@ -10,38 +11,18 @@ import angr
 import claripy
 from imp import reload
 
+os.system("../../set-aslr.sh off")
 
 
-def memory_sum(file):
-    f = open(file, "r")
-    maps = f.read()
-    m_sum = 0
-    for line in maps:
-        if line=="":
-            continue
-        line = line.split(" ")[0]
-        mem = [int(i,16) for i in line.split("-")]
-        m_sum += mem[1]-mem[0]
-        
-state = 0
-simgr = 0
-p = 0
-before_malloc = 0
+p = replayer.Replayer("easyheap", "./sample.txt", "maps.8998")
+
+state = p.get_entry_state()
+simgr = p.get_simgr()
 
 
-def full_init():
-    global state, simgr, p, before_malloc
-    p = replayer.Replayer("easyheap", "./sample.txt", "maps.8998")
-
-    state = p.get_entry_state()
-    simgr = p.get_simgr()
-
-def full_reload():
-    reload(parse_helpers)
-    reload(replayer)
-    reload(analyser)
-    full_init()
-
-
-full_init()
+if __name__=="__main__":
+    p.enable_analysis(["heap_analysis", "got_analysis", "leak_analysis"])
+    p.do_analysis()
+    p.generate_report()
+    
 
