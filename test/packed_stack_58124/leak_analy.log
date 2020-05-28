@@ -1,0 +1,4 @@
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 05:38:32,807", "leakname": "puts", "addr": "0", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: puts 0 in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 05:38:32,808"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 05:38:32,809", "leakname": "puts", "addr": "0", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: puts 0 in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 05:38:32,809"}

@@ -12,7 +12,7 @@ from call_analysis import *
 from heap_analysis import *
 from got_analysis import *
 from imp import reload
-
+from report.gen_html import *
 
 
 def memory_sum(file):
@@ -35,15 +35,10 @@ before_malloc = 0
 def full_init():
     global state, simgr, p, before_malloc
     p = replayer.Replayer("stack1", "./sample.txt", "maps.stack.58124")
-    # p.do_track()
-    # g = got_analysis(p)
-    # g.do_analysis()
-    # h = heap_analysis(p)
-    # h.do_analysis()
-    # state = p.get_entry_state()
-    # simgr = p.get_simgr()
-    c = call_analysis(p)
-    c.do_analysis()
+    p.enable_analysis(["heap_analysis", "call_analysis", "leak_analysis", "got_analysis"])
+    p.do_analysis()
+    generate_report('./stack1', got_log_path='./got_analy.log', leak_log_path='./leak_analy.log', \
+                    heap_log_path='./heap_analy.log', call_log_path='./call_analy.log')
 
 
 def full_reload():

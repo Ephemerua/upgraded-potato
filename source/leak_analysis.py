@@ -7,6 +7,7 @@ in most situation :(
 import struct
 from symbol_resolve import symbol_resolve
 import logging
+from pythonjsonlogger import jsonlogger
 import os
 from analysis import register_ana
 
@@ -15,7 +16,7 @@ class leak_analysis(object):
     Use heuristic way to find leaked address from exploited_state's stdout.
     Assume each loaded object is samller than 16MB, so the higher 3 bytes in
     address is always the same with object's base addr.
-    Also, low bytes of address is usually useless in exploit, so we check leaked higher 
+    Also, low bytes of address is usually useless in exploit, so we check leaked higher
     three bytes to find leak.
 
     XXX: if we have 140737349736160 in output, which is actually an address, how can we
@@ -31,12 +32,15 @@ class leak_analysis(object):
         self._prefixs = []
         self.leaked_addrs = []
         self._find_prefix()
+
+        self.log_list = []
         self.report_logger = logging.getLogger('leak_analysis')
         self.report_logger.setLevel(logging.INFO)
         self.log_path = os.path.join(project.target_path, "leak_analy.log")
-        self.report_logger_handle = logging.FileHandler(self.log_path, mode="w+")
+        self.report_logger_handle = logging.FileHandler(self.log_path, mode="w")
+        self.report_logger_handle.setFormatter(jsonlogger.JsonFormatter('%(message)%(levelname)%(asctime)'))
         self.report_logger.addHandler(self.report_logger_handle)
-        
+
 
 
     def _find_prefix(self):
@@ -63,9 +67,9 @@ class leak_analysis(object):
         end = len(output)
         while pos!=-1:
             pos_list.append(pos)
-            pos = output.find(prefix, pos + 1, end) 
+            pos = output.find(prefix, pos + 1, end)
 
-        
+
         #try to get full addr, and unpack
         for pos in pos_list:
             if pos + 3 > end:
@@ -79,6 +83,11 @@ class leak_analysis(object):
             result = self.symbol_resolve.reverse_resolve(i)
             if result:
                 # print("Found leaked addr: %s %x in lib %s" %(result[0], result[1], result[2]))
+                leak_dict = {'leakname':result[0], \
+                             'addr':'%x'%(result[1]), \
+                             'lib':result[2], \
+                             "record": "true"}
+                self.report_logger.info("[*]recording...", extra=leak_dict)
                 self.report_logger.info("Found leaked addr: %s %x in lib %s" %(result[0], result[1], result[2]))
     
     def do_analysis(self):

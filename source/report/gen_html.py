@@ -3,7 +3,7 @@ from report.log_view import *
 from report.env_view import *
 import time
 
-def generate_report(binary_path, template_name="template.html", report_name = "report.html", \
+def generate_report(binary_path, report_name = "report.html", template_name="template.html", \
                     got_log_path = "", heap_log_path = "", leak_log_path = "", \
                     call_log_path = ""):
     '''
@@ -58,7 +58,7 @@ def generate_report(binary_path, template_name="template.html", report_name = "r
     generate_html(got_table, image_path, leak_table, rop_table)
 
 if __name__ == '__main__':
-    generate_report("../../test/sample/easyheap","./template.html", "./report_new.html", \
+    generate_report("../../test/sample/easyheap", "./report_new.html", "./template.html", \
                     got_log_path="../../test/sample/got_analy.log", \
                     heap_log_path="../../test/sample/heap_analy.log", \
                     leak_log_path="../../test/sample/leak_analy.log", \

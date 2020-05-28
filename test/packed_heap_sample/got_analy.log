@@ -1,9 +1,6 @@
-Got analysis started.
-Exploited state haven't been set! Do replay now...?
-Found got mismatch: symbol atoi with addr 0x7ffff784f390
-which is func system in file libc-2.23.so
-Got analysis ended.
-
-Found 1 mismatch entry: 
-atoi: 0x7ffff784f390 -> system
-
+{"message": "Got analysis started.", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,363"}
+{"message": "Found got mismatch: symbol atoi with addr 0x7ffff784f390", "levelname": "WARNING", "asctime": "2020-05-28 04:44:19,365"}
+{"message": "which is func system in file libc-2.23.so", "levelname": "WARNING", "asctime": "2020-05-28 04:44:19,366"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,366", "mismatch": "atoi", "addr": "0x7ffff784f390", "function": "system", "file": "libc-2.23.so", "record": "true"}
+{"message": "Got analysis ended.", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,366"}
+{"message": "\nFound 1 mismatch entry: \natoi: 0x7ffff784f390 -> system\n", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,366"}

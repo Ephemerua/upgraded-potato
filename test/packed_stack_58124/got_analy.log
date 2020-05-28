@@ -1,0 +1,6 @@
+{"message": "Got analysis started.", "levelname": "INFO", "asctime": "2020-05-28 05:38:32,810"}
+{"message": "Found got mismatch: symbol __gmon_start__ with addr 0x400546", "levelname": "WARNING", "asctime": "2020-05-28 05:38:32,812"}
+{"message": "which is func plt.__gmon_start__ in file stack1", "levelname": "WARNING", "asctime": "2020-05-28 05:38:32,812"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 05:38:32,812", "mismatch": "__gmon_start__", "addr": "0x400546", "function": "plt.__gmon_start__", "file": "stack1", "record": "true"}
+{"message": "Got analysis ended.", "levelname": "INFO", "asctime": "2020-05-28 05:38:32,812"}
+{"message": "\nFound 1 mismatch entry: \n__gmon_start__: 0x400546 -> plt.__gmon_start__\n", "levelname": "INFO", "asctime": "2020-05-28 05:38:32,812"}

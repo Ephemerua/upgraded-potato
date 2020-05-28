@@ -96,7 +96,7 @@
 								</a>
                                 <div class="collapse panel-collapse" role="tabpanel" id="information">
                                     <div class="panel-body"> 
-                                        <p class="fw_300 color_33">{{checksecinfo}}&nbsp;</p>
+                                        <p class="fw_300 color_33">checksec:<br>{{checksecinfo}}&nbsp;</p>
                                         <p class="fw_300 color_33"> system:<br>{{osinfo}} </p>
                                         <p class="fw_300 color_33"> <br> report time: <br> {{reporttime}} </p>
 									</div>
@@ -106,7 +106,7 @@
 						<div class="panel">
                                 <a href="#GOT_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">GOT Analysis</a>
                                 <div class="collapse panel-collapse" role="tabpanel" id="GOT_analysis">
-                                    <div class="panel-body"> 
+                                    <div class="panel-body">
 										<section class="flick_table">
 											<div class="container">
 												<div class="row">
@@ -155,7 +155,7 @@
 									</div>
                                 </div>
                             </div>
-							
+
 						<div class="panel">
                                 <a href="#Leak_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">Leak Analysis</a>
                                 <div class="collapse panel-collapse" role="tabpanel" id="Leak_analysis">
@@ -199,21 +199,26 @@
 										<section class="flick_table">
 											<div class="container">
 												<div class="row">
+													<h3 class="fw_300">ROP table</h3>
 													<div class="col-sm-11">
 														<div class="table_style3 table_style2 table-responsive">
 															<table class="table">
 																<thead>
 																	<tr>
+																		<th>state timestamp</th>
 																		<th>situation</th>
 																		<th>addr informatino</th>
+																		<th>block code</th>
 																		<th>rop information</th>
 																	</tr>
 																</thead>
 																<tbody>
 																	{% for item in calltable %}
 																	<tr>
+																		<td>{{ item.timestamp }}</td>
 																		<td>{{ item.situation }}</td>
 																		<td>{{ item.jump }}</td>
+																		<td style="white-space: nowrap">{{ item.block }}</td>
 																		<td>{{ item.info }}</td>
 																	</tr>
 																	{% endfor%}

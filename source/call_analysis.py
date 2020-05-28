@@ -1,6 +1,9 @@
 import angr
-from  util.info_print import stack_backtrace, printable_backtrace, fetch_str
+
+from source.replayer import state_timestamp
+from util.info_print import stack_backtrace, printable_backtrace, fetch_str
 import logging
+from pythonjsonlogger import jsonlogger
 import os
 from analysis import register_ana
 
@@ -43,11 +46,13 @@ To make it work, I edited angr/engines/successors.py, lineno 211 to this:
                  #state._inspect('return', BP_AFTER)
 """
 
-def bp_constructor(ana, addr, size = 8, callback = None):
+
+def bp_constructor(ana, addr, size=8, callback=None):
     """
     construct a bp before given addr is written, get its origin value and modified value.
     record the addr to call_analysis.overflow_pos
     """
+
     def write_bp(state):
         target_addr = state.inspect.mem_write_address
         target_size = state.inspect.mem_write_length
@@ -57,30 +62,41 @@ def bp_constructor(ana, addr, size = 8, callback = None):
             target_addr = target_addr.args[0]
         if type(target_size) != int:
             target_size = target_size.args[0]
-        
+
         # make sure the write covers our addr
-        if (target_addr >= addr+size):
+        if (target_addr >= addr + size):
             return
-        if (target_addr + target_size <=addr):
+        if (target_addr + target_size <= addr):
             return
 
         # break on BP_AFTER, so we only need to get the value we care about
-        origin = state.memory.load(addr, 8, endness = 'Iend_LE').args[0]
-        #print(write_expr)
+        origin = state.memory.load(addr, 8, endness='Iend_LE').args[0]
+        # print(write_expr)
         bt = stack_backtrace(state)
         backup = state.memory.load(target_addr, size)
-        state.memory.store(target_addr, write_expr, disable_actions=True, inspect = False)
-        modified = state.memory.load(addr, 8, endness = 'Iend_LE').args[0]
+        state.memory.store(target_addr, write_expr, disable_actions=True, inspect=False)
+        modified = state.memory.load(addr, 8, endness='Iend_LE').args[0]
         ana.overflow_pos.add(addr)
-        state.memory.store(target_addr, backup, disable_actions=True, inspect = False)
+        state.memory.store(target_addr, backup, disable_actions=True, inspect=False)
         if origin == modified:
             return
         # print("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified) ))
-        state.project.report_logger.info("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified)))
+        state.project.call_logger.info("\n[%s]address %s changed from %s to %s" % (hex(state_timestamp(state)), \
+                                                                                   hex(addr), hex(origin),
+                                                                                   hex(modified)))
         # print(printable_backtrace(bt))
-        state.project.report_logger.info(printable_backtrace(bt))
-        #print(state.callstack)
+        callstackstr = printable_backtrace(bt)
+        state.project.call_logger.info(callstackstr)
+        call_dict = {'situation': "address %s changed" % hex(addr), \
+                     'jump': "[addr:%s]->\n[addr:%s]" % (hex(origin), hex(modified)), \
+                     'block': "None", \
+                     'info': callstackstr, \
+                     'timestamp': str(state_timestamp(state)), \
+                     'type': "overflow", \
+                     "record": "true"}
+        state.project.call_logger.info("[*]recording...", extra=call_dict)
         return
+
     return write_bp
 
 
@@ -92,18 +108,20 @@ def call_args_x64(state):
     # a4 = regs.r10
     # a5 = regs.r8
     # a6 = regs.r9
-    return {'rdi':a1, 'rsi':a2, 'rdx':a3}#, a4, a5, a6
+    return {'rdi': a1, 'rsi': a2, 'rdx': a3}  # , a4, a5, a6
+
 
 def __test_filter(s, value):
     if s:
         if '__gmon_start__' in s[0]:
             s = list(s)
-            s[0] = 'sub_%x'% value
+            s[0] = 'sub_%x' % value
             s[1] = 0
     return s
 
+
 def ret_info(state):
-    result = ""
+    # result = ""
     ret_src = state.history.bbl_addrs[-1]
     ret_dst = state.regs.rip.args[0]
     args = call_args_x64(state)
@@ -112,63 +130,69 @@ def ret_info(state):
     src_symbol = state.project.symbol_resolve.reverse_resolve(ret_src)
     src_symbol = __test_filter(src_symbol, ret_src)
 
-    result += "From"
+    jumpstr = ""
+    jumpstr += "From"
     if src_symbol:
-        result += " %s: %s + %d (%s)" %(src_symbol[2], src_symbol[0], src_symbol[1], hex(ret_src))
+        jumpstr += " %s: %s + %d (%s)" % (src_symbol[2], src_symbol[0], src_symbol[1], hex(ret_src))
     else:
-        result += " %s" % hex(ret_src)
-    result += " to"
+        jumpstr += " %s" % hex(ret_src)
+    jumpstr += " to"
     if dst_symbol:
-        result += " %s: %s + %d (%s)\n" %(dst_symbol[2], dst_symbol[0], dst_symbol[1], hex(ret_dst))
+        jumpstr += " %s: %s + %d (%s)\n" % (dst_symbol[2], dst_symbol[0], dst_symbol[1], hex(ret_dst))
     else:
-        result += " %s\n" % hex(ret_dst)
+        jumpstr += " %s\n" % hex(ret_dst)
 
+    insnstr = ""
     block = state.block().capstone.insns
-    result += "Insns:\n"
+    insnstr += "Insns:\n"
     for insn in block:
-        result += '\t' + str(insn)+'\n'
-    result += 'Args:\n'
+        insnstr += '\t' + str(insn) + '\n'
+
+    argstr = ""
+    argstr += 'Args:\n'
     for reg, value in args.items():
-        result += "\t%s: %s" % (reg, hex(value.args[0]))
+        argstr += "\t%s: %s" % (reg, hex(value.args[0]))
         s = fetch_str(state, value)
-        result += s
+        argstr += s
         s = state.project.symbol_resolve.reverse_resolve(value)
         if s:
             if '__gmon_start__' in s[0]:
                 s = list(s)
-                s[0] = 'sub_%x'% value.args[0]
+                s[0] = 'sub_%x' % value.args[0]
                 s[1] = 0
-            result += " (%s + %d)" % (s[0], s[1])
-        result += '\n'
+            argstr += " (%s + %d)" % (s[0], s[1])
+        argstr += '\n'
 
-    return result
+    return jumpstr, insnstr, argstr
 
 
 def call_cb_constructor(ana, **kwargs):
     def call_callback(state):
         # get info, and do some record
-        ret_addr = state.memory.load(state.regs.rsp, 8, endness = 'Iend_LE')
+        ret_addr = state.memory.load(state.regs.rsp, 8, endness='Iend_LE')
         rsp = state.regs.rsp.args[0]
-        #print(ret_addr)
-        #print("now at", state.regs.rip)
-        assert(ret_addr.concrete)
+        # print(ret_addr)
+        # print("now at", state.regs.rip)
+        assert (ret_addr.concrete)
         ret_addr = ret_addr.args[0]
         ana.call_stack.append(ret_addr)
-        ana.call_history.append((state.regs.rip.args[0],'call'))
+        ana.call_history.append((state.regs.rip.args[0], 'call'))
 
         # make a write bp on return address in case of overflow
-        ana.ret_bps[rsp] = (state.inspect.b("mem_write", when = angr.BP_BEFORE, action = bp_constructor(ana, rsp, 8)))
-        
+        ana.ret_bps[rsp] = (state.inspect.b("mem_write", when=angr.BP_BEFORE, action=bp_constructor(ana, rsp, 8)))
+
         # should we track this call?
         if ana._last_depth < ana.track_depth:
             # control flow has changed, log the call
-            call_info = {'at':state.history.bbl_addrs[-1], \
-                'to':state.inspect.function_address.args[0], \
-                'type': 'call after overflow'}
+            call_info = {'at': state.history.bbl_addrs[-1], \
+                         'to': state.inspect.function_address.args[0], \
+                         'type': 'call after overflow'}
             ana.abnormal_calls.append(call_info)
             ana._last_depth += 1
-        return 
+        return
+
     return call_callback
+
 
 def ret_cb_constructor(ana, **kwargs):
     """
@@ -178,6 +202,7 @@ def ret_cb_constructor(ana, **kwargs):
     2. if not match, means we are in ROP/overflow condition
         reset the _last_depth now, cause we are in a new overflow
     """
+
     def ret_callback(state):
         # filter simprocedures
         at = state.history.bbl_addrs[-1]
@@ -186,10 +211,10 @@ def ret_cb_constructor(ana, **kwargs):
         ret_origin = 0
         ret_addr = state.regs.rip
         origin_rsp = state.regs.rsp.args[0] - 8
-        assert(ret_addr.concrete)
+        assert (ret_addr.concrete)
         ret_addr = ret_addr.args[0]
         ana.call_history.append((ret_addr, 'ret'))
-        #print("return to 0x%x" % ret_addr)
+        # print("return to 0x%x" % ret_addr)
         # get the top of call_stack
         if ana.call_stack:
             ret_origin = ana.call_stack[-1]
@@ -198,45 +223,62 @@ def ret_cb_constructor(ana, **kwargs):
                 ana.call_stack.pop()
                 if ana._last_depth and ana.call_track:
                     ana._last_depth -= 1
-                 
+
             else:
                 # FIXME: only reset _last_depth on mismatching????
                 # print("\nStrange return to 0x%x:" % ret_addr)
-                state.project.report_logger.info("\nStrange return to 0x%x:" % ret_addr)
+                state.project.call_logger.info("\n[%s]Strange return to 0x%x:" % (hex(state_timestamp(state)), \
+                                                                                  ret_addr))
                 ana._last_depth = 0
                 ana.call_track = 1
-                ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"mismatch"})
-                #TODO: get rop info here
+                ana.abnormal_calls.append({"at": state.history.bbl_addrs[-1], "to": ret_addr, "type": "mismatch"})
+                # TODO: get rop info here
                 # print(ret_info(state))
-                state.project.report_logger.info(ret_info(state))
+                jump, insns, arg = ret_info(state)
+                state.project.call_logger.info("\n" + jump + insns + arg)
+                call_dict = {'situation': "Strange return to 0x%x:" % ret_addr, \
+                             'jump': jump[:-1], \
+                             'block': insns[:-1], \
+                             'info': arg[:-1], \
+                             'timestamp': str(state_timestamp(state)), \
+                             'type': "strange", \
+                             'record': "true"}
+                state.project.call_logger.info("[*]recording...", extra=call_dict)
 
         else:
             # no frame? must be rop
             # print("\nUnrecorded return to 0x%x" % ret_addr)
-            state.project.report_logger.info("\nUnrecorded return to 0x%x" % ret_addr)
+            state.project.call_logger.info("\n[%s]Unrecorded return to 0x%x" % (hex(state_timestamp(state)), \
+                                                                                ret_addr))
             ana.call_track = 1
-            ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"unrecorded"})
-            #TODO: get rop info here
+            ana.abnormal_calls.append({"at": state.history.bbl_addrs[-1], "to": ret_addr, "type": "unrecorded"})
+            # TODO: get rop info here
             # print(ret_info(state))
-            state.project.report_logger.info(ret_info(state))
-
+            jump, insns, arg = ret_info(state)
+            state.project.call_logger.info("\n" + jump + insns + arg)
+            call_dict = {'situation': "Unrecorded return to 0x%x" % ret_addr, \
+                         'jump': jump[:-1], \
+                         'block': insns[:-1], \
+                         'info': arg[:-1], \
+                         'timestamp': str(state_timestamp(state)), \
+                         'type': 'unrecorded', \
+                         "record": "true"}
+            state.project.call_logger.info("[*]recording...", extra=call_dict)
 
         # remove the breakpoint
         bp = ana.ret_bps.pop(origin_rsp, None)
         if bp:
-            state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bp)
+            state.inspect.remove_breakpoint(event_type='mem_write', bp=bp)
         return
 
     return ret_callback
-
-
 
 
 class call_analysis(object):
     """
     FIXME: sometimes bp won't be fired, why?????
     XXX: state.callstack plugin doesn't work under unciron
-    Set bp on call and return, compare the address called and returned to, 
+    Set bp on call and return, compare the address called and returned to,
     so we can find stack's return address overflow.
 
     :ivar project:          project
@@ -244,7 +286,8 @@ class call_analysis(object):
     :ivar abnormal_calls:   record mismatch or abnormal return
     :ivar call_track:       tracks call info
     """
-    def __init__(self, project, track_depth = 1):
+
+    def __init__(self, project, track_depth=1):
         self.project = project
         self.call_stack = []
         self.abnormal_calls = []
@@ -259,12 +302,11 @@ class call_analysis(object):
         self.overflow_pos = set()
 
         self.log_path = os.path.join(project.target_path, "call_analy.log")
-        self.project.report_logger = logging.getLogger('call_analysis')
-        self.project.report_logger.setLevel(logging.INFO)
+        self.project.call_logger = logging.getLogger('call_analysis')
+        self.project.call_logger.setLevel(logging.DEBUG)
         file_handle = logging.FileHandler(self.log_path, mode="w")
-        self.project.report_logger.addHandler(file_handle)
-
-
+        file_handle.setFormatter(jsonlogger.JsonFormatter('%(message)%(levelname)%(asctime)'))
+        self.project.call_logger.addHandler(file_handle)
 
     def do_analysis(self):
         """
@@ -275,10 +317,11 @@ class call_analysis(object):
         state = self.project.get_entry_state()
         # XXX: unicorn engine at present cannot handle call/return breakpoint...
         state.options.discard("UNICORN")
-        self.bps.append(state.inspect.b("call", when = angr.BP_AFTER, action = self.call_cb))
-        self.bps.append(state.inspect.b("return", when = angr.BP_AFTER, action = self.ret_cb))
+        self.bps.append(state.inspect.b("call", when=angr.BP_AFTER, action=self.call_cb))
+        self.bps.append(state.inspect.b("return", when=angr.BP_AFTER, action=self.ret_cb))
         simgr = self.project.get_simgr(state)
         simgr.run()
+
 
 register_ana('call_analysis', call_analysis)
 

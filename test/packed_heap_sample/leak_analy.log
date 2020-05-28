@@ -1,0 +1,28 @@
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,349", "leakname": "_IO_file_jumps", "addr": "0", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: _IO_file_jumps 0 in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,349"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,350", "leakname": "_IO_2_1_stdout_", "addr": "-20", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: _IO_2_1_stdout_ -20 in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,350"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,351", "leakname": "got._IO_2_1_stderr_", "addr": "-5d", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: got._IO_2_1_stderr_ -5d in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,351"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,351", "leakname": "got._IO_2_1_stderr_", "addr": "-5d", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: got._IO_2_1_stderr_ -5d in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,351"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,352", "leakname": "got._IO_2_1_stderr_", "addr": "-5d", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: got._IO_2_1_stderr_ -5d in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,352"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,353", "leakname": "got._IO_2_1_stderr_", "addr": "-5c", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: got._IO_2_1_stderr_ -5c in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,353"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,354", "leakname": "_IO_2_1_stdin_", "addr": "0", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: _IO_2_1_stdin_ 0 in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,355"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,357", "leakname": "_IO_file_jumps", "addr": "0", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: _IO_file_jumps 0 in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,358"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,359", "leakname": "_IO_2_1_stdout_", "addr": "-20", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: _IO_2_1_stdout_ -20 in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,359"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,360", "leakname": "got._IO_2_1_stderr_", "addr": "-5d", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: got._IO_2_1_stderr_ -5d in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,360"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,361", "leakname": "got._IO_2_1_stderr_", "addr": "-5d", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: got._IO_2_1_stderr_ -5d in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,361"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,361", "leakname": "got._IO_2_1_stderr_", "addr": "-5d", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: got._IO_2_1_stderr_ -5d in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,361"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,362", "leakname": "got._IO_2_1_stderr_", "addr": "-5c", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: got._IO_2_1_stderr_ -5c in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,362"}
+{"message": "[*]recording...", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,363", "leakname": "_IO_2_1_stdin_", "addr": "0", "lib": "libc-2.23.so", "record": "true"}
+{"message": "Found leaked addr: _IO_2_1_stdin_ 0 in lib libc-2.23.so", "levelname": "INFO", "asctime": "2020-05-28 04:44:19,363"}
