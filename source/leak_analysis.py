@@ -9,6 +9,8 @@ from symbol_resolve import symbol_resolve
 import os
 from analysis import register_ana
 import logger
+from util.info_print import stack_backtrace, printable_backtrace
+from common import *
 
 class leak_analysis(object):
     """
@@ -30,6 +32,7 @@ class leak_analysis(object):
         self.symbol_resolve = symbol_resolve(project)
         self._prefixs = []
         self.leaked_addrs = []
+        self.leaked_symbols = []
         self._find_prefix()
         self.report_logger = logger.get_logger(__name__)
 
@@ -69,11 +72,46 @@ class leak_analysis(object):
             addr = struct.unpack("<Q", addr)[0]
             self.leaked_addrs.append(addr)
 
-        # TODO: do report
         for i in self.leaked_addrs:
             result = self.symbol_resolve.reverse_resolve(i)
             if result:
-                self.report_logger.info("Leaked address", symbol = result[0], addr = result[1], lib = result[2])
+                self.leaked_symbols.append({"addr":i, "symbol":result})
+
+
+    def do_report(self):
+        for i in self.leaked_symbols:
+            self.report_logger.info("Leaked address", addr = i["addr"], symbol = i["symbol"][0], offset = i["symbol"][1], lib = i["symbol"][2])
+
+    def track_leak(self):
+        addrs = self.leaked_addrs
+        def find_func(state, get_addr = False):
+            nonlocal addrs
+            for i in addrs:
+                if struct.pack("<Q", i)[:6] in state.posix.dumps(1):
+                    if get_addr:
+                        return i
+                    return True
+                else:
+                    return False
+        simgr = self.project.get_simgr()
+        simgr.active[0].options.discard("UNICORN")
+        simgr.explore(find = find_func)
+        if "found" in simgr.stashes:
+            state = simgr.stashes["found"][0]
+            rip = BV2Int(state.regs.rip)
+            bt = printable_backtrace(stack_backtrace(state))
+            addr = find_func(state, get_addr=True)
+            symbol = []
+            for i in self.leaked_symbols:
+                if i["addr"]==addr:
+                    symbol = i["symbol"]
+            if symbol:
+                message = "Found leakage of %s%+d (%s) at :%s" %(symbol[0], symbol[1],hex(addr), hex(rip))
+            self.report_logger.warn(message, backtrace = bt)
+        else:
+            self.report_logger.warning("Track leak failed.")
+        
+        return simgr
     
     def do_analysis(self):
         """
@@ -86,5 +124,7 @@ class leak_analysis(object):
         output = self.project.exploited_state.posix.dumps(1)
         for prefix in self._prefixs:
             self._match_output(prefix, output)
+        self.do_report()
+        self.track_leak()
     
 register_ana('leak_analysis', leak_analysis)
