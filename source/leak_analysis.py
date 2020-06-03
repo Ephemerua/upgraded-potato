@@ -80,7 +80,8 @@ class leak_analysis(object):
 
     def do_report(self):
         for i in self.leaked_symbols:
-            self.report_logger.info("Leaked address", addr = i["addr"], symbol = i["symbol"][0], offset = i["symbol"][1], lib = i["symbol"][2])
+            message = "Found leakage: %s%+d(%s)"%((i["symbol"][0]), i["symbol"][1], hex(i["addr"]))
+            self.report_logger.warn(message, type="leak",addr = i["addr"], symbol = i["symbol"][0], offset = i["symbol"][1], lib = i["symbol"][2])
 
     def track_leak(self):
         addrs = self.leaked_addrs
@@ -107,7 +108,7 @@ class leak_analysis(object):
                     symbol = i["symbol"]
             if symbol:
                 message = "Found leakage of %s%+d (%s) at :%s" %(symbol[0], symbol[1],hex(addr), hex(rip))
-            self.report_logger.warn(message, backtrace = bt)
+            self.report_logger.warn(message, backtrace = bt, type='leak_trace')
         else:
             self.report_logger.warning("Track leak failed.")
         
@@ -125,6 +126,8 @@ class leak_analysis(object):
         for prefix in self._prefixs:
             self._match_output(prefix, output)
         self.do_report()
+        self.report_logger.info("Start tracking of leakage.")
         self.track_leak()
+        
     
 register_ana('leak_analysis', leak_analysis)

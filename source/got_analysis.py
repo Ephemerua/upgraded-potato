@@ -6,6 +6,8 @@ from symbol_resolve import symbol_resolve
 import os
 from analysis import register_ana
 import logger
+from util.info_print import stack_backtrace, printable_backtrace
+from common import *
 
 # TODO: test this function
 class got_analysis(object):
@@ -19,34 +21,6 @@ class got_analysis(object):
         self.report_logger = logger.get_logger(__name__)
         self.mismatch = {}
     
-    def _resolve_mismatch(self, addr):
-        """
-        Deprecated function to do the resolve.
-        """
-        # first find which object the addr belongs to
-        maps = self.project.maps
-        found_obj = 0
-        for obj in maps:
-            for seg in maps[obj]:
-                if addr >= seg["start"] and addr <=seg["end"]:
-                    found_obj = obj
-                else:
-                    continue
-        
-        if found_obj == 0:
-            # print("Cannot find symbol of addr %s." % hex(addr))
-            self.report_logger.warning("Cannot find symbol of addr %s." % hex(addr))
-            return None
-        
-        # now try to find the symbol name
-        found_obj = found_obj.split('/')[-1] # TEST: use filename, not path
-        obj = self.project.elfs[found_obj]
-        symbols = {v:k for k, v in obj.symbols.items()}
-        addrs = [ i for i in symbols]
-        addrs_diff = [ abs(i-addr) for i in addrs]
-        idx = addrs_diff.index(min(addrs_diff))
-        return symbols[addrs[idx]], found_obj
-
     def result_str(self):
         log_str = ""
         for k,v in self.mismatch.items():
@@ -56,13 +30,35 @@ class got_analysis(object):
             else:
                 log_str += "\n"
         return log_str
+    
+    def track_got(self):
+        if self.mismatch == []:
+            return
+        main = self.project.elfs[self.project.target]
+        ana = self
+        state = self.project.get_entry_state()
+        #state.options.discard("UNICORN")
+        for sym in self.mismatch:
+            addr = main.got[sym]
+            def got_track_bp(state):
+                nonlocal ana, sym, addr
+                bt = printable_backtrace(stack_backtrace(state))
+                changed = state.memory.load(addr, 8 , endness = "Iend_LE")
+                changed = BV2Int(changed)
+                message = "Found write to got table: %s" % sym
+                ana.report_logger.warn(message, backtrace = bt)
+            
+            state.inspect.b("mem_write", action = got_track_bp, when = angr.BP_AFTER,\
+                mem_write_address=addr )
+
+        simgr = self.project.factory.simgr(state)
+        simgr.run()
 
 
     def do_analysis(self):
         """
         Do the job.
         """
-        # first we resolve all imported symbols' addr
         self.report_logger.info("Got analysis started.")
         if not self.project.exploited_state:
             self.report_logger.warning("Exploited state haven't been set! Do replay now...?")
@@ -70,6 +66,9 @@ class got_analysis(object):
             simgr.run()
         assert(self.project.exploited_state)
         main = self.project.elfs[self.project.target]
+        # save 'correct' got in origin_got
+        # save exploited_state's got to exploited_got
+        # e.g. xxx_got['puts'] = 0xdeadbeef
         origin_got = {}
         exploited_got = {}
         for sym in main.got:
@@ -114,7 +113,8 @@ class got_analysis(object):
                         self.report_logger.info("GOT mismatch", symbol = sym, addr = addr, func = resolve_result[0], file = resolve_result[2])
                     else:
                         self.report_logger.info("GOT mismatch", symbol = sym, addr = addr)
-
+        self.track_got()
+        self.report_logger.info("Got analysis done.")
             
 
 register_ana('got_analysis', got_analysis)            
