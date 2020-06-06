@@ -31,7 +31,7 @@ class got_analysis(object):
                 log_str += "\n"
         return log_str
     
-    def track_got(self):
+    def trace_got(self):
         if self.mismatch == []:
             return
         main = self.project.elfs[self.project.target]
@@ -40,15 +40,15 @@ class got_analysis(object):
         #state.options.discard("UNICORN")
         for sym in self.mismatch:
             addr = main.got[sym]
-            def got_track_bp(state):
+            def got_trace_bp(state):
                 nonlocal ana, sym, addr
                 bt = printable_backtrace(stack_backtrace(state))
                 changed = state.memory.load(addr, 8 , endness = "Iend_LE")
                 changed = BV2Int(changed)
                 message = "Found write to got table: %s" % sym
-                ana.report_logger.warn(message, backtrace = bt)
+                ana.report_logger.warn(message, backtrace = bt, type='got_change')
             
-            state.inspect.b("mem_write", action = got_track_bp, when = angr.BP_AFTER,\
+            state.inspect.b("mem_write", action = got_trace_bp, when = angr.BP_AFTER,\
                 mem_write_address=addr )
 
         simgr = self.project.factory.simgr(state)
@@ -59,9 +59,9 @@ class got_analysis(object):
         """
         Do the job.
         """
-        self.report_logger.info("Got analysis started.")
+        self.report_logger.info("Got analysis started.", type='tips')
         if not self.project.exploited_state:
-            self.report_logger.warning("Exploited state haven't been set! Do replay now...?")
+            self.report_logger.warning("Exploited state haven't been set! Do replay now...?", type='tips')
             simgr = self.project.get_simgr()
             simgr.run()
         assert(self.project.exploited_state)
@@ -72,6 +72,8 @@ class got_analysis(object):
         origin_got = {}
         exploited_got = {}
         for sym in main.got:
+            if sym == "__gmon_start__":
+                continue
             # how to judge which file a symbol belongs to ??? 
             # XXX: now just iter over all objects
             for libname, obj in self.project.elfs.items():
@@ -98,7 +100,7 @@ class got_analysis(object):
         assert(len(origin_got) == len(exploited_got))
         for sym, addr in exploited_got.items():
             # check if addr matched, or the symbol haven't been resolved 
-            # don't track 0 addr
+            # don't trace 0 addr
             if addr == 0:
                 continue
             if addr in origin_got[sym]:
@@ -110,11 +112,13 @@ class got_analysis(object):
                     resolve_result = self.symbol_resolve.reverse_resolve(addr)
                     self.mismatch[sym] = {"addr":addr}
                     if resolve_result:
-                        self.report_logger.info("GOT mismatch", symbol = sym, addr = addr, func = resolve_result[0], file = resolve_result[2])
+                        message = "GOT mismatch: %s changed to %s%+d(%s)." % (sym, resolve_result[0], resolve_result[1], hex(addr))
+                        self.report_logger.warn(message, symbol = sym, addr = addr, func = resolve_result[0], file = resolve_result[2], type='got_mismatch')
                     else:
-                        self.report_logger.info("GOT mismatch", symbol = sym, addr = addr)
-        self.track_got()
-        self.report_logger.info("Got analysis done.")
+                        message = "GOT mismatch: %s changed to %s." % (sym, hex(addr))
+                        self.report_logger.warn(message, symbol = sym, addr = addr, type='got_mismatch')
+        self.trace_got()
+        self.report_logger.info("Got analysis done.", type='tips')
             
 
 register_ana('got_analysis', got_analysis)            

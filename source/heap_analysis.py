@@ -94,7 +94,7 @@ def bp_overflow(report_logger, start_addr, size, callback = None):
                 ,warn_pos = start_addr+size, warn_size  = overflow_len, info_pos = target_addr\
                     ,info_size = target_size)
             message = "Found chunk overflow at %s." % hex(start_addr)
-            report_logger.warn(message, type='heap_warn', start_addr = start_addr, size = size, target_addr = target_addr, target_size = target_size, overflow_len = overflow_len, overflow_content = overflow_content, memory = memory)
+            report_logger.warn(message, type='heap_overflow', start_addr = start_addr, size = size, target_addr = target_addr, target_size = target_size, overflow_len = overflow_len, overflow_content = overflow_content, memory = memory)
         return
     return write_bp
 
@@ -151,7 +151,7 @@ def bp_redzone(report_logger, start_addr, size, callback = None,  allow_heap_ops
 
         backtrace = printable_backtrace(stack_backtrace(state))
         message = "Redzone(%s) at %s overwritten." %(mtype, hex(start_addr))
-        report_logger.warn(message, mtype = mtype, start_addr = start_addr, target_addr = target_addr, write_size = write_size, write_expr = write_expr, backtrace = backtrace, memory = memory)
+        report_logger.warn(message, type="redzone_write",mtype = mtype, start_addr = start_addr, target_addr = target_addr, write_size = write_size, write_expr = write_expr, backtrace = backtrace, memory = memory)
         return
     return write_bp
     
@@ -192,7 +192,7 @@ def _malloc_hook(state):
         symbol = state.project.symbol_resolve.reverse_resolve(rax) # dirty but easy
         if symbol:
             message = "Chunk returned (%s <- %s%+d)not in heap."% (hex(rax), hex(symbol[0]), hex(symbol[1]))
-            state.project.report_logger.warn(message, symbol = symbol[0], offset = symbol[1], type = 'heap_warn')
+            state.project.report_logger.warn(message, symbol = symbol[0], offset = symbol[1], type = 'alloc_warn')
 
         state.project.heap_analysis.add_chunk(rax, size)
         # # TEST
@@ -370,7 +370,7 @@ class heap_analysis(object):
             else:
                 self.chunks_av[addr] = [sizes, size]
             self.abused_chunks.append({"addr":addr, "size":size, "type":"allocated mutiple times"})
-            self.project.report_logger.warn("Double allocated chunk", addr = addr, size = size, type = 'heap_warn')
+            self.project.report_logger.warn("Double allocated chunk", addr = addr, size = size, type = 'alloc_warn')
 
         else:
             self.chunks_av[addr] = size
@@ -396,7 +396,7 @@ class heap_analysis(object):
                         self.chunks_av.pop(addr)
                 else:
                     self.abused_chunks.append({"addr": addr, "size":size, "type":"freed with modified size"})
-                    self.project.report_logger.warn("Chunk freed with modified size", addr = addr, size = size, type='heap_warn')
+                    self.project.report_logger.warn("Chunk freed with modified size", addr = addr, size = size, type='free_warn')
             # target chunk doesn't been allocated more than one time,
             # so sizes is an int
             elif size == sizes:
@@ -408,7 +408,7 @@ class heap_analysis(object):
         else:
             # this chunk is not allocated by c/m/relloc
             self.abused_chunks.append({"addr":addr, "size": size, "type":"chunk not allocated is freed"})
-            self.project.report_logger.warn("Unallocated chunk is freed", addr = addr, size = size, type = 'heap_warn')
+            self.project.report_logger.warn("Unallocated chunk is freed", addr = addr, size = size, type = 'free_warn')
 
     
     def enable_hook(self):

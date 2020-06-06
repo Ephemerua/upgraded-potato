@@ -127,8 +127,6 @@ def fetch_str(state, addr):
                 break
             else:
                 result += chr(c)
-    if result:
-        result = ' -> "'+result+'"'
 
     return result
 

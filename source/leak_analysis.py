@@ -83,7 +83,7 @@ class leak_analysis(object):
             message = "Found leakage: %s%+d(%s)"%((i["symbol"][0]), i["symbol"][1], hex(i["addr"]))
             self.report_logger.warn(message, type="leak",addr = i["addr"], symbol = i["symbol"][0], offset = i["symbol"][1], lib = i["symbol"][2])
 
-    def track_leak(self):
+    def trace_leak(self):
         addrs = self.leaked_addrs
         def find_func(state, get_addr = False):
             nonlocal addrs
@@ -126,8 +126,8 @@ class leak_analysis(object):
         for prefix in self._prefixs:
             self._match_output(prefix, output)
         self.do_report()
-        self.report_logger.info("Start tracking of leakage.")
-        self.track_leak()
+        self.report_logger.info("Start tracing of leakage.")
+        self.trace_leak()
         
     
 register_ana('leak_analysis', leak_analysis)

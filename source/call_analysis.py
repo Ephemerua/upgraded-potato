@@ -75,7 +75,8 @@ def bp_constructor(ana, addr, size = 8, callback = None):
         state.memory.store(target_addr, backup, disable_actions=True, inspect = False)
         if origin == modified:
             return
-        state.project.report_logger.info("Return address overwritten", addr = addr, origin = origin, modified = modified, backtrace = printable_backtrace(bt))
+        message = "Return address at %s overwritten to %s" % (hex(addr), hex(modified))
+        state.project.report_logger.warn(message, type='return_address_overwritten',addr = addr, origin = origin, modified = modified, backtrace = printable_backtrace(bt))
         #print(state.callstack)
         return
     return write_bp
@@ -128,7 +129,8 @@ def ret_info(state):
     for reg, value in args.items():
         result += "\t%s: %s" % (reg, hex(value.args[0]))
         s = fetch_str(state, value)
-        result += s
+        if s:
+            result += " ->" + """ "%s" """%(s)
         s = state.project.symbol_resolve.reverse_resolve(value)
         if s:
             if '__gmon_start__' in s[0]:
@@ -202,13 +204,15 @@ def ret_cb_constructor(ana, **kwargs):
                 ana.call_track = 1
                 ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"mismatch"})
                 #TODO: get rop info here
-                state.project.report_logger.info("Strange return", ret_addr = ret_addr, ret_info = ret_info(state))
+                message = "Strange return to %s" %hex(ret_addr)
+                state.project.report_logger.warn(message, type='strange_return', ret_addr = ret_addr, ret_info = ret_info(state))
         else:
             # no frame? must be rop
             ana.call_track = 1
             ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"unrecorded"})
             #TODO: get rop info here
-            state.project.report_logger.info("Unrecorded return", ret_addr = ret_addr, ret_info = ret_info(state))
+            message = "Unrecorded return to %s" %hex(ret_addr)
+            state.project.report_logger.warn(message, type='strange_return', ret_addr = ret_addr, ret_info = ret_info(state))
 
 
         # remove the breakpoint
@@ -264,4 +268,3 @@ class call_analysis(object):
         simgr.run()
 
 register_ana('call_analysis', call_analysis)
-
