@@ -12,6 +12,7 @@ import logger
 from util.info_print import stack_backtrace, printable_backtrace
 from common import *
 
+
 class leak_analysis(object):
     """
     Use heuristic way to find leaked address from exploited_state's stdout.
@@ -34,7 +35,7 @@ class leak_analysis(object):
         self.leaked_addrs = []
         self.leaked_symbols = []
         self._find_prefix()
-        self.report_logger = logger.get_logger(__name__)
+        self.report_logger = 0
 
 
     def _find_prefix(self):
@@ -118,6 +119,8 @@ class leak_analysis(object):
         """
         do the job
         """
+        self.report_logger = logger.get_logger(__name__)
+
         if not self.project.exploited_state:
             # print("No exploited state to analyse!")
             self.report_logger.warning("No exploited state to analyse!")

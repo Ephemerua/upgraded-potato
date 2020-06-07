@@ -6,7 +6,7 @@ from arena import Arena
 from util.info_print import  stack_backtrace, printable_backtrace
 import logging
 from analysis import register_ana
-
+from source.replayer import state_timestamp
 import logger
 
 """
@@ -94,7 +94,8 @@ def bp_overflow(report_logger, start_addr, size, callback = None):
                 ,warn_pos = start_addr+size, warn_size  = overflow_len, info_pos = target_addr\
                     ,info_size = target_size)
             message = "Found chunk overflow at %s." % hex(start_addr)
-            report_logger.warn(message, type='heap_overflow', start_addr = start_addr, size = size, target_addr = target_addr, target_size = target_size, overflow_len = overflow_len, overflow_content = overflow_content, memory = memory)
+            report_logger.warn(message, type='heap_overflow', start_addr = start_addr, size = size, target_addr = target_addr, \
+                               target_size = target_size, overflow_len = overflow_len, overflow_content = overflow_content, memory = memory, state_timestamp = state_timestamp(state))
         return
     return write_bp
 
@@ -151,7 +152,8 @@ def bp_redzone(report_logger, start_addr, size, callback = None,  allow_heap_ops
 
         backtrace = printable_backtrace(stack_backtrace(state))
         message = "Redzone(%s) at %s overwritten." %(mtype, hex(start_addr))
-        report_logger.warn(message, type="redzone_write",mtype = mtype, start_addr = start_addr, target_addr = target_addr, write_size = write_size, write_expr = write_expr, backtrace = backtrace, memory = memory)
+        report_logger.warn(message, type="redzone_write",mtype = mtype, start_addr = start_addr, target_addr = target_addr, \
+                           write_size = write_size, write_expr = write_expr, backtrace = backtrace, memory = memory, state_timestamp = state_timestamp(state))
         return
     return write_bp
     
@@ -187,12 +189,12 @@ def _malloc_hook(state):
         assert(rax.concrete)
         rax = rax.args[0]
         message = "Malloc(%s) => %s" % (hex(size), hex(rax))
-        state.project.report_logger.info(message, size = size, ret_addr = rax, type = "malloc")
+        state.project.report_logger.info(message, size = size, ret_addr = rax, type = "malloc", state_timestamp = state_timestamp(state))
         # TODO: check if return addr is sane. 
         symbol = state.project.symbol_resolve.reverse_resolve(rax) # dirty but easy
         if symbol:
             message = "Chunk returned (%s <- %s%+d)not in heap."% (hex(rax), hex(symbol[0]), hex(symbol[1]))
-            state.project.report_logger.warn(message, symbol = symbol[0], offset = symbol[1], type = 'alloc_warn')
+            state.project.report_logger.warn(message, symbol = symbol[0], offset = symbol[1], type = 'alloc_warn', state_timestamp = state_timestamp(state))
 
         state.project.heap_analysis.add_chunk(rax, size)
         # # TEST
@@ -253,7 +255,7 @@ def _calloc_hook(state):
         rax = state.regs.rax
         assert(rax.concrete)
         #rax = rax.args[0]
-        state.project.report_logger.info("Calloc",  size = size*count, ret_addr = rax)
+        state.project.report_logger.info("Calloc", type = 'calloc', size = size*count, ret_addr = rax, state_timestamp = state_timestamp(state))
         state.project.unhook(ret_addr)
 
     assert(not state.project.is_hooked(ret_addr))
@@ -275,8 +277,7 @@ def _free_hook(state):
     size = (size >> 4)<<4
     # print("Free called to free %s with size %s" % (hex(addr), hex(size)))
     message = "Free(%s) (size: %s)" % (hex(addr), hex(size))
-    state.project.report_logger.info(message, addr = addr, size = size, type="free")
-    # report_logger.debug("Free called to free %s with size %s" % (hex(addr), hex(size)))
+    state.project.report_logger.info(message, addr = addr, size = size, type="free", state_timestamp = state_timestamp(state))
 
     # get info for ret callback
     # stack frame haven't been created, so return address is in rsp
@@ -348,7 +349,6 @@ class heap_analysis(object):
         self.arenas = []
         self.inuse_bps ={}
         self.free_bps = {}
-        self.project.report_logger = logger.get_logger(__name__)
     
     # FIXME: bull shit
     def _ptr_in_chunk(self, ptr):
@@ -370,7 +370,7 @@ class heap_analysis(object):
             else:
                 self.chunks_av[addr] = [sizes, size]
             self.abused_chunks.append({"addr":addr, "size":size, "type":"allocated mutiple times"})
-            self.project.report_logger.warn("Double allocated chunk", addr = addr, size = size, type = 'alloc_warn')
+            self.project.report_logger.warn("Double allocated chunk", addr = addr, size = size, type = 'alloc_warn', state_timestamp = state_timestamp(state))
 
         else:
             self.chunks_av[addr] = size
@@ -396,7 +396,7 @@ class heap_analysis(object):
                         self.chunks_av.pop(addr)
                 else:
                     self.abused_chunks.append({"addr": addr, "size":size, "type":"freed with modified size"})
-                    self.project.report_logger.warn("Chunk freed with modified size", addr = addr, size = size, type='free_warn')
+                    self.project.report_logger.warn("Chunk freed with modified size", addr = addr, size = size, type='free_warn', state_timestamp = state_timestamp(state))
             # target chunk doesn't been allocated more than one time,
             # so sizes is an int
             elif size == sizes:
@@ -408,7 +408,7 @@ class heap_analysis(object):
         else:
             # this chunk is not allocated by c/m/relloc
             self.abused_chunks.append({"addr":addr, "size": size, "type":"chunk not allocated is freed"})
-            self.project.report_logger.warn("Unallocated chunk is freed", addr = addr, size = size, type = 'free_warn')
+            self.project.report_logger.warn("Unallocated chunk is freed", addr = addr, size = size, type = 'free_warn', state_timestamp = state_timestamp(state))
 
     
     def enable_hook(self):
@@ -438,6 +438,7 @@ class heap_analysis(object):
         """
         Do the job.
         """
+        self.project.report_logger = logger.get_logger(__name__)
         self.enable_hook()
         state = self.project.get_entry_state()
         #state.options.discard("UNICORN")

@@ -96,7 +96,7 @@
 								</a>
                                 <div class="collapse panel-collapse" role="tabpanel" id="information">
                                     <div class="panel-body"> 
-                                        <p class="fw_300 color_33">{{checksecinfo}}&nbsp;</p>
+                                        <p class="fw_300 color_33">checksec:<br>{{checksecinfo}}&nbsp;</p>
                                         <p class="fw_300 color_33"> system:<br>{{osinfo}} </p>
                                         <p class="fw_300 color_33"> <br> report time: <br> {{reporttime}} </p>
 									</div>
@@ -106,30 +106,40 @@
 						<div class="panel">
                                 <a href="#GOT_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">GOT Analysis</a>
                                 <div class="collapse panel-collapse" role="tabpanel" id="GOT_analysis">
-                                    <div class="panel-body"> 
+                                    <div class="panel-body">
 										<section class="flick_table">
 											<div class="container">
 												<div class="row">
+													{% macro got_title(index) %}
+															<a data-toggle="collapse" data-parent="#accordion" href="#gotcollapse{{ index }}">
+													{% endmacro %}
+													{% macro got_innercontent(index) %}
+															<div id="gotcollapse{{ index }}" class="panel-collapse collapse">
+																<div class="panel-body">
+													{% endmacro %}
 													<h3 class="fw_300">GOT Change</h3>
 													<div class="col-sm-11">
-														<div class="table_style1 table_style2 table-responsive">
-															<table class="table">
-																<thead>
-																	<tr>
-																		<th>got mismatch</th>
-																		<th>which function</th>
-																	</tr>
-																</thead>
-																<tbody>
-																	{% for item in gottable %}
-																		<tr>
-																			<td>{{ item.mismatch }}</td>
-																			<td>{{ item.function }}</td>
-																		</tr>
-																	{% endfor%}
-																</tbody>
-															</table>
+														{% for item in gotoutput %}
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	{{ got_title(loop.index0) }}
+																		<p class="fw_300 color_33">
+																			{{ item.message }}
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															{{ got_innercontent(loop.index0) }}
+																	<p class="fw_300 color_33">
+																	{% for key, value in item.items() %}
+																		{{ key }}: {{ value }} <br>
+																	{% endfor %}
+																	</p>
+																</div>
+															</div>
 														</div>
+														{% endfor%}
 													</div>
 												</div>
 											</div>
@@ -152,10 +162,47 @@
 												</div>
 											</div>
 										</section>
+														{% macro heap_title(index) %}
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse{{ index }}">
+														{% endmacro %}
+														{% macro heap_innercontent(index) %}
+															<div id="heapcollapse{{ index }}" class="panel-collapse collapse">
+																<div class="panel-body">
+														{% endmacro %}
+										<section id="heapanalysisoutput">
+											<div class="container">
+												<div class="row">
+													<div class="col-md-11">
+														<h3 class="fw_300">Heap Information</h3>
+														{% for item in heapoutput %}
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	{{ heap_title(loop.index0) }}
+																		<p class="fw_300 color_33">
+																			{{ item.message }}
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															{{ heap_innercontent(loop.index0) }}
+																	<p class="fw_300 color_33">
+																	{% for key, value in item.items() %}
+																		{{ key }}: {{ value }} <br>
+																	{% endfor %}
+																	</p>
+																</div>
+															</div>
+														</div>
+														{% endfor%}
+													</div>
+												</div>
+											</div>
+										</section>
 									</div>
                                 </div>
                             </div>
-							
+
 						<div class="panel">
                                 <a href="#Leak_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">Leak Analysis</a>
                                 <div class="collapse panel-collapse" role="tabpanel" id="Leak_analysis">
@@ -163,31 +210,41 @@
 										<section class="flick_table">
 											<div class="container">
 												<div class="row">
+													{% macro leak_title(index) %}
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse{{ index }}">
+													{% endmacro %}
+													{% macro leak_innercontent(index) %}
+															<div id="leakcollapse{{ index }}" class="panel-collapse collapse">
+																<div class="panel-body">
+													{% endmacro %}
+													<h3 class="fw_300">Leakage Information</h3>
 													<div class="col-sm-11">
-														<div class="table_style1 table_style2 table-responsive">
-															<table class="table">
-																<thead>
-																	<tr>
-																		<th>name</th>
-																		<th>offset addr</th>
-																		<th>lib file</th>
-																	</tr>
-																</thead>
-																<tbody>
-																	{% for item in leaktable %}
-																	<tr>
-																		<td>{{ item.name }}</td>
-																		<td>{{ item.addr }}</td>
-																		<td>{{ item.lib }}</td>
-																	</tr>
-																	{% endfor%}
-																</tbody>
-															</table>
+														{% for item in leakoutput %}
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	{{ leak_title(loop.index0) }}
+																		<p class="fw_300 color_33">
+																			{{ item.message }}
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															{{ leak_innercontent(loop.index0) }}
+																	<p class="fw_300 color_33">
+																	{% for key, value in item.items() %}
+																		{{ key }}: {{ value }} <br>
+																	{% endfor %}
+																	</p>
+																</div>
+															</div>
 														</div>
+														{% endfor%}
 													</div>
 												</div>
 											</div>
 										</section>
+
 									</div>
                                 </div>
                             </div>
@@ -199,27 +256,36 @@
 										<section class="flick_table">
 											<div class="container">
 												<div class="row">
+													{% macro call_title(index) %}
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse{{ index }}">
+													{% endmacro %}
+													{% macro call_innercontent(index) %}
+															<div id="callcollapse{{ index }}" class="panel-collapse collapse">
+																<div class="panel-body">
+													{% endmacro %}
+													<h3 class="fw_300">Rop Information</h3>
 													<div class="col-sm-11">
-														<div class="table_style3 table_style2 table-responsive">
-															<table class="table">
-																<thead>
-																	<tr>
-																		<th>situation</th>
-																		<th>addr informatino</th>
-																		<th>rop information</th>
-																	</tr>
-																</thead>
-																<tbody>
-																	{% for item in calltable %}
-																	<tr>
-																		<td>{{ item.situation }}</td>
-																		<td>{{ item.jump }}</td>
-																		<td>{{ item.info }}</td>
-																	</tr>
-																	{% endfor%}
-																</tbody>
-															</table>
+														{% for item in calloutput %}
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	{{ call_title(loop.index0) }}
+																		<p class="fw_300 color_33">
+																			{{ item.message }}
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															{{ call_innercontent(loop.index0) }}
+																	<p class="fw_300 color_33">
+																	{% for key, value in item.items() %}
+																		{{ key }}: {{ value }} <br>
+																	{% endfor %}
+																	</p>
+																</div>
+															</div>
 														</div>
+														{% endfor%}
 													</div>
 												</div>
 											</div>

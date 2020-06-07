@@ -18,7 +18,7 @@ class got_analysis(object):
     def __init__(self, project):
         self.project = project
         self.symbol_resolve = symbol_resolve(project)
-        self.report_logger = logger.get_logger(__name__)
+        self.report_logger = 0
         self.mismatch = {}
     
     def result_str(self):
@@ -59,6 +59,8 @@ class got_analysis(object):
         """
         Do the job.
         """
+        self.report_logger = logger.get_logger(__name__)
+
         self.report_logger.info("Got analysis started.", type='tips')
         if not self.project.exploited_state:
             self.report_logger.warning("Exploited state haven't been set! Do replay now...?", type='tips')
