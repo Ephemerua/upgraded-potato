@@ -1202,7 +1202,7 @@
 								</a>
                                 <div class="collapse panel-collapse" role="tabpanel" id="information">
                                     <div class="panel-body"> 
-                                        <p class="fw_300 color_33">checksec:<br>{{checksecinfo}}&nbsp;</p>
+                                        <p class="fw_300 color_33"> checksec:<br>{{checksecinfo}}&nbsp;</p>
                                         <p class="fw_300 color_33"> system:<br>{{osinfo}} </p>
                                         <p class="fw_300 color_33"> <br> report time: <br> {{reporttime}} </p>
 									</div>
@@ -1263,7 +1263,23 @@
 												<div class="row">
 													<div class="col-md-11">
 														<h3 class="fw_300">Heap Transfer Gragh</h3>
-														<a><img src="{{img_path}}", style="width:100%;height:auto;"></a>
+														<div class="panel panel-default">
+															<div class="panel-heading">
+																<h4 class="panel-title">
+																	<a data-toggle="collapse" data-parent="#accordion" href="#heapgraphcollapse">
+																		<p class="fw_300 ">
+																			click for large picture
+																		</p>
+																	</a>
+																</h4>
+															</div>
+
+															<div id="heapgraphcollapse" class="panel-collapse collapse">
+																<div class="panel-body">
+																		<a><img src="{{img_path}}"></a>
+																</div>
+															</div>
+														</div>
 													</div>
 												</div>
 											</div>
