@@ -69,6 +69,7 @@ class Replayer(angr.project.Project):
         self._lib_opts = lib_opts
         self._bp = bp
         self.exploited_state = 0
+        self.end_timestamp = 0
         self.enabled_anas = {}
 
 
@@ -220,8 +221,7 @@ class Replayer(angr.project.Project):
         for ana_name in self.enabled_anas:
             exec("self.%s.do_analysis()" % ana_name)
 
-def state_timestamp(state):
-    return len(state.history.bbl_addrs)
+
 
 
 

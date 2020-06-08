@@ -85,6 +85,9 @@ class leak_analysis(object):
             self.report_logger.warn(message, type="leak",addr = i["addr"], symbol = i["symbol"][0], offset = i["symbol"][1], lib = i["symbol"][2])
 
     def trace_leak(self):
+        if self.leaked_addrs == []:
+            return
+        self.report_logger.info("Start tracing of leakage.")
         addrs = self.leaked_addrs
         def find_func(state, get_addr = False):
             nonlocal addrs
@@ -108,7 +111,7 @@ class leak_analysis(object):
                 if i["addr"]==addr:
                     symbol = i["symbol"]
             if symbol:
-                message = "Found leakage of %s%+d (%s) at :%s" %(symbol[0], symbol[1],hex(addr), hex(rip))
+                message = "Leakage trace: %s%+d (%s) at :%s" %(symbol[0], symbol[1],hex(addr), hex(rip))
             self.report_logger.warn(message, backtrace = bt, type='leak_trace')
         else:
             self.report_logger.warning("Track leak failed.")
@@ -129,7 +132,6 @@ class leak_analysis(object):
         for prefix in self._prefixs:
             self._match_output(prefix, output)
         self.do_report()
-        self.report_logger.info("Start tracing of leakage.")
         self.trace_leak()
         
     

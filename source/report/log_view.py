@@ -3,7 +3,28 @@ import copy
 from graphviz import Source
 import os
 import json
+from ansi2html import Ansi2HTMLConverter
+from jinja2 import Markup
+from termcolor import colored
+import copy
 
+# converter for ansi input    
+conv = Ansi2HTMLConverter()
+def escape_ansi(line):
+    ansi_escape = re.compile(r'(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]')
+    return ansi_escape.sub('', line)
+
+def html_format(dict):
+    global conv
+    if dict["level"] == "warning":
+        dict["message"] = colored(dict["message"], "red")
+    for key, val in dict.items():
+        if isinstance(val, str):
+            dict[key] = conv.convert(val, full=False)
+        elif isinstance(val, int):
+            dict[key] = hex(val)
+        dict[key] = dict[key].replace("\n", "<br/>")
+        dict[key] = dict[key].replace("\t", "&emsp;"*2)
 
 def set_html_color(dict, color):
     for key, val in dict.items():
@@ -41,8 +62,9 @@ def memory_color_htmlformat(str):
             return "<font color='red'>%s</font>" % num.group(1)
 
     result = re.sub('(?P<yellow>\\u001b\\[33m[0-9a-fA-F]{0,2}\\u001b\\[0m)|(?P<red>\\u001b\\[33m\\u001b\\[31m[0-9a-fA-F]{0,2}\\u001b\\[0m\\u001b\\[0m)', _replace_format, str)
-    result = '\n' + result
-    return result
+    #result = "\n" + result 
+    return result+"<br/>"
+
 
 def overflow_heap_info(node_info, overflow_info):
     '''
@@ -52,9 +74,9 @@ def overflow_heap_info(node_info, overflow_info):
     :return: the node which is overflow point
     '''
     for info in node_info:
-        start = int(info['addr'], 16)-0x10
-        end = start + int(info['size'], 16)
-        overflow_start = int(overflow_info['addr'], 16)
+        start = info['addr']-0x10
+        end = start + info['size']
+        overflow_start = overflow_info['addr']
         if overflow_start >= start and overflow_start <= end:
             info['content'] = overflow_info['content']
             info['type'] = overflow_info['type']
@@ -79,13 +101,17 @@ def free_heap_info(node_info, free_info):
 class report_log(object):
     def __init__(self, log_path):
         self.log_path = log_path
-        self.heap_log_list, self.call_log_list, self.leak_log_list, self.got_log_list = self.__parse_log_file()
+        self.heap_log_list, self.call_log_list,\
+             self.leak_log_list, self.got_log_list,\
+                 self.heap_log_list_dot = self.__parse_log_file()
 
     def __parse_log_file(self):
-        heap_log_list = []
-        call_log_list = []
-        leak_log_list = []
-        got_log_list = []
+        heap_log_list_html = []
+        call_log_list_html = []
+        leak_log_list_html = []
+        got_log_list_html = []
+        heap_log_list_dot = []
+
         f = open(self.log_path, 'r')
         lines = f.readlines()
         for line in lines:
@@ -96,43 +122,31 @@ class report_log(object):
             name = dict['name']
             if 'statestamp' in dict.keys():
                 dict['message'] = '[%s] %s' % (hex(dict['statestamp']), dict['message'])
-            fix_format(dict)
+            dict_bak = copy.deepcopy(dict)
+            html_format(dict)
             if name == 'heap_analysis':
-                heap_log_list.append(dict)
+                heap_log_list_html.append(dict)
+                dot_dict = (dict_bak)
+                heap_log_list_dot.append(dot_dict)
             elif name == 'call_analysis':
-                call_log_list.append(dict)
+                call_log_list_html.append(dict)
             elif name == 'got_analysis':
-                got_log_list.append(dict)
+                got_log_list_html.append(dict)
             elif name == 'leak_analysis':
-                leak_log_list.append(dict)
+                leak_log_list_html.append(dict)
         f.close()
-        return heap_log_list, call_log_list, leak_log_list, got_log_list
+        return heap_log_list_html, call_log_list_html, leak_log_list_html, got_log_list_html, heap_log_list_dot
 
     def get_leak_output(self):
-        for dict in self.leak_log_list:
-            fix_br_format(dict)
         return self.leak_log_list
 
     def get_got_output(self):
-        for dict in self.got_log_list:
-            fix_br_format(dict)
         return self.got_log_list
 
     def get_call_output(self):
-        for dict in self.call_log_list:
-            type = dict['type']
-            if type == 'return_address_overwritten':
-                set_html_color(dict, 'red')
-            elif type == 'unrecorded_strange_return':
-                set_html_color(dict, 'green')
-            fix_br_format(dict)
         return self.call_log_list
 
     def get_heap_output(self):
-        for dict in self.heap_log_list:
-            if 'memory' in dict.keys():
-                dict['memory'] = memory_color_htmlformat(dict['memory'])
-            fix_br_format(dict)
         return self.heap_log_list
 
     def get_heap_graph(self):
@@ -146,7 +160,7 @@ class report_log(object):
                 type = dict['type']
                 if type == 'malloc':
                     content = '[%s] %s' % (dict['state_timestamp'], dict['message'])
-                    malloc_info = {'addr': dict['ret_addr'], \
+                    malloc_info = {'addr': dict['addr'], \
                                    'size': dict['size'], \
                                    'statestamp': dict['state_timestamp'], \
                                    'content': content, \
@@ -158,7 +172,7 @@ class report_log(object):
 
                 elif type == 'calloc':
                     content = '[%s] %s' % (dict['state_timestamp'], dict['message'])
-                    calloc_info = {'addr': dict['ret_addr'], \
+                    calloc_info = {'addr': dict['addr'], \
                                    'size': dict['size'], \
                                    'statestamp': dict['state_timestamp'], \
                                    'content': content, \
@@ -191,6 +205,7 @@ class report_log(object):
                                        'type': dict['type'], \
                                        'node': copy.deepcopy(node_info), \
                                        'memory': memory_color_htmlformat(dict['memory'])})
+                    print(memory_color_htmlformat(dict['memory']))
 
                 elif type == 'redzone_write':
                     heap_infos.append({'content': '[%s] %s' % (dict['state_timestamp'], dict['message']), \
@@ -200,8 +215,8 @@ class report_log(object):
             return heap_infos
 
 
-        heap_infos = _heap_trans_list(self.heap_log_list)
-        head_dot = '''digraph G {n0[shape=reocord,label="......"]'''
+        heap_infos = _heap_trans_list(self.heap_log_list_dot)
+        head_dot = '''digraph G {n0[shape=record,label="......"]'''
         tail_dot = "}"
         label_dot = ""
         edge_dot = ""
@@ -248,9 +263,8 @@ class report_log(object):
         dot = head_dot + label_dot + edge_dot + tail_dot
         t = Source(dot)
         t.save("HeapChange.dot")
-        os.system("dot ./HeapChange.dot -Tsvg -o ./HeapChange.svg")
-        return os.path.join(os.getcwd(), 'HeapChange.svg')
-
+        os.system("dot ./HeapChange.dot -Tpng -o /tmp/HeapChange.png")
+        return "/tmp/HeapChange.png"
 
 
 

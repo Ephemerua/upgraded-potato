@@ -3,10 +3,10 @@ import angr
 import os
 from structures import malloc_state
 from arena import Arena
-from util.info_print import  stack_backtrace, printable_backtrace
+from util.info_print import  stack_backtrace, printable_backtrace, printable_memory
 import logging
 from analysis import register_ana
-from source.replayer import state_timestamp
+from common import state_timestamp
 import logger
 
 """
@@ -38,39 +38,7 @@ For simple double free it is easy. TODO: any other case?
 """
 
 
-from termcolor import colored
-def printable_memory(state, start, size, warn_pos = 0, warn_size = 0, info_pos = 0, info_size = 0):
-    result = ""
-    # align
-    size = ((size >>3) <<3) + 0x10
-    endl = -1
-    warn = 0
-    for addr in range(start, start+size, 8):
-        mem = state.memory.load(addr, 8, endness = "Iend_LE")
-        assert(mem.concrete)
-        mem = mem.args[0]
-        if endl:
-            result += "%s| " %(hex(addr))
-            endl = ~endl
-        else:
-            result += '  ' 
-            endl = ~endl
-        mem = "%016x" % mem
-        colored_mem = ["" for i in range(8)]
-        j = 0
-        for i in range(14, -2, -2):
-            bt = mem[i:i+2]
-            if addr + j in range(warn_pos, warn_pos+warn_size):
-                bt = colored(bt, 'red')
-            if addr + j in range(info_pos, info_pos+info_size):
-                bt = colored(bt, 'yellow')
-            colored_mem[7-j] = bt
-            j += 1
 
-        result += "".join(colored_mem) 
-        if endl:
-            result += '\n'
-    return result
             
 
 def bp_overflow(report_logger, start_addr, size, callback = None):
@@ -189,14 +157,14 @@ def _malloc_hook(state):
         assert(rax.concrete)
         rax = rax.args[0]
         message = "Malloc(%s) => %s" % (hex(size), hex(rax))
-        state.project.report_logger.info(message, size = size, ret_addr = rax, type = "malloc", state_timestamp = state_timestamp(state))
+        state.project.report_logger.info(message, size = size, addr = rax, type = "malloc", state_timestamp = state_timestamp(state))
         # TODO: check if return addr is sane. 
         symbol = state.project.symbol_resolve.reverse_resolve(rax) # dirty but easy
         if symbol:
             message = "Chunk returned (%s <- %s%+d)not in heap."% (hex(rax), hex(symbol[0]), hex(symbol[1]))
             state.project.report_logger.warn(message, symbol = symbol[0], offset = symbol[1], type = 'alloc_warn', state_timestamp = state_timestamp(state))
 
-        state.project.heap_analysis.add_chunk(rax, size)
+        state.project.heap_analysis.add_chunk(rax, size, state)
         # # TEST
         # ms, arena_addr = get_malloc_state(state, rax)
         # assert(ms)
@@ -283,7 +251,7 @@ def _free_hook(state):
     # stack frame haven't been created, so return address is in rsp
     ret_addr = state.memory.load(state.regs.rsp, endness = 'Iend_LE')
     ret_addr = ret_addr.args[0]
-    state.project.heap_analysis.del_chunk(addr, size)
+    state.project.heap_analysis.del_chunk(addr, size, state)
 
     # since the chunk is freed, remove write bps
     bps = state.project.heap_analysis.inuse_bps
@@ -357,7 +325,7 @@ class heap_analysis(object):
                 return addr, size
         return None
 
-    def add_chunk(self, addr, size):
+    def add_chunk(self, addr, size, state):
         """
         when a chunk is alloced, this func is called to do record and check.
         """
@@ -381,7 +349,7 @@ class heap_analysis(object):
         else:
             self.chunks_sv[size] = [addr]
 
-    def del_chunk(self, addr, size):
+    def del_chunk(self, addr, size, state):
         """
         when a chunk is freed, this func is called to do record and check.
         """
@@ -438,6 +406,7 @@ class heap_analysis(object):
         """
         Do the job.
         """
+        self.clear()
         self.project.report_logger = logger.get_logger(__name__)
         self.enable_hook()
         state = self.project.get_entry_state()

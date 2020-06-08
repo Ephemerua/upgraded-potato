@@ -4,7 +4,7 @@ import os
 from analysis import register_ana
 import os
 import logger
-from source.replayer import state_timestamp
+from common import state_timestamp
 """
 Set write bp on return address in stack.
 TODO: get rop chain info
@@ -171,6 +171,7 @@ def call_cb_constructor(ana, **kwargs):
         return 
     return call_callback
 
+# This cb trigged after 'ret'
 def ret_cb_constructor(ana, **kwargs):
     """
     make a ret bp.
@@ -190,37 +191,41 @@ def ret_cb_constructor(ana, **kwargs):
         assert(ret_addr.concrete)
         ret_addr = ret_addr.args[0]
         ana.call_history.append((ret_addr, 'ret'))
-        #print("return to 0x%x" % ret_addr)
-        # get the top of call_stack
+
+        # try to match ret address
         if ana.call_stack:
-            ret_origin = ana.call_stack[-1]
-            # compare the top wit ret_addr
-            if ret_origin == ret_addr:
-                ana.call_stack.pop()
+            if ret_addr in ana.call_stack:
+                while 1:
+                    temp = ana.call_stack.pop()
+                    if temp == ret_addr:
+                        break
+                # TODO: fix call track
                 if ana._last_depth and ana.call_track:
                     ana._last_depth -= 1
-                 
             else:
                 # FIXME: only reset _last_depth on mismatching????
+                ana.call_stack.pop()
                 ana._last_depth = 0
                 ana.call_track = 1
                 ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"mismatch"})
-                #TODO: get rop info here
                 message = "Strange return to %s" %hex(ret_addr)
                 state.project.report_logger.warn(message, type='strange_return', ret_addr = ret_addr, ret_info = ret_info(state), state_timestamp = state_timestamp(state))
         else:
             # no frame? must be rop
             ana.call_track = 1
             ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"unrecorded"})
-            #TODO: get rop info here
             message = "Unrecorded return to %s" %hex(ret_addr)
             state.project.report_logger.warn(message, type='unrecorded_strange_return', ret_addr = ret_addr, ret_info = ret_info(state), state_timestamp = state_timestamp(state))
 
 
         # remove the breakpoint
-        bp = ana.ret_bps.pop(origin_rsp, None)
-        if bp:
-            state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bp)
+        removed = []
+        for rsp, bp in ana.ret_bps.items():
+            if rsp <= origin_rsp:
+                removed.append(rsp)
+                state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bp)
+        for i in removed:
+            ana.ret_bps.pop(i)
         return
 
     return ret_callback
@@ -230,7 +235,6 @@ def ret_cb_constructor(ana, **kwargs):
 
 class call_analysis(object):
     """
-    FIXME: sometimes bp won't be fired, why?????
     XXX: state.callstack plugin doesn't work under unciron
     Set bp on call and return, compare the address called and returned to, 
     so we can find stack's return address overflow.
