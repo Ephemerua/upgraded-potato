@@ -46,7 +46,7 @@ class got_analysis(object):
                 changed = state.memory.load(addr, 8 , endness = "Iend_LE")
                 changed = BV2Int(changed)
                 message = "Found write to got table: %s" % sym
-                ana.report_logger.warn(message, backtrace = bt, type='got_change')
+                ana.report_logger.warn(message, backtrace = bt, type='got_change', state_timestamp = state_timestamp(state))
             
             state.inspect.b("mem_write", action = got_trace_bp, when = angr.BP_AFTER,\
                 mem_write_address=addr )
@@ -115,10 +115,10 @@ class got_analysis(object):
                     self.mismatch[sym] = {"addr":addr}
                     if resolve_result:
                         message = "GOT mismatch: %s changed to %s%+d(%s)." % (sym, resolve_result[0], resolve_result[1], hex(addr))
-                        self.report_logger.warn(message, symbol = sym, addr = addr, func = resolve_result[0], file = resolve_result[2], type='got_mismatch')
+                        self.report_logger.warn(message, got_entry_symbol = sym, modified_addr = addr, modified_to_func = resolve_result[0], modified_func_belongs_to = resolve_result[2], type='got_mismatch')
                     else:
                         message = "GOT mismatch: %s changed to %s." % (sym, hex(addr))
-                        self.report_logger.warn(message, symbol = sym, addr = addr, type='got_mismatch')
+                        self.report_logger.warn(message, got_entry_symbol = sym, modified_addr = addr, type='got_mismatch')
         self.trace_got()
         self.report_logger.info("Got analysis done.", type='tips')
             

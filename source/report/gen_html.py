@@ -1,12 +1,12 @@
 from jinja2 import Environment, FileSystemLoader
-from report.log_view import *
-from report.env_view import *
+from .log_view import *
+from .env_view import *
 import time
 
 def generate_report(binary_path, template_name="template.html", report_name = "report.html", \
                     analysis_path = ""):
     '''
-    the report will be generated in ../../html/
+    the report will be generated in current directory
     :param binary_path:
     :param template_name:
     :param report_name:
@@ -37,7 +37,6 @@ def generate_report(binary_path, template_name="template.html", report_name = "r
         '''
         path = __file__[:__file__.rfind("/")]
         work_path = os.getcwd()
-        print(work_path)
         os.system("cp -rf %s/html %s"%(path, work_path))
         html_path = os.getcwd()+"/html/"
         if os.access(heap_image_path,os.F_OK):
@@ -46,7 +45,6 @@ def generate_report(binary_path, template_name="template.html", report_name = "r
         else:
             print("Heap change image not found!")
             heap_image_path = ""
-        print(html_path)
 
         env = Environment(loader=FileSystemLoader(html_path))
         template = env.get_template(template_name)
@@ -62,6 +60,7 @@ def generate_report(binary_path, template_name="template.html", report_name = "r
                                            heapoutput=heap_output, \
                                            calloutput=call_output)
             fout.write(html_content)
+            print("Report generated at %s/report.html" % html_path)
 
     generate_html(got_output, heap_image_path, heap_output, leak_output, call_output)
 

@@ -77,7 +77,7 @@ def bp_constructor(ana, addr, size = 8, callback = None):
         if origin == modified:
             return
         message = "Return address at %s overwritten to %s" % (hex(addr), hex(modified))
-        state.project.report_logger.warn(message, type='return_address_overwritten',addr = addr, origin = origin, modified = modified, \
+        state.project.report_logger.warn(message, type='return_address_overwritten',stack_address = addr, origin_return_address = origin, modified_return_address = modified, \
                                          backtrace = printable_backtrace(bt), state_timestamp = state_timestamp(state))
         #print(state.callstack)
         return
@@ -209,13 +209,13 @@ def ret_cb_constructor(ana, **kwargs):
                 ana.call_track = 1
                 ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"mismatch"})
                 message = "Strange return to %s" %hex(ret_addr)
-                state.project.report_logger.warn(message, type='strange_return', ret_addr = ret_addr, ret_info = ret_info(state), state_timestamp = state_timestamp(state))
+                state.project.report_logger.warn(message, type='strange_return', return_to = ret_addr, ret_information = ret_info(state), state_timestamp = state_timestamp(state))
         else:
             # no frame? must be rop
             ana.call_track = 1
             ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"unrecorded"})
             message = "Unrecorded return to %s" %hex(ret_addr)
-            state.project.report_logger.warn(message, type='unrecorded_strange_return', ret_addr = ret_addr, ret_info = ret_info(state), state_timestamp = state_timestamp(state))
+            state.project.report_logger.warn(message, type='unrecorded_strange_return', return_to = ret_addr, ret_information = ret_info(state), state_timestamp = state_timestamp(state))
 
 
         # remove the breakpoint

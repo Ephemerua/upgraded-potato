@@ -156,7 +156,7 @@ def _malloc_hook(state):
         rax = state.regs.rax
         assert(rax.concrete)
         rax = rax.args[0]
-        message = "Malloc(%s) => %s" % (hex(size), hex(rax))
+        message = "Memory allocate: malloc(%s) => %s" % (hex(size), hex(rax))
         state.project.report_logger.info(message, size = size, addr = rax, type = "malloc", state_timestamp = state_timestamp(state))
         # TODO: check if return addr is sane. 
         symbol = state.project.symbol_resolve.reverse_resolve(rax) # dirty but easy
@@ -244,7 +244,7 @@ def _free_hook(state):
     size = size.args[0]
     size = (size >> 4)<<4
     # print("Free called to free %s with size %s" % (hex(addr), hex(size)))
-    message = "Free(%s) (size: %s)" % (hex(addr), hex(size))
+    message = "Memory free: free(%s) (size: %s)" % (hex(addr), hex(size))
     state.project.report_logger.info(message, addr = addr, size = size, type="free", state_timestamp = state_timestamp(state))
 
     # get info for ret callback

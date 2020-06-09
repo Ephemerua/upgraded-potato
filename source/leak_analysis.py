@@ -82,12 +82,12 @@ class leak_analysis(object):
     def do_report(self):
         for i in self.leaked_symbols:
             message = "Found leakage: %s%+d(%s)"%((i["symbol"][0]), i["symbol"][1], hex(i["addr"]))
-            self.report_logger.warn(message, type="leak",addr = i["addr"], symbol = i["symbol"][0], offset = i["symbol"][1], lib = i["symbol"][2])
+            self.report_logger.warn(message, type="leak",leaked_address = i["addr"], symbol_of_address = i["symbol"][0], offset = i["symbol"][1], lib = i["symbol"][2])
 
     def trace_leak(self):
         if self.leaked_addrs == []:
             return
-        self.report_logger.info("Start tracing of leakage.")
+        self.report_logger.info("Start tracing of leakage.", type="tips")
         addrs = self.leaked_addrs
         def find_func(state, get_addr = False):
             nonlocal addrs
@@ -111,10 +111,10 @@ class leak_analysis(object):
                 if i["addr"]==addr:
                     symbol = i["symbol"]
             if symbol:
-                message = "Leakage trace: %s%+d (%s) at :%s" %(symbol[0], symbol[1],hex(addr), hex(rip))
-            self.report_logger.warn(message, backtrace = bt, type='leak_trace')
+                message = "Leakage trace: leak of %s%+d (%s) happened at :%s" %(symbol[0], symbol[1],hex(addr), hex(rip))
+            self.report_logger.warn(message, backtrace = bt, type='leak_trace', state_timestamp = state_timestamp(state))
         else:
-            self.report_logger.warning("Track leak failed.")
+            self.report_logger.warning("Track leak failed.", type="tips")
         
         return simgr
     

@@ -7,6 +7,7 @@ from ansi2html import Ansi2HTMLConverter
 from jinja2 import Markup
 from termcolor import colored
 import copy
+from .type_info import desc_dict, key_replace_dict
 
 # converter for ansi input    
 conv = Ansi2HTMLConverter()
@@ -16,8 +17,18 @@ def escape_ansi(line):
 
 def html_format(dict):
     global conv
+    result = {}
+    # set message color
     if dict["level"] == "warning":
         dict["message"] = colored(dict["message"], "red")
+    # drop useless item
+    dict.pop("name", None)
+    dict.pop("level", None)
+    # add desc
+    if "type" in dict:
+        result["Description"] = desc_dict[dict["type"]]
+    dict.pop("type", None)
+    # html and color format
     for key, val in dict.items():
         if isinstance(val, str):
             dict[key] = conv.convert(val, full=False)
@@ -25,6 +36,20 @@ def html_format(dict):
             dict[key] = hex(val)
         dict[key] = dict[key].replace("\n", "<br/>")
         dict[key] = dict[key].replace("\t", "&emsp;"*2)
+    # replace some key name to be more neat
+    for k,v in dict.items():
+        if k=='message'or k=='type'or k=='level':
+            result[k] = v
+            continue
+        if k in key_replace_dict:
+            k = key_replace_dict[k]
+            result[k] = v
+            continue
+        k = k.replace("_", "&nbsp")
+        if len(k)>1:
+            k = k[0].upper()+k[1:]
+        result[k] = v
+    return result
 
 def set_html_color(dict, color):
     for key, val in dict.items():
@@ -98,6 +123,11 @@ def free_heap_info(node_info, free_info):
         index += 1
     return node_info
 
+def no_message_tips(output_list):
+    if output_list == []:
+        output_list.append({"message":"Not enabled or nothing to report."})
+    return output_list
+
 class report_log(object):
     def __init__(self, log_path):
         self.log_path = log_path
@@ -123,7 +153,7 @@ class report_log(object):
             if 'statestamp' in dict.keys():
                 dict['message'] = '[%s] %s' % (hex(dict['statestamp']), dict['message'])
             dict_bak = copy.deepcopy(dict)
-            html_format(dict)
+            dict = html_format(dict)
             if name == 'heap_analysis':
                 heap_log_list_html.append(dict)
                 dot_dict = (dict_bak)
@@ -137,17 +167,19 @@ class report_log(object):
         f.close()
         return heap_log_list_html, call_log_list_html, leak_log_list_html, got_log_list_html, heap_log_list_dot
 
+
     def get_leak_output(self):
-        return self.leak_log_list
+        return no_message_tips(self.leak_log_list)
 
     def get_got_output(self):
-        return self.got_log_list
+        return no_message_tips(self.got_log_list)
 
     def get_call_output(self):
-        return self.call_log_list
+        return no_message_tips(self.call_log_list)
+
 
     def get_heap_output(self):
-        return self.heap_log_list
+        return no_message_tips(self.heap_log_list)
 
     def get_heap_graph(self):
 
@@ -205,7 +237,6 @@ class report_log(object):
                                        'type': dict['type'], \
                                        'node': copy.deepcopy(node_info), \
                                        'memory': memory_color_htmlformat(dict['memory'])})
-                    print(memory_color_htmlformat(dict['memory']))
 
                 elif type == 'redzone_write':
                     heap_infos.append({'content': '[%s] %s' % (dict['state_timestamp'], dict['message']), \
