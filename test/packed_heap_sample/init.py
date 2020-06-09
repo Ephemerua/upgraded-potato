@@ -23,6 +23,7 @@ simgr = p.get_simgr()
 def run():
     p.enable_analysis(["heap_analysis", "got_analysis", "leak_analysis", "call_analysis"])
     p.do_analysis()
-    generate_report('./easyheap', analysis_path='./analysis.log')
-    
+    p.generate_report()
+
+
 
