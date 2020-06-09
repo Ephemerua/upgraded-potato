@@ -1,9 +1,10 @@
 import angr
 from  util.info_print import stack_backtrace, printable_backtrace, fetch_str
-import logging
 import os
 from analysis import register_ana
-
+import os
+import logger
+from common import state_timestamp
 """
 Set write bp on return address in stack.
 TODO: get rop chain info
@@ -75,10 +76,9 @@ def bp_constructor(ana, addr, size = 8, callback = None):
         state.memory.store(target_addr, backup, disable_actions=True, inspect = False)
         if origin == modified:
             return
-        # print("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified) ))
-        state.project.report_logger.info("address %s changed from %s to %s" % (hex(addr), hex(origin), hex(modified)))
-        # print(printable_backtrace(bt))
-        state.project.report_logger.info(printable_backtrace(bt))
+        message = "Return address at %s overwritten to %s" % (hex(addr), hex(modified))
+        state.project.report_logger.warn(message, type='return_address_overwritten',stack_address = addr, origin_return_address = origin, modified_return_address = modified, \
+                                         backtrace = printable_backtrace(bt), state_timestamp = state_timestamp(state))
         #print(state.callstack)
         return
     return write_bp
@@ -131,7 +131,8 @@ def ret_info(state):
     for reg, value in args.items():
         result += "\t%s: %s" % (reg, hex(value.args[0]))
         s = fetch_str(state, value)
-        result += s
+        if s:
+            result += " ->" + """ "%s" """%(s)
         s = state.project.symbol_resolve.reverse_resolve(value)
         if s:
             if '__gmon_start__' in s[0]:
@@ -170,6 +171,7 @@ def call_cb_constructor(ana, **kwargs):
         return 
     return call_callback
 
+# This cb trigged after 'ret'
 def ret_cb_constructor(ana, **kwargs):
     """
     make a ret bp.
@@ -189,42 +191,41 @@ def ret_cb_constructor(ana, **kwargs):
         assert(ret_addr.concrete)
         ret_addr = ret_addr.args[0]
         ana.call_history.append((ret_addr, 'ret'))
-        #print("return to 0x%x" % ret_addr)
-        # get the top of call_stack
+
+        # try to match ret address
         if ana.call_stack:
-            ret_origin = ana.call_stack[-1]
-            # compare the top wit ret_addr
-            if ret_origin == ret_addr:
-                ana.call_stack.pop()
+            if ret_addr in ana.call_stack:
+                while 1:
+                    temp = ana.call_stack.pop()
+                    if temp == ret_addr:
+                        break
+                # TODO: fix call track
                 if ana._last_depth and ana.call_track:
                     ana._last_depth -= 1
-                 
             else:
                 # FIXME: only reset _last_depth on mismatching????
-                # print("\nStrange return to 0x%x:" % ret_addr)
-                state.project.report_logger.info("\nStrange return to 0x%x:" % ret_addr)
+                ana.call_stack.pop()
                 ana._last_depth = 0
                 ana.call_track = 1
                 ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"mismatch"})
-                #TODO: get rop info here
-                # print(ret_info(state))
-                state.project.report_logger.info(ret_info(state))
-
+                message = "Strange return to %s" %hex(ret_addr)
+                state.project.report_logger.warn(message, type='strange_return', return_to = ret_addr, ret_information = ret_info(state), state_timestamp = state_timestamp(state))
         else:
             # no frame? must be rop
-            # print("\nUnrecorded return to 0x%x" % ret_addr)
-            state.project.report_logger.info("\nUnrecorded return to 0x%x" % ret_addr)
             ana.call_track = 1
             ana.abnormal_calls.append({"at":state.history.bbl_addrs[-1], "to":ret_addr, "type":"unrecorded"})
-            #TODO: get rop info here
-            # print(ret_info(state))
-            state.project.report_logger.info(ret_info(state))
+            message = "Unrecorded return to %s" %hex(ret_addr)
+            state.project.report_logger.warn(message, type='unrecorded_strange_return', return_to = ret_addr, ret_information = ret_info(state), state_timestamp = state_timestamp(state))
 
 
         # remove the breakpoint
-        bp = ana.ret_bps.pop(origin_rsp, None)
-        if bp:
-            state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bp)
+        removed = []
+        for rsp, bp in ana.ret_bps.items():
+            if rsp <= origin_rsp:
+                removed.append(rsp)
+                state.inspect.remove_breakpoint(event_type = 'mem_write', bp = bp)
+        for i in removed:
+            ana.ret_bps.pop(i)
         return
 
     return ret_callback
@@ -234,7 +235,6 @@ def ret_cb_constructor(ana, **kwargs):
 
 class call_analysis(object):
     """
-    FIXME: sometimes bp won't be fired, why?????
     XXX: state.callstack plugin doesn't work under unciron
     Set bp on call and return, compare the address called and returned to, 
     so we can find stack's return address overflow.
@@ -258,19 +258,17 @@ class call_analysis(object):
         self.track_depth = track_depth
         self.overflow_pos = set()
 
-        self.log_path = os.path.join(project.target_path, "call_analy.log")
-        self.project.report_logger = logging.getLogger('call_analysis')
-        self.project.report_logger.setLevel(logging.INFO)
-        file_handle = logging.FileHandler(self.log_path, mode="w")
-        self.project.report_logger.addHandler(file_handle)
-
-
 
     def do_analysis(self):
         """
         do the job
         XXX: could we merge this to avoid simgr.run() again?
         """
+
+        # if self.project.report_logger is in xxx_analysis.__init__(),
+        # the self.project.report_logger will be set the last initialized one during Replayer.enable_analysis,
+        # so get_logger should be put in xxx.do_analysis()
+        self.project.report_logger = logger.get_logger(__name__)
 
         state = self.project.get_entry_state()
         # XXX: unicorn engine at present cannot handle call/return breakpoint...
@@ -281,4 +279,3 @@ class call_analysis(object):
         simgr.run()
 
 register_ana('call_analysis', call_analysis)
-

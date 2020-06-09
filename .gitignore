@@ -1,5 +1,6 @@
 .DS_Store
 /bin
+
 # Coredumps
 **/core.*
 **/.gdb_history
@@ -60,3 +61,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Tests
+!test/*/*.so
+test/*/*.log

@@ -2,78 +2,93 @@ import re
 import copy
 from graphviz import Source
 import os
+import json
+from ansi2html import Ansi2HTMLConverter
+from jinja2 import Markup
+from termcolor import colored
+import copy
+from .type_info import desc_dict, key_replace_dict
 
+# converter for ansi input    
+conv = Ansi2HTMLConverter()
+def escape_ansi(line):
+    ansi_escape = re.compile(r'(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]')
+    return ansi_escape.sub('', line)
 
+def html_format(dict):
+    global conv
+    result = {}
+    # set message color
+    if dict["level"] == "warning":
+        dict["message"] = colored(dict["message"], "red")
+    # drop useless item
+    dict.pop("name", None)
+    dict.pop("level", None)
+    # add desc
+    if "type" in dict:
+        result["Description"] = desc_dict[dict["type"]]
+    dict.pop("type", None)
+    # html and color format
+    for key, val in dict.items():
+        if isinstance(val, str):
+            dict[key] = conv.convert(val, full=False)
+        elif isinstance(val, int):
+            dict[key] = hex(val)
+        dict[key] = dict[key].replace("\n", "<br/>")
+        dict[key] = dict[key].replace("\t", "&emsp;"*2)
+    # replace some key name to be more neat
+    for k,v in dict.items():
+        if k=='message'or k=='type'or k=='level':
+            result[k] = v
+            continue
+        if k in key_replace_dict:
+            k = key_replace_dict[k]
+            result[k] = v
+            continue
+        k = k.replace("_", "&nbsp")
+        if len(k)>1:
+            k = k[0].upper()+k[1:]
+        result[k] = v
+    return result
 
-class view_leak_log(object):
-    def __init__(self, path):
-        self.path = path
+def set_html_color(dict, color):
+    for key, val in dict.items():
+        dict[key] = '''<font color="%s">%s</font>''' % (color, val)
+    return dict
 
-    def get_leak_table(self):
-        '''
-        :return: a list whose format is for jinja2
-        '''
-        def parse_info_from_log(path):
-            '''
-            parse the leak analysis log file
-            :param path: leak analysis log file path
-            :return: a list whose format is for jinja2
-            '''
+def fix_br_format(dict):
+    for key, val in dict.items():
+        if isinstance(val, str):
+            dict[key] = val.replace('\n', '<br/>')
+    return dict
 
-            leak_list = []
-            f = open(path, "r")
-            while True:
-                node_info = {}
-                line = f.readline()
-                if not line:
-                    break
-                obj = re.match("Found leaked addr: (.*) (.*) in lib (.*)", line)
-                if obj:
-                    node_info['name'] = obj.group(1)
-                    node_info['addr'] = obj.group(2)
-                    node_info['lib'] = obj.group(3)
-                    leak_list.append(copy.deepcopy(node_info))
-            f.close()
-            return leak_list
+def fix_format(dict):
+    if 'backtrace' in dict.keys():
+        dict['backtrace'] = '\n' + dict['backtrace']
+    for key, val in dict.items():
+        if isinstance(val, int):
+            dict[key] = "%s" % hex(val)
+    return dict
 
-        return parse_info_from_log(self.path)
+def memory_color_htmlformat(str):
+    '''
+    replace the ansi format, only red and yellow
+    :param str: memory str
+    :return: memory str with html format
+    '''
+    def _replace_format(matched):
+        if matched.group('yellow') is not None:
+            num = re.match('\\u001b\\[33m([0-9a-fA-F]{0,2})\\u001b\\[0m', matched.group('yellow'))
+            # print(num.group(1))
+            return "<font color='#EACE00'>%s</font>" % num.group(1)
+        elif matched.group('red') is not None:
+            num = re.match('\\u001b\\[33m\\u001b\\[31m([0-9a-fA-F]{0,2})\\u001b\\[0m\\u001b\\[0m', matched.group('red'))
+            # print(num.group(1))
+            return "<font color='red'>%s</font>" % num.group(1)
 
-class view_got_log(object):
-    def __init__(self, path):
-        self.path = path
-
-    def get_got_change(self):
-        '''
-        :return: a list whose format is for jinja2
-        '''
-
-        def parse_info_from_log(path):
-            '''
-            parse the got analysis log file
-            :param path: got analysis log file path
-            :return: a list whose format is for jinja2
-            '''
-            f = open(path, "r")
-            got_change = []
-            lines = f.readlines()
-            for i in range(len(lines)):
-                node_info = {}
-                misobj = re.match("Found got mismatch: (.*)", lines[i])
-                if misobj:
-                    node_info['mismatch'] = misobj.group(1)
-                    if i == len(lines) - 1:
-                        continue
-                    if lines[i + 1].startswith("which is func"):
-                        obj = re.match("which is func (.*)", lines[i + 1])
-                        node_info['function'] = obj.group(1)
-                    else:
-                        # node_info.append("")
-                        node_info['function'] = ""
-                    got_change.append(copy.deepcopy(node_info))
-            f.close()
-            return got_change
-
-        return parse_info_from_log(self.path)
+    result = re.sub('(?P<yellow>\\u001b\\[33m[0-9a-fA-F]{0,2}\\u001b\\[0m)|(?P<red>\\u001b\\[33m\\u001b\\[31m[0-9a-fA-F]{0,2}\\u001b\\[0m\\u001b\\[0m)', _replace_format, str)
+    #result = "\n" + result 
+    return result+"<br/>"
 
 
 def overflow_heap_info(node_info, overflow_info):
@@ -84,11 +99,12 @@ def overflow_heap_info(node_info, overflow_info):
     :return: the node which is overflow point
     '''
     for info in node_info:
-        start = int(info[0], 16)-0x10
-        end = start + int(info[1], 16)
-        overflow_start = int(overflow_info[0], 16)
+        start = info['addr']-0x10
+        end = start + info['size']
+        overflow_start = overflow_info['addr']
         if overflow_start >= start and overflow_start <= end:
-            info[2] = overflow_info[2]
+            info['content'] = overflow_info['content']
+            info['type'] = overflow_info['type']
             break
     return node_info
 
@@ -99,120 +115,139 @@ def free_heap_info(node_info, free_info):
     :param free_info: a node which will be free
     :return: the node which will be free in heap info
     '''
-    success = False
     index = 0
     for info in node_info:
-        if info[0] == free_info[0]:
-            success = True
-            break
+        if info['addr'] == free_info['addr']:
+            del node_info[index]
+            return node_info
         index += 1
-    if success:
-        del node_info[index]
-        return node_info
-    else:
-        return node_info
+    return node_info
 
-def extract_memory(f):
-    res = ""
-    while True:
-        line = f.readline()
-        if line is not '\n':
-            res += \
-                line.replace('[0m', '').replace('[33m', '').replace('[31m', '')
-            break
-    while True:
-        line = f.readline()
-        if line is '\n':
-            break
-        res += \
-            line.replace('[0m', '').replace('[33m', '').replace('[31m', '')
-    return res
+def no_message_tips(output_list):
+    if output_list == []:
+        output_list.append({"message":"Not enabled or nothing to report."})
+    return output_list
 
-def extract_stack(f):
-    res = ""
-    while True:
-        line = f.readline()
-        if "stack:" in line or line=="":
-            break
+class report_log(object):
+    def __init__(self, log_path):
+        self.log_path = log_path
+        self.heap_log_list, self.call_log_list,\
+             self.leak_log_list, self.got_log_list,\
+                 self.heap_log_list_dot = self.__parse_log_file()
 
-    while True:
-        line = f.readline()
-        if line == '\n'or line=="":
-            break
-        res += line
+    def __parse_log_file(self):
+        heap_log_list_html = []
+        call_log_list_html = []
+        leak_log_list_html = []
+        got_log_list_html = []
+        heap_log_list_dot = []
 
-    return res if res is not "" else "None"
+        f = open(self.log_path, 'r')
+        lines = f.readlines()
+        for line in lines:
+            dict = json.loads(line[:-1])
+            del dict['logger_factory']
+            del dict['timestamp']
+            del dict['logger']
+            name = dict['name']
+            if 'statestamp' in dict.keys():
+                dict['message'] = '[%s] %s' % (hex(dict['statestamp']), dict['message'])
+            dict_bak = copy.deepcopy(dict)
+            dict = html_format(dict)
+            if name == 'heap_analysis':
+                heap_log_list_html.append(dict)
+                dot_dict = (dict_bak)
+                heap_log_list_dot.append(dot_dict)
+            elif name == 'call_analysis':
+                call_log_list_html.append(dict)
+            elif name == 'got_analysis':
+                got_log_list_html.append(dict)
+            elif name == 'leak_analysis':
+                leak_log_list_html.append(dict)
+        f.close()
+        return heap_log_list_html, call_log_list_html, leak_log_list_html, got_log_list_html, heap_log_list_dot
 
-class view_heap_log(object):
 
-    def __init__(self, path):
-        self.path = path
+    def get_leak_output(self):
+        return no_message_tips(self.leak_log_list)
 
-    def gen_heap_change_png(self):
-        '''
-        generate dot file and png file
-        :return:
-        '''
+    def get_got_output(self):
+        return no_message_tips(self.got_log_list)
 
-        def parse_heap_change_log(path):
-            '''
-            Record heap change information
-            :param path: heap analysis log file path
-            :return: a list of heap info change
-            '''
+    def get_call_output(self):
+        return no_message_tips(self.call_log_list)
 
+
+    def get_heap_output(self):
+        return no_message_tips(self.heap_log_list)
+
+    def get_heap_graph(self):
+
+
+        def _heap_trans_list(list):
             heap_infos = []
-            f = open(path, "r")
             node_info = []
-            while True:
-                line = f.readline()
-                if not line:
-                    break
-
-                mallocobj = re.match("Malloc called with size (.*), returns addr (.*)", line)
-                if mallocobj:
-                    malloc_info = [mallocobj.group(2), mallocobj.group(1), mallocobj.group()]
+            for dict in list:
+                dict = fix_br_format(dict)
+                type = dict['type']
+                if type == 'malloc':
+                    content = '[%s] %s' % (dict['state_timestamp'], dict['message'])
+                    malloc_info = {'addr': dict['addr'], \
+                                   'size': dict['size'], \
+                                   'statestamp': dict['state_timestamp'], \
+                                   'content': content, \
+                                   'type': dict['type']}
                     node_info.append(malloc_info)
-                    heap_infos.append([mallocobj.group(), copy.deepcopy(node_info)])
-                    continue
+                    heap_infos.append({'content': content, \
+                                       'type': dict['type'], \
+                                       'node': copy.deepcopy(node_info)})
 
-                callocobj = re.match("Calloc called with size (.*), returns addr (.*)", line)
-                if callocobj:
-                    calloc_info = [callocobj.group(2), callocobj.group(1), callocobj.group()]
+                elif type == 'calloc':
+                    content = '[%s] %s' % (dict['state_timestamp'], dict['message'])
+                    calloc_info = {'addr': dict['addr'], \
+                                   'size': dict['size'], \
+                                   'statestamp': dict['state_timestamp'], \
+                                   'content': content, \
+                                   'type': dict['type']}
                     node_info.append(calloc_info)
-                    heap_infos.append([callocobj.group(), copy.deepcopy(node_info)])
-                    continue
+                    heap_infos.append({'content': content, \
+                                       'type': dict['type'], \
+                                       'node': copy.deepcopy(node_info)})
 
-                freeobj = re.match("Free called to free (.*) with size (.*)", line)
-                if freeobj:
-                    # print("free:" + freeobj.group(1) + " " + freeobj.group(2))
-                    free_info = [freeobj.group(1), freeobj.group(2), freeobj.group()]
+                elif type == 'free':
+                    content = '[%s] %s' % (dict['state_timestamp'], dict['message'])
+                    free_info = {'addr': dict['addr'], \
+                                 'size': dict['size'], \
+                                 'statestamp': dict['state_timestamp'], \
+                                 'content': content, \
+                                 'type': dict['type']}
                     node_info = free_heap_info(node_info, free_info)
-                    heap_infos.append([freeobj.group(), copy.deepcopy(node_info)])
-                    continue
+                    heap_infos.append({'content': content, \
+                                       'type': dict['type'], \
+                                       'node': copy.deepcopy(node_info)})
 
-                overflowobj = re.match(
-                    "Found overflow in chunk at (.*), size (.*) with write starts at (.*), size (.*)!\n",
-                    line)
-                if overflowobj:
-                    # print("overflow:" + overflowobj.group(1) + " " + overflowobj.group(2))
-                    overlength = f.readline()
-                    overflow_info = [overflowobj.group(3), overflowobj.group(4), overflowobj.group() + overlength]
+                elif type == 'heap_overflow':
+                    overflow_info = {'addr': dict['target_addr'], \
+                                     'size': dict['target_size'], \
+                                     'content': '[%s] %s' % (dict['state_timestamp'], dict['message']), \
+                                     'type': dict['type']}
                     node_info = overflow_heap_info(node_info, overflow_info)
                     # add the memory info by extract_memory()
-                    heap_infos.append([overflowobj.group() + overlength, copy.deepcopy(node_info), extract_memory(f)])
+                    heap_infos.append({'content': '[%s] %s' % (dict['state_timestamp'], dict['message']), \
+                                       'type': dict['type'], \
+                                       'node': copy.deepcopy(node_info), \
+                                       'memory': memory_color_htmlformat(dict['memory'])})
 
-                memobj = re.match("Mem write to chunk header (.*) start at (.*) with size (.*): <(.*)>", line)
-                if memobj:
-                    heap_infos.append([memobj.group(),extract_memory(f), extract_stack(f)])
-
-            f.close()
-            # print(self.heap_infos)
+                elif type == 'redzone_write':
+                    heap_infos.append({'content': '[%s] %s' % (dict['state_timestamp'], dict['message']), \
+                                       'type': dict['type'], \
+                                       'memory': memory_color_htmlformat(dict['memory']), \
+                                       'backtrace': dict['backtrace']})
             return heap_infos
 
 
-        heap_infos = parse_heap_change_log(self.path)
-        head_dot = '''digraph G {n0[shape=reocord,label="......"]'''
+        heap_infos = _heap_trans_list(self.heap_log_list_dot)
+        head_dot = '''digraph G {n0[shape=record,label="......"]'''
         tail_dot = "}"
         label_dot = ""
         edge_dot = ""
@@ -220,157 +255,47 @@ class view_heap_log(object):
         for heap_info in heap_infos:
             index += 1
 
-            # when the node is empty
-            if len(heap_info[1]) == 0:
-                label_dot += '''n%s[shape=record,label="......"]''' % (index)
-                edge_dot += '''n%s->n%s[label="%s"]''' % (index-1, index, heap_info[0])
-                continue
-
             # table format
-            content = '''n%s[shape=none, label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">''' % (index)
+            content = '''n%s[shape=none, label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">''' % (
+                index)
+            # when the node is empty
+            if 'node' in heap_info.keys():
+                if len(heap_info['node']) == 0:
+                    label_dot += '''n%s[shape=record,label="......"]''' % (index)
+                    edge_dot += '''n%s->n%s[label="%s"]''' % (index - 1, index, heap_info['content'])
+                    continue
+
+                # construct the heap node graph ande highlight the overflow part
+                for info in heap_info['node']:
+                    if info['type'] == "heap_overflow":
+                        content += '''<tr><td bgcolor="lightgrey"><font color="red">%s size:%s</font></td></tr>''' % (
+                            info['addr'], info['size'])
+                        continue
+                    content += '''<tr><td>%s size:%s</td></tr>''' % (info['addr'], info['size'])
 
             # when the node is the overflow one
-            if heap_info[0].startswith("Found overflow") and len(heap_info) == 3:
-                label_dot += '''n%s%s[shape=box,label="%s"]''' % (index, index, heap_info[2])
-                edge_dot += '''{rank = same; n%s->n%s%s[style=dotted label="%s"]}''' % (index, index, index, "memory content")
+            if heap_info['type'] == "heap_overflow":
+                label_dot += '''n%s%s[shape=box,label=<%s>]''' % (index, index, heap_info['memory'])
+                edge_dot += '''{rank = same; n%s->n%s%s[style=dotted label="%s"]}''' % (
+                index, index, index, "memory content")
 
             # when the node is the mem write one
-            if heap_info[0].startswith("Mem write"):
-                label_dot += '''n%s[shape=box,label="%s"]''' % (index, heap_info[1])
-                label_dot += '''n%s%s[shape=box,label="%s"]''' % (index, index, heap_info[2])
-                edge_dot += '''n%s->n%s[label="%s"]''' % (index-1, index, heap_info[0])
-                edge_dot += '''{rank = same; n%s->n%s%s[style=dotted label="%s"]}''' % (index, index, index, "Stack")
+            if heap_info['type'] == 'redzone_write':
+                label_dot += '''n%s[shape=box,label=<%s>]''' % (index, heap_info['memory'])
+                label_dot += '''n%s%s[shape=box,label=<%s>]''' % (index, index, heap_info['backtrace'])
+                edge_dot += '''n%s->n%s[label="%s",style=dotted]''' % (index - 1, index, heap_info['content'])
+                edge_dot += '''{rank = same; n%s->n%s%s[style=dotted]}''' % (index, index, index)
                 continue
-
-            # construct the heap node graph ande highlight the overflow part
-            for info in heap_info[1]:
-                if len(info) < 3:
-                        break
-                if info[2].startswith("Found overflow"):
-                    content += '''<tr><td bgcolor="lightgrey"><font color="red">%s size:%s</font></td></tr>''' % (
-                        info[0], info[1])
-                    continue
-                content += '''<tr><td>%s size:%s</td></tr>''' % (info[0], info[1])
 
             content += '''</table>>]'''
             label_dot += content
-            edge_dot += '''n%s->n%s[label="%s"]''' % (index - 1, index, heap_info[0])
-
+            edge_dot += '''n%s->n%s[label="%s"]''' % (index - 1, index, heap_info['content'])
 
         dot = head_dot + label_dot + edge_dot + tail_dot
         t = Source(dot)
-        t.save("HeapChange.dot")
-        os.system("dot ./HeapChange.dot -T png -o ./HeapChange.png")
-        return os.path.join(os.getcwd(), 'HeapChange.png')
+        t.save("/tmp/HeapChange.dot")
+        os.system("dot /tmp/HeapChange.dot -Tpng -o /tmp/HeapChange.png")
+        return "/tmp/HeapChange.png"
 
 
-def extract_strange_rop(headline, f):
-    '''
-    :param headline: the first line
-    :param f: file stream
-    :return:
-    '''
-    strange_info = {}
-    strange_info['situation'] = headline[:-2]
-    obj = re.match("From (.*) to (.*)", f.readline())
-    if obj:
-        strange_info['jump'] = (obj.group(1) + "->\n" + obj.group(2)).replace('\n', '<br>')
 
-    while not f.readline().startswith("Args:"):
-        pass
-
-    args = ""
-    while True:
-        line = f.readline()
-        if line is '\n':
-            break
-        args += line
-    strange_info['info'] = ("args:\n" + args[:-1]).replace('\n', '<br>')
-    return strange_info
-
-def extract_overflow_rop(headline, f):
-    '''
-    for overflow info, highlight with red color
-    :param headline: the first line
-    :param f: file stream
-    :return:
-    '''
-    overflow_info = {}
-    sitobj = re.match('(.*) changed from (.*) to (.*)', headline)
-    if sitobj:
-        overflow_info['situation'] = '''<font color="red">''' + \
-                                     sitobj.group(1) + \
-                                     '''</font>'''
-        overflow_info['jump'] = '''<font color="red">change:''' \
-                                + sitobj.group(2) + "-><br>" + sitobj.group(3) + \
-                                '''</font>'''
-
-    info = ""
-    while True:
-        line = f.readline()
-        if line is '\n':
-            break
-        info += line
-
-    overflow_info['info'] = '''<font color="red">''' + \
-                            info.replace('\n', '<br>') + \
-                            '''</font>'''
-    return overflow_info
-
-def extract_unrecord_rop(headline, f):
-    '''
-    for unrecord info, highligth with green color
-    :param headline: the first line
-    :param f: file stream
-    :return:
-    '''
-    unrecord_info = {}
-    unrecord_info['situation'] = '''<font color="green">''' + headline[:-1] + '''</font>'''
-    obj = re.match("From (.*) to (.*)", f.readline())
-    if obj:
-        unrecord_info['jump'] = '''<font color="green">''' + \
-                                (obj.group(1) + "->\n" + obj.group(2)).replace('\n', '<br>') + \
-                                '''</font>'''
-    while not f.readline().startswith("Args:"):
-        pass
-
-    args = ""
-    while True:
-        line = f.readline()
-        if line is '\n':
-            break
-        args += line
-    unrecord_info['info'] = '''<font color="green">''' + \
-                            ("args:\n" + args[:-1]).replace('\n', '<br>') + \
-                            '''</font>'''
-    return unrecord_info
-
-
-class view_call_log(object):
-
-    def __init__(self, path):
-        self.path = path
-
-    def get_rop_table(self):
-        '''
-        :return: a list whose format is for jinja2
-        '''
-        f = open(self.path, 'r')
-        rop_list = []
-        while True:
-            line = f.readline()
-            if not line:
-                break
-
-            if line.startswith("Strange return to"):
-                rop_list.append(copy.deepcopy(extract_strange_rop(line, f)))
-                continue
-
-            if line.startswith("address "):
-                rop_list.append(copy.deepcopy(extract_overflow_rop(line, f)))
-                continue
-
-            if line.startswith("Unrecorded return to"):
-                rop_list.append(copy.deepcopy(extract_unrecord_rop(line, f)))
-
-        return rop_list

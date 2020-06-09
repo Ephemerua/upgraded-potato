@@ -14,7 +14,7 @@ from pwnlib.elf.elf import ELF
 from symbol_resolve import symbol_resolve
 
 from util.rep_pack import rep_pack
-from report.gen_html import generate_report
+from report.gen_html import generate_report as gen_report
 
 from analysis import visualize_analysis
 
@@ -55,7 +55,7 @@ class Replayer(angr.project.Project):
         self.maps = parse_maps_from_file(map_path, plus = True)
         self.reverse_maps = reverse_maps(self.maps)
         self.target  = target_name
-        self.target_path = os.getcwd()
+        self.report_log_path = os.getcwd()
         self.report_logger = 0
 
         self.cfg = 0
@@ -69,6 +69,7 @@ class Replayer(angr.project.Project):
         self._lib_opts = lib_opts
         self._bp = bp
         self.exploited_state = 0
+        self.end_timestamp = 0
         self.enabled_anas = {}
 
 
@@ -214,19 +215,16 @@ class Replayer(angr.project.Project):
                 self.enabled_anas[name] = inited_ana
 
     def do_analysis(self):
+        analysis_file = os.path.join(self.report_log_path, "analysis.log")
+        if os.path.isfile(analysis_file):
+            os.remove(analysis_file)
         for ana_name in self.enabled_anas:
             exec("self.%s.do_analysis()" % ana_name)
 
     def generate_report(self):
-        kwargs = {}
-        for name, ana in self.enabled_anas.items():
-            name = name.split("_")[0] + "_log_path"
-            kwargs[name] = ana.log_path
-        generate_report(self.__binary_path, **kwargs)
+        gen_report(self.__binary_path, analysis_path="./analysis.log" )
 
 
-def state_timestamp(state):
-    return len(state.history.bbl_addrs)
 
 
 

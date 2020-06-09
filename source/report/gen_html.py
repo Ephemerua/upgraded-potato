@@ -1,46 +1,51 @@
 from jinja2 import Environment, FileSystemLoader
-from report.log_view import *
-from report.env_view import *
+from .log_view import *
+from .env_view import *
 import time
 
 def generate_report(binary_path, template_name="template.html", report_name = "report.html", \
-                    got_log_path = "", heap_log_path = "", leak_log_path = "", \
-                    call_log_path = ""):
+                    analysis_path = ""):
     '''
-
-    :param template_path:
-    :param report_path:
-    :param got_log_path:
-    :param heap_log_path:
-    :param leak_log_path:
+    the report will be generated in current directory
+    :param binary_path:
+    :param template_name:
+    :param report_name:
+    :param analysis_path:
     :return:
     '''
-    checksec_info = get_checksec_info(binary_path).replace("\n", "<br>")
+
+    path = __file__[:__file__.rfind("/")+1]
+
+    checksec_info = get_checksec_info(binary_path).replace("\n", "<br/>")
     os_info = get_os_info()
-    image_path = ""
-    got_table = []
-    leak_table = []
-    rop_table = []
-    if got_log_path is not "":
-        got_table = view_got_log(got_log_path).get_got_change()
 
-    if heap_log_path is not "":
-        image_path = view_heap_log(heap_log_path).gen_heap_change_png()
+    report = report_log(analysis_path)
 
-    if leak_log_path is not "":
-        leak_table = view_leak_log(leak_log_path).get_leak_table()
+    got_output = report.get_got_output()
+    leak_output = report.get_leak_output()
+    call_output = report.get_call_output()
+    heap_output = report.get_heap_output()
+    heap_image_path = report.get_heap_graph()
 
-    if call_log_path is not "":
-        rop_table = view_call_log(call_log_path).get_rop_table()
 
-    def generate_html(got_table=[], image_path=[], leak_table=[], rop_table=[]):
+    def generate_html(got_output=[], heap_image_path="/tmp/HeapChange.png", heap_output=[] , leak_output=[], call_output=[]):
         '''
         :param got_table:
         :param image_path:
         :param leak_table:
         :return:
         '''
-        html_path = os.path.join(os.getcwd(), "../../html/")
+        path = __file__[:__file__.rfind("/")]
+        work_path = os.getcwd()
+        os.system("cp -rf %s/html %s"%(path, work_path))
+        html_path = os.getcwd()+"/html/"
+        if os.access(heap_image_path,os.F_OK):
+            os.system("cp -f %s %s" % (heap_image_path, html_path))
+            heap_image_path = "./HeapChange.png"
+        else:
+            print("Heap change image not found!")
+            heap_image_path = ""
+
         env = Environment(loader=FileSystemLoader(html_path))
         template = env.get_template(template_name)
 
@@ -49,17 +54,16 @@ def generate_report(binary_path, template_name="template.html", report_name = "r
             html_content = template.render(osinfo=os_info, \
                                            checksecinfo=checksec_info, \
                                            reporttime=report_time, \
-                                           gottable=got_table, \
-                                           img_path=image_path, \
-                                           leaktable=leak_table, \
-                                           calltable=rop_table)
+                                           gotoutput=got_output, \
+                                           img_path=heap_image_path, \
+                                           leakoutput=leak_output, \
+                                           heapoutput=heap_output, \
+                                           calloutput=call_output)
             fout.write(html_content)
+            print("Report generated at %s/report.html" % html_path)
 
-    generate_html(got_table, image_path, leak_table, rop_table)
+    generate_html(got_output, heap_image_path, heap_output, leak_output, call_output)
 
 if __name__ == '__main__':
-    generate_report("../../test/sample/easyheap","./template.html", "./report_new.html", \
-                    got_log_path="../../test/sample/got_analy.log", \
-                    heap_log_path="../../test/sample/heap_analy.log", \
-                    leak_log_path="../../test/sample/leak_analy.log", \
-                    call_log_path="../../test/sample/call_analy.log")
+    generate_report("../../test/packed_heap_sample/easyheap", report_name="report_new.html", \
+                    analysis_path="../../test/packed_heap_sample/analysis.log")

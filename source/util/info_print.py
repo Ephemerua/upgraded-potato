@@ -1,3 +1,9 @@
+import angr
+
+PROT_READ = 1
+PROT_WRITE = 2
+PROT_EXEC = 4
+
 def print_callstack(state):
     cs = state.callstack
     print("\nStack:")
@@ -29,7 +35,7 @@ class stack_frame(object):
         else:
             result += ": "
         
-        result += "%#18x" % self.addr
+        result += "%#018x" % self.addr
         if self.symbol:
             name = self.symbol[0]
             offset = self.symbol[1]
@@ -37,7 +43,7 @@ class stack_frame(object):
                 name = "sub_%x" % (self.addr+offset)
                 offset = 0
 
-            result += " in %s" % name
+            result += "\tin  %s" % name
             if offset != 0:
                 result += "%+d\t" % offset
             else:
@@ -91,7 +97,7 @@ def printable_backtrace(bt):
 
     :param bt: result of stack_backtrace
     """
-    result = "Callstack:\n"
+    result = "\n"
     for i in bt:
         result += str(i)
     return result
@@ -121,8 +127,39 @@ def fetch_str(state, addr):
                 break
             else:
                 result += chr(c)
-    if result:
-        result = ' -> "'+result+'"'
 
     return result
 
+from termcolor import colored
+def printable_memory(state, start, size, warn_pos = 0, warn_size = 0, info_pos = 0, info_size = 0):
+    result = "\n"
+    # align
+    size = ((size >>3) <<3) + 0x10
+    endl = -1
+    warn = 0
+    for addr in range(start, start+size, 8):
+        mem = state.memory.load(addr, 8, endness = "Iend_LE")
+        assert(mem.concrete)
+        mem = mem.args[0]
+        if endl:
+            result += "%s| " %(hex(addr))
+            endl = ~endl
+        else:
+            result += '  ' 
+            endl = ~endl
+        mem = "%016x" % mem
+        colored_mem = ["" for i in range(8)]
+        j = 0
+        for i in range(14, -2, -2):
+            bt = mem[i:i+2]
+            if addr + j in range(warn_pos, warn_pos+warn_size):
+                bt = colored(bt, 'red')
+            if addr + j in range(info_pos, info_pos+info_size):
+                bt = colored(bt, 'yellow')
+            colored_mem[7-j] = bt
+            j += 1
+
+        result += "".join(colored_mem) 
+        if endl:
+            result += '\n'
+    return result

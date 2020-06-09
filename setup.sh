@@ -40,3 +40,20 @@ then
     python3 -m pip install cstruct
 fi
 
+python3 -m pip show termcolor 1>/dev/null
+if [ $? -ne 0  ]
+then
+    python3 -m pip install termcolor 
+fi
+
+python3 -m pip show jinja2 1>/dev/null
+if [ $? -ne 0  ]
+then
+    python3 -m pip install jinja2
+fi
+
+python3 -m pip show graphviz 1>/dev/null
+if [ $? -ne 0  ]
+then
+    python3 -m pip install graphviz
+fi
