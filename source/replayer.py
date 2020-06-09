@@ -14,7 +14,7 @@ from pwnlib.elf.elf import ELF
 from symbol_resolve import symbol_resolve
 
 from util.rep_pack import rep_pack
-from report.gen_html import generate_report
+from report.gen_html import generate_report as gen_report
 
 from analysis import visualize_analysis
 
@@ -220,6 +220,9 @@ class Replayer(angr.project.Project):
             os.remove(analysis_file)
         for ana_name in self.enabled_anas:
             exec("self.%s.do_analysis()" % ana_name)
+
+    def generate_report(self):
+        gen_report(self.__binary_path, analysis_path="./analysis.log" )
 
 
 

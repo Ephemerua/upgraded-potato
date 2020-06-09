@@ -293,8 +293,8 @@ class report_log(object):
 
         dot = head_dot + label_dot + edge_dot + tail_dot
         t = Source(dot)
-        t.save("HeapChange.dot")
-        os.system("dot ./HeapChange.dot -Tpng -o /tmp/HeapChange.png")
+        t.save("/tmp/HeapChange.dot")
+        os.system("dot /tmp/HeapChange.dot -Tpng -o /tmp/HeapChange.png")
         return "/tmp/HeapChange.png"
 
 
