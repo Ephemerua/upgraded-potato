@@ -14,5 +14,7 @@ def get_checksec_info(path):
 def get_os_info():
     return os.popen("uname -a").read()
 
+
+
 # str = (get_checksec_info("../../test/sample/easyheap"))
 # print(get_os_info())

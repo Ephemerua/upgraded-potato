@@ -133,7 +133,7 @@ class report_log(object):
         self.log_path = log_path
         self.heap_log_list, self.call_log_list,\
              self.leak_log_list, self.got_log_list,\
-                 self.heap_log_list_dot = self.__parse_log_file()
+                 self.heap_log_list_dot , self.warning_statestamp_list = self.__parse_log_file()
 
     def __parse_log_file(self):
         heap_log_list_html = []
@@ -141,6 +141,7 @@ class report_log(object):
         leak_log_list_html = []
         got_log_list_html = []
         heap_log_list_dot = []
+        warnging_statestamp_list = []
 
         f = open(self.log_path, 'r')
         lines = f.readlines()
@@ -150,8 +151,12 @@ class report_log(object):
             del dict['timestamp']
             del dict['logger']
             name = dict['name']
-            if 'statestamp' in dict.keys():
-                dict['message'] = '[%s] %s' % (hex(dict['statestamp']), dict['message'])
+
+            if 'state_timestamp' in dict.keys():
+                dict['message'] = '[%s] %s' % (dict['state_timestamp'], dict['message'])
+                # if dict['level'] == 'warning':
+                warnging_statestamp_list.append([dict['type'], (dict['state_timestamp'])])
+
             dict_bak = copy.deepcopy(dict)
             dict = html_format(dict)
             if name == 'heap_analysis':
@@ -165,7 +170,8 @@ class report_log(object):
             elif name == 'leak_analysis':
                 leak_log_list_html.append(dict)
         f.close()
-        return heap_log_list_html, call_log_list_html, leak_log_list_html, got_log_list_html, heap_log_list_dot
+        return heap_log_list_html, call_log_list_html, leak_log_list_html, \
+               got_log_list_html, heap_log_list_dot, warnging_statestamp_list
 
 
     def get_leak_output(self):
@@ -177,12 +183,13 @@ class report_log(object):
     def get_call_output(self):
         return no_message_tips(self.call_log_list)
 
-
     def get_heap_output(self):
         return no_message_tips(self.heap_log_list)
 
-    def get_heap_graph(self):
+    def get_warning_statestamp(self):
+        return self.warning_statestamp_list
 
+    def get_heap_graph(self):
 
         def _heap_trans_list(list):
             heap_infos = []

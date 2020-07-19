@@ -98,10 +98,55 @@
 								</a>
                                 <div class="collapse panel-collapse" role="tabpanel" id="information">
                                     <div class="panel-body"> 
-                                        <p class="fw_300 color_33"> checksec:<br>[*] '/ctf/work/playground/tmp/upgraded-potato/test/packed_heap_sample/easyheap'<br/>    Arch:     amd64-64-little<br/>    RELRO:    Partial RELRO<br/>    Stack:    Canary found<br/>    NX:       NX enabled<br/>    PIE:      No PIE (0x400000)<br/>&nbsp;</p>
-                                        <p class="fw_300 color_33"> system:<br>Linux 050a4ec25f2c 4.9.184-linuxkit #1 SMP Tue Jul 2 22:58:16 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
+                                        <p class="fw_300 color_33"> checksec:<br>[*] '/home/vis/Desktop/workplace2/upgraded-potato/test/packed_heap_sample/easyheap'<br/>    Arch:     amd64-64-little<br/>    RELRO:    Partial RELRO<br/>    Stack:    Canary found<br/>    NX:       NX enabled<br/>    PIE:      No PIE (0x400000)<br/>&nbsp;</p>
+                                        <p class="fw_300 color_33"> system:<br>Linux ubuntu 4.15.0-107-generic #108~16.04.1-Ubuntu SMP Fri Jun 12 02:57:13 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
  </p>
-                                        <p class="fw_300 color_33"> <br> report time: <br> 2020.06.09 </p>
+                                        <p class="fw_300 color_33"> <br> report time: <br> 2020.07.19 </p>
+									</div>
+									<div class="panel-body">
+                                        
+
+<style>
+
+</style>
+
+<div id="fig_el3369714034559380456071846129"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       
+       mpld3.draw_figure("fig_el3369714034559380456071846129", {"width": 980.0, "height": 350.0, "axes": [{"bbox": [0.18, 0.10999999999999999, 0.81, 0.77], "xlim": [-0.7000000000000001, 14.7], "ylim": [-0.25, 5.25], "xdomain": [-0.7000000000000001, 14.7], "ydomain": [-0.25, 5.25], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 15, "tickvalues": [4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 0.0, 13.0, 1.0, 2.0, 14.0, 3.0], "tickformat_formatter": "fixed", "tickformat": ["138", "143", "180", "185", "219", "256", "267", "311", "387", "39", "446", "50", "87", "9799", "98"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 6, "tickvalues": [1.0, 4.0, 2.0, 5.0, 0.0, 3.0], "tickformat_formatter": "fixed", "tickformat": ["free", "got_change", "heap_overflow", "leak_trace", "malloc", "redzone_write"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": true, "color": "#808080", "dasharray": "6.4,1.6,1.0,1.6", "alpha": 0.7}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33697140345870031440", "lines": [], "paths": [], "markers": [], "texts": [{"text": "state timestamp", "position": [0.5, -0.07529375386518243], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 16.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el33697140345593959440"}], "collections": [{"offsets": "data01", "xindex": 0, "yindex": 1, "paths": [[[[0.0, -0.5], [0.13260155, -0.5], [0.25978993539242673, -0.44731684579412084], [0.3535533905932738, -0.3535533905932738], [0.44731684579412084, -0.25978993539242673], [0.5, -0.13260155], [0.5, 0.0], [0.5, 0.13260155], [0.44731684579412084, 0.25978993539242673], [0.3535533905932738, 0.3535533905932738], [0.25978993539242673, 0.44731684579412084], [0.13260155, 0.5], [0.0, 0.5], [-0.13260155, 0.5], [-0.25978993539242673, 0.44731684579412084], [-0.3535533905932738, 0.3535533905932738], [-0.44731684579412084, 0.25978993539242673], [-0.5, 0.13260155], [-0.5, 0.0], [-0.5, -0.13260155], [-0.44731684579412084, -0.25978993539242673], [-0.3535533905932738, -0.3535533905932738], [-0.25978993539242673, -0.44731684579412084], [-0.13260155, -0.5], [0.0, -0.5]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]], "pathtransforms": [[8.419691425682043, 0.0, 0.0, 8.419691425682043, 0.0, 0.0]], "alphas": [0.7], "edgecolors": ["rgba(178, 34, 34, 0.7)"], "facecolors": ["rgba(178, 34, 34, 0.7)"], "edgewidths": [1.0], "offsetcoordinates": "data", "pathcoordinates": "display", "zorder": 1, "id": "el33697140345579238352"}], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 0.0], [1.0, 0.0], [2.0, 0.0], [3.0, 0.0], [4.0, 1.0], [5.0, 1.0], [6.0, 1.0], [7.0, 1.0], [8.0, 0.0], [9.0, 0.0], [10.0, 0.0], [11.0, 2.0], [11.0, 3.0], [11.0, 3.0], [12.0, 2.0], [12.0, 3.0], [12.0, 3.0], [13.0, 4.0], [14.0, 5.0]]}, "id": "el33697140345593804560", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "https://d3js.org/d3.v5"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.1.js", function(){
+         
+         mpld3.draw_figure("fig_el3369714034559380456071846129", {"width": 980.0, "height": 350.0, "axes": [{"bbox": [0.18, 0.10999999999999999, 0.81, 0.77], "xlim": [-0.7000000000000001, 14.7], "ylim": [-0.25, 5.25], "xdomain": [-0.7000000000000001, 14.7], "ydomain": [-0.25, 5.25], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 15, "tickvalues": [4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 0.0, 13.0, 1.0, 2.0, 14.0, 3.0], "tickformat_formatter": "fixed", "tickformat": ["138", "143", "180", "185", "219", "256", "267", "311", "387", "39", "446", "50", "87", "9799", "98"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 6, "tickvalues": [1.0, 4.0, 2.0, 5.0, 0.0, 3.0], "tickformat_formatter": "fixed", "tickformat": ["free", "got_change", "heap_overflow", "leak_trace", "malloc", "redzone_write"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": true, "color": "#808080", "dasharray": "6.4,1.6,1.0,1.6", "alpha": 0.7}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33697140345870031440", "lines": [], "paths": [], "markers": [], "texts": [{"text": "state timestamp", "position": [0.5, -0.07529375386518243], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 16.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el33697140345593959440"}], "collections": [{"offsets": "data01", "xindex": 0, "yindex": 1, "paths": [[[[0.0, -0.5], [0.13260155, -0.5], [0.25978993539242673, -0.44731684579412084], [0.3535533905932738, -0.3535533905932738], [0.44731684579412084, -0.25978993539242673], [0.5, -0.13260155], [0.5, 0.0], [0.5, 0.13260155], [0.44731684579412084, 0.25978993539242673], [0.3535533905932738, 0.3535533905932738], [0.25978993539242673, 0.44731684579412084], [0.13260155, 0.5], [0.0, 0.5], [-0.13260155, 0.5], [-0.25978993539242673, 0.44731684579412084], [-0.3535533905932738, 0.3535533905932738], [-0.44731684579412084, 0.25978993539242673], [-0.5, 0.13260155], [-0.5, 0.0], [-0.5, -0.13260155], [-0.44731684579412084, -0.25978993539242673], [-0.3535533905932738, -0.3535533905932738], [-0.25978993539242673, -0.44731684579412084], [-0.13260155, -0.5], [0.0, -0.5]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]], "pathtransforms": [[8.419691425682043, 0.0, 0.0, 8.419691425682043, 0.0, 0.0]], "alphas": [0.7], "edgecolors": ["rgba(178, 34, 34, 0.7)"], "facecolors": ["rgba(178, 34, 34, 0.7)"], "edgewidths": [1.0], "offsetcoordinates": "data", "pathcoordinates": "display", "zorder": 1, "id": "el33697140345579238352"}], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 0.0], [1.0, 0.0], [2.0, 0.0], [3.0, 0.0], [4.0, 1.0], [5.0, 1.0], [6.0, 1.0], [7.0, 1.0], [8.0, 0.0], [9.0, 0.0], [10.0, 0.0], [11.0, 2.0], [11.0, 3.0], [11.0, 3.0], [12.0, 2.0], [12.0, 3.0], [12.0, 3.0], [13.0, 4.0], [14.0, 5.0]]}, "id": "el33697140345593804560", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("https://d3js.org/d3.v5.js", function(){
+         mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.1.js", function(){
+                 
+                 mpld3.draw_figure("fig_el3369714034559380456071846129", {"width": 980.0, "height": 350.0, "axes": [{"bbox": [0.18, 0.10999999999999999, 0.81, 0.77], "xlim": [-0.7000000000000001, 14.7], "ylim": [-0.25, 5.25], "xdomain": [-0.7000000000000001, 14.7], "ydomain": [-0.25, 5.25], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 15, "tickvalues": [4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 0.0, 13.0, 1.0, 2.0, 14.0, 3.0], "tickformat_formatter": "fixed", "tickformat": ["138", "143", "180", "185", "219", "256", "267", "311", "387", "39", "446", "50", "87", "9799", "98"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 6, "tickvalues": [1.0, 4.0, 2.0, 5.0, 0.0, 3.0], "tickformat_formatter": "fixed", "tickformat": ["free", "got_change", "heap_overflow", "leak_trace", "malloc", "redzone_write"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": true, "color": "#808080", "dasharray": "6.4,1.6,1.0,1.6", "alpha": 0.7}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el33697140345870031440", "lines": [], "paths": [], "markers": [], "texts": [{"text": "state timestamp", "position": [0.5, -0.07529375386518243], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 16.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el33697140345593959440"}], "collections": [{"offsets": "data01", "xindex": 0, "yindex": 1, "paths": [[[[0.0, -0.5], [0.13260155, -0.5], [0.25978993539242673, -0.44731684579412084], [0.3535533905932738, -0.3535533905932738], [0.44731684579412084, -0.25978993539242673], [0.5, -0.13260155], [0.5, 0.0], [0.5, 0.13260155], [0.44731684579412084, 0.25978993539242673], [0.3535533905932738, 0.3535533905932738], [0.25978993539242673, 0.44731684579412084], [0.13260155, 0.5], [0.0, 0.5], [-0.13260155, 0.5], [-0.25978993539242673, 0.44731684579412084], [-0.3535533905932738, 0.3535533905932738], [-0.44731684579412084, 0.25978993539242673], [-0.5, 0.13260155], [-0.5, 0.0], [-0.5, -0.13260155], [-0.44731684579412084, -0.25978993539242673], [-0.3535533905932738, -0.3535533905932738], [-0.25978993539242673, -0.44731684579412084], [-0.13260155, -0.5], [0.0, -0.5]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]], "pathtransforms": [[8.419691425682043, 0.0, 0.0, 8.419691425682043, 0.0, 0.0]], "alphas": [0.7], "edgecolors": ["rgba(178, 34, 34, 0.7)"], "facecolors": ["rgba(178, 34, 34, 0.7)"], "edgewidths": [1.0], "offsetcoordinates": "data", "pathcoordinates": "display", "zorder": 1, "id": "el33697140345579238352"}], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 0.0], [1.0, 0.0], [2.0, 0.0], [3.0, 0.0], [4.0, 1.0], [5.0, 1.0], [6.0, 1.0], [7.0, 1.0], [8.0, 0.0], [9.0, 0.0], [10.0, 0.0], [11.0, 2.0], [11.0, 3.0], [11.0, 3.0], [12.0, 2.0], [12.0, 3.0], [12.0, 3.0], [13.0, 4.0], [14.0, 5.0]]}, "id": "el33697140345593804560", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+            })
+         });
+}
+</script>
 									</div>
                                 </div>
                             </div>
@@ -175,7 +220,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#gotcollapse2">
 													
 																		<p class="fw_300 color_33">
-																			<span class="ansi31">Found write to got table: atoi</span>
+																			<span class="ansi31">[446] Found write to got table: atoi</span>
 																		</p>
 																	</a>
 																</h4>
@@ -269,7 +314,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse0">
 														
 																		<p class="fw_300 color_33">
-																			Memory allocate: malloc(0x20) =&gt; 0x603010
+																			[39] Memory allocate: malloc(0x20) =&gt; 0x603010
 																		</p>
 																	</a>
 																</h4>
@@ -293,7 +338,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse1">
 														
 																		<p class="fw_300 color_33">
-																			Memory allocate: malloc(0x190) =&gt; 0x603030
+																			[50] Memory allocate: malloc(0x190) =&gt; 0x603030
 																		</p>
 																	</a>
 																</h4>
@@ -317,7 +362,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse2">
 														
 																		<p class="fw_300 color_33">
-																			Memory allocate: malloc(0x20) =&gt; 0x6031c0
+																			[87] Memory allocate: malloc(0x20) =&gt; 0x6031c0
 																		</p>
 																	</a>
 																</h4>
@@ -341,7 +386,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse3">
 														
 																		<p class="fw_300 color_33">
-																			Memory allocate: malloc(0x20) =&gt; 0x6031e0
+																			[98] Memory allocate: malloc(0x20) =&gt; 0x6031e0
 																		</p>
 																	</a>
 																</h4>
@@ -365,7 +410,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse4">
 														
 																		<p class="fw_300 color_33">
-																			Memory free: free(0x6031e0) (size: 0x20)
+																			[138] Memory free: free(0x6031e0) (size: 0x20)
 																		</p>
 																	</a>
 																</h4>
@@ -389,7 +434,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse5">
 														
 																		<p class="fw_300 color_33">
-																			Memory free: free(0x6031c0) (size: 0x20)
+																			[143] Memory free: free(0x6031c0) (size: 0x20)
 																		</p>
 																	</a>
 																</h4>
@@ -413,7 +458,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse6">
 														
 																		<p class="fw_300 color_33">
-																			Memory free: free(0x603030) (size: 0x190)
+																			[180] Memory free: free(0x603030) (size: 0x190)
 																		</p>
 																	</a>
 																</h4>
@@ -424,7 +469,7 @@
 														
 																	<p class="fw_300 color_33">
 															
-																	<strong>Description</strong>: Calling free(void* addr) to free memory. <br><strong>Addr</strong>: 0x603030 <br><strong>Chunk size</strong>: 0x190 <br><strong>State&nbsptimestamp</strong>: 277 <br>
+																	<strong>Description</strong>: Calling free(void* addr) to free memory. <br><strong>Addr</strong>: 0x603030 <br><strong>Chunk size</strong>: 0x190 <br><strong>State&nbsptimestamp</strong>: 180 <br>
 																	</p>
 																</div>
 															</div>
@@ -437,7 +482,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse7">
 														
 																		<p class="fw_300 color_33">
-																			Memory free: free(0x603010) (size: 0x20)
+																			[185] Memory free: free(0x603010) (size: 0x20)
 																		</p>
 																	</a>
 																</h4>
@@ -448,7 +493,7 @@
 														
 																	<p class="fw_300 color_33">
 															
-																	<strong>Description</strong>: Calling free(void* addr) to free memory. <br><strong>Addr</strong>: 0x603010 <br><strong>Chunk size</strong>: 0x20 <br><strong>State&nbsptimestamp</strong>: 282 <br>
+																	<strong>Description</strong>: Calling free(void* addr) to free memory. <br><strong>Addr</strong>: 0x603010 <br><strong>Chunk size</strong>: 0x20 <br><strong>State&nbsptimestamp</strong>: 185 <br>
 																	</p>
 																</div>
 															</div>
@@ -461,7 +506,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse8">
 														
 																		<p class="fw_300 color_33">
-																			Memory allocate: malloc(0x20) =&gt; 0x603010
+																			[219] Memory allocate: malloc(0x20) =&gt; 0x603010
 																		</p>
 																	</a>
 																</h4>
@@ -472,7 +517,7 @@
 														
 																	<p class="fw_300 color_33">
 															
-																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x20 <br><strong>Addr</strong>: 0x603010 <br><strong>State&nbsptimestamp</strong>: 316 <br>
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x20 <br><strong>Addr</strong>: 0x603010 <br><strong>State&nbsptimestamp</strong>: 219 <br>
 																	</p>
 																</div>
 															</div>
@@ -485,7 +530,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse9">
 														
 																		<p class="fw_300 color_33">
-																			Memory allocate: malloc(0x20) =&gt; 0x6031c0
+																			[256] Memory allocate: malloc(0x20) =&gt; 0x6031c0
 																		</p>
 																	</a>
 																</h4>
@@ -496,7 +541,7 @@
 														
 																	<p class="fw_300 color_33">
 															
-																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x20 <br><strong>Addr</strong>: 0x6031c0 <br><strong>State&nbsptimestamp</strong>: 353 <br>
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x20 <br><strong>Addr</strong>: 0x6031c0 <br><strong>State&nbsptimestamp</strong>: 256 <br>
 																	</p>
 																</div>
 															</div>
@@ -509,7 +554,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse10">
 														
 																		<p class="fw_300 color_33">
-																			Memory allocate: malloc(0x20) =&gt; 0x6031e0
+																			[267] Memory allocate: malloc(0x20) =&gt; 0x6031e0
 																		</p>
 																	</a>
 																</h4>
@@ -520,7 +565,7 @@
 														
 																	<p class="fw_300 color_33">
 															
-																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x20 <br><strong>Addr</strong>: 0x6031e0 <br><strong>State&nbsptimestamp</strong>: 364 <br>
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x20 <br><strong>Addr</strong>: 0x6031e0 <br><strong>State&nbsptimestamp</strong>: 267 <br>
 																	</p>
 																</div>
 															</div>
@@ -533,7 +578,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse11">
 														
 																		<p class="fw_300 color_33">
-																			<span class="ansi31">Found chunk overflow at 0x6031c0.</span>
+																			<span class="ansi31">[311] Found chunk overflow at 0x6031c0.</span>
 																		</p>
 																	</a>
 																</h4>
@@ -544,7 +589,7 @@
 														
 																	<p class="fw_300 color_33">
 															
-																	<strong>Description</strong>: A memory write operation causes overflow in heap. <br><strong>Start&nbspaddr</strong>: 0x6031c0 <br><strong>Chunk size</strong>: 0x10 <br><strong>Target&nbspaddr</strong>: 0x6031b0 <br><strong>Target&nbspsize</strong>: 0x21 <br><strong>Overflow&nbsplen</strong>: 0x1 <br><strong>Overflow&nbspcontent</strong>: &lt;BV8 10&gt; <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">01</span><span class="ansi33">90</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">31</span><span class="ansi33">e0</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">08</span><br/>0x6031d0| 00000000000000<span class="ansi33"></span><span class="ansi31">00</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 408 <br>
+																	<strong>Description</strong>: A memory write operation causes overflow in heap. <br><strong>Start&nbspaddr</strong>: 0x6031c0 <br><strong>Chunk size</strong>: 0x10 <br><strong>Target&nbspaddr</strong>: 0x6031b0 <br><strong>Target&nbspsize</strong>: 0x21 <br><strong>Overflow&nbsplen</strong>: 0x1 <br><strong>Overflow&nbspcontent</strong>: &lt;BV8 10&gt; <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">01</span><span class="ansi33">90</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">31</span><span class="ansi33">e0</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">08</span><br/>0x6031d0| 00000000000000<span class="ansi33"></span><span class="ansi31">00</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 311 <br>
 																	</p>
 																</div>
 															</div>
@@ -557,7 +602,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse12">
 														
 																		<p class="fw_300 color_33">
-																			<span class="ansi31">Redzone(chunk header) at 0x6031b0 overwritten.</span>
+																			<span class="ansi31">[311] Redzone(chunk header) at 0x6031b0 overwritten.</span>
 																		</p>
 																	</a>
 																</h4>
@@ -568,7 +613,7 @@
 														
 																	<p class="fw_300 color_33">
 															
-																	<strong>Description</strong>: A memory write operation trys to access unavailable area. <br><strong>Redzone type</strong>: chunk header <br><strong>Start&nbspaddr</strong>: 0x6031b0 <br><strong>Target&nbspaddr</strong>: 0x6031b0 <br><strong>Write&nbspsize</strong>: 0x10 <br><strong>Write&nbspexpr</strong>: &lt;BV128 0x90010000000000002000000000000000&gt; <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in  read_syscall&emsp;&emsp;bp: 0x7fffffffe420<br/>Frame 1: 0x0000000000400bdd&emsp;&emsp;in  sub_4010ca&emsp;&emsp;bp: 0x7fffffffe460<br/>Frame 2: 0x00007ffff782a830&emsp;&emsp;in  __libc_start_main+240&emsp;&emsp;bp: 0x400c00<br/>Frame 3: 0x11fe258d4c544155&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;bp: 0x41ff894156415741<br/> <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">01</span><span class="ansi33"></span><span class="ansi31">90</span>  <span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">31</span><span class="ansi33">e0</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">08</span><br/>0x6031d0| 00000000000000<span class="ansi33">00</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 408 <br>
+																	<strong>Description</strong>: A memory write operation trys to access unavailable area. <br><strong>Redzone type</strong>: chunk header <br><strong>Start&nbspaddr</strong>: 0x6031b0 <br><strong>Target&nbspaddr</strong>: 0x6031b0 <br><strong>Write&nbspsize</strong>: 0x10 <br><strong>Write&nbspexpr</strong>: &lt;BV128 0x90010000000000002000000000000000&gt; <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in  read_syscall&emsp;&emsp;bp: 0x7fffffffe420<br/>Frame 1: 0x0000000000400bdd&emsp;&emsp;in  sub_4010ca&emsp;&emsp;bp: 0x7fffffffe460<br/>Frame 2: 0x00007ffff782a830&emsp;&emsp;in  __libc_start_main+240&emsp;&emsp;bp: 0x400c00<br/>Frame 3: 0x11fe258d4c544155&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;bp: 0x41ff894156415741<br/> <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">01</span><span class="ansi33"></span><span class="ansi31">90</span>  <span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">31</span><span class="ansi33">e0</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">08</span><br/>0x6031d0| 00000000000000<span class="ansi33">00</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 311 <br>
 																	</p>
 																</div>
 															</div>
@@ -581,7 +626,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse13">
 														
 																		<p class="fw_300 color_33">
-																			<span class="ansi31">Redzone(chunk header) at 0x6031d0 overwritten.</span>
+																			<span class="ansi31">[311] Redzone(chunk header) at 0x6031d0 overwritten.</span>
 																		</p>
 																	</a>
 																</h4>
@@ -592,7 +637,7 @@
 														
 																	<p class="fw_300 color_33">
 															
-																	<strong>Description</strong>: A memory write operation trys to access unavailable area. <br><strong>Redzone type</strong>: chunk header <br><strong>Start&nbspaddr</strong>: 0x6031d0 <br><strong>Target&nbspaddr</strong>: 0x6031d0 <br><strong>Write&nbspsize</strong>: 0x1 <br><strong>Write&nbspexpr</strong>: &lt;BV8 10&gt; <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in  read_syscall&emsp;&emsp;bp: 0x7fffffffe420<br/>Frame 1: 0x0000000000400bdd&emsp;&emsp;in  sub_4010ca&emsp;&emsp;bp: 0x7fffffffe460<br/>Frame 2: 0x00007ffff782a830&emsp;&emsp;in  __libc_start_main+240&emsp;&emsp;bp: 0x400c00<br/>Frame 3: 0x11fe258d4c544155&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;bp: 0x41ff894156415741<br/> <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">01</span><span class="ansi33">90</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">31</span><span class="ansi33">e0</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">08</span><br/>0x6031d0| 00000000000000<span class="ansi33"></span><span class="ansi31">00</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 408 <br>
+																	<strong>Description</strong>: A memory write operation trys to access unavailable area. <br><strong>Redzone type</strong>: chunk header <br><strong>Start&nbspaddr</strong>: 0x6031d0 <br><strong>Target&nbspaddr</strong>: 0x6031d0 <br><strong>Write&nbspsize</strong>: 0x1 <br><strong>Write&nbspexpr</strong>: &lt;BV8 10&gt; <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in  read_syscall&emsp;&emsp;bp: 0x7fffffffe420<br/>Frame 1: 0x0000000000400bdd&emsp;&emsp;in  sub_4010ca&emsp;&emsp;bp: 0x7fffffffe460<br/>Frame 2: 0x00007ffff782a830&emsp;&emsp;in  __libc_start_main+240&emsp;&emsp;bp: 0x400c00<br/>Frame 3: 0x11fe258d4c544155&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;bp: 0x41ff894156415741<br/> <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">01</span><span class="ansi33">90</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">31</span><span class="ansi33">e0</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">08</span><br/>0x6031d0| 00000000000000<span class="ansi33"></span><span class="ansi31">00</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 311 <br>
 																	</p>
 																</div>
 															</div>
@@ -605,7 +650,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse14">
 														
 																		<p class="fw_300 color_33">
-																			<span class="ansi31">Found chunk overflow at 0x6031c0.</span>
+																			<span class="ansi31">[387] Found chunk overflow at 0x6031c0.</span>
 																		</p>
 																	</a>
 																</h4>
@@ -616,7 +661,7 @@
 														
 																	<p class="fw_300 color_33">
 															
-																	<strong>Description</strong>: A memory write operation causes overflow in heap. <br><strong>Start&nbspaddr</strong>: 0x6031c0 <br><strong>Chunk size</strong>: 0x10 <br><strong>Target&nbspaddr</strong>: 0x6031b0 <br><strong>Target&nbspsize</strong>: 0x21 <br><strong>Overflow&nbsplen</strong>: 0x1 <br><strong>Overflow&nbspcontent</strong>: &lt;BV8 10&gt; <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">01</span><span class="ansi33">90</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">20</span><span class="ansi33">88</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">10</span><span class="ansi33">00</span><br/>0x6031d0| 00000000000000<span class="ansi33"></span><span class="ansi31">0a</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 484 <br>
+																	<strong>Description</strong>: A memory write operation causes overflow in heap. <br><strong>Start&nbspaddr</strong>: 0x6031c0 <br><strong>Chunk size</strong>: 0x10 <br><strong>Target&nbspaddr</strong>: 0x6031b0 <br><strong>Target&nbspsize</strong>: 0x21 <br><strong>Overflow&nbsplen</strong>: 0x1 <br><strong>Overflow&nbspcontent</strong>: &lt;BV8 10&gt; <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">01</span><span class="ansi33">90</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">20</span><span class="ansi33">88</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">10</span><span class="ansi33">00</span><br/>0x6031d0| 00000000000000<span class="ansi33"></span><span class="ansi31">0a</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 387 <br>
 																	</p>
 																</div>
 															</div>
@@ -629,7 +674,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse15">
 														
 																		<p class="fw_300 color_33">
-																			<span class="ansi31">Redzone(chunk header) at 0x6031b0 overwritten.</span>
+																			<span class="ansi31">[387] Redzone(chunk header) at 0x6031b0 overwritten.</span>
 																		</p>
 																	</a>
 																</h4>
@@ -640,7 +685,7 @@
 														
 																	<p class="fw_300 color_33">
 															
-																	<strong>Description</strong>: A memory write operation trys to access unavailable area. <br><strong>Redzone type</strong>: chunk header <br><strong>Start&nbspaddr</strong>: 0x6031b0 <br><strong>Target&nbspaddr</strong>: 0x6031b0 <br><strong>Write&nbspsize</strong>: 0x10 <br><strong>Write&nbspexpr</strong>: &lt;BV128 0x90010000000000002000000000000000&gt; <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in  read_syscall&emsp;&emsp;bp: 0x7fffffffe420<br/>Frame 1: 0x0000000000400bdd&emsp;&emsp;in  sub_4010ca&emsp;&emsp;bp: 0x7fffffffe460<br/>Frame 2: 0x00007ffff782a830&emsp;&emsp;in  __libc_start_main+240&emsp;&emsp;bp: 0x400c00<br/>Frame 3: 0x11fe258d4c544155&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;bp: 0x41ff894156415741<br/> <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">01</span><span class="ansi33"></span><span class="ansi31">90</span>  <span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">20</span><span class="ansi33">88</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">10</span><span class="ansi33">00</span><br/>0x6031d0| 00000000000000<span class="ansi33">0a</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 484 <br>
+																	<strong>Description</strong>: A memory write operation trys to access unavailable area. <br><strong>Redzone type</strong>: chunk header <br><strong>Start&nbspaddr</strong>: 0x6031b0 <br><strong>Target&nbspaddr</strong>: 0x6031b0 <br><strong>Write&nbspsize</strong>: 0x10 <br><strong>Write&nbspexpr</strong>: &lt;BV128 0x90010000000000002000000000000000&gt; <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in  read_syscall&emsp;&emsp;bp: 0x7fffffffe420<br/>Frame 1: 0x0000000000400bdd&emsp;&emsp;in  sub_4010ca&emsp;&emsp;bp: 0x7fffffffe460<br/>Frame 2: 0x00007ffff782a830&emsp;&emsp;in  __libc_start_main+240&emsp;&emsp;bp: 0x400c00<br/>Frame 3: 0x11fe258d4c544155&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;bp: 0x41ff894156415741<br/> <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">01</span><span class="ansi33"></span><span class="ansi31">90</span>  <span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">20</span><span class="ansi33">88</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">10</span><span class="ansi33">00</span><br/>0x6031d0| 00000000000000<span class="ansi33">0a</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 387 <br>
 																	</p>
 																</div>
 															</div>
@@ -653,7 +698,7 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse16">
 														
 																		<p class="fw_300 color_33">
-																			<span class="ansi31">Redzone(chunk header) at 0x6031d0 overwritten.</span>
+																			<span class="ansi31">[387] Redzone(chunk header) at 0x6031d0 overwritten.</span>
 																		</p>
 																	</a>
 																</h4>
@@ -664,7 +709,7 @@
 														
 																	<p class="fw_300 color_33">
 															
-																	<strong>Description</strong>: A memory write operation trys to access unavailable area. <br><strong>Redzone type</strong>: chunk header <br><strong>Start&nbspaddr</strong>: 0x6031d0 <br><strong>Target&nbspaddr</strong>: 0x6031d0 <br><strong>Write&nbspsize</strong>: 0x1 <br><strong>Write&nbspexpr</strong>: &lt;BV8 10&gt; <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in  read_syscall&emsp;&emsp;bp: 0x7fffffffe420<br/>Frame 1: 0x0000000000400bdd&emsp;&emsp;in  sub_4010ca&emsp;&emsp;bp: 0x7fffffffe460<br/>Frame 2: 0x00007ffff782a830&emsp;&emsp;in  __libc_start_main+240&emsp;&emsp;bp: 0x400c00<br/>Frame 3: 0x11fe258d4c544155&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;bp: 0x41ff894156415741<br/> <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">01</span><span class="ansi33">90</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">20</span><span class="ansi33">88</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">10</span><span class="ansi33">00</span><br/>0x6031d0| 00000000000000<span class="ansi33"></span><span class="ansi31">0a</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 484 <br>
+																	<strong>Description</strong>: A memory write operation trys to access unavailable area. <br><strong>Redzone type</strong>: chunk header <br><strong>Start&nbspaddr</strong>: 0x6031d0 <br><strong>Target&nbspaddr</strong>: 0x6031d0 <br><strong>Write&nbspsize</strong>: 0x1 <br><strong>Write&nbspexpr</strong>: &lt;BV8 10&gt; <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in  read_syscall&emsp;&emsp;bp: 0x7fffffffe420<br/>Frame 1: 0x0000000000400bdd&emsp;&emsp;in  sub_4010ca&emsp;&emsp;bp: 0x7fffffffe460<br/>Frame 2: 0x00007ffff782a830&emsp;&emsp;in  __libc_start_main+240&emsp;&emsp;bp: 0x400c00<br/>Frame 3: 0x11fe258d4c544155&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;bp: 0x41ff894156415741<br/> <br><strong>Memory</strong>: <br/>0x6031b0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">01</span><span class="ansi33">90</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">20</span><br/>0x6031c0| <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">60</span><span class="ansi33">20</span><span class="ansi33">88</span>  <span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">00</span><span class="ansi33">10</span><span class="ansi33">00</span><br/>0x6031d0| 00000000000000<span class="ansi33"></span><span class="ansi31">0a</span>  0000000000000021<br/> <br><strong>State&nbsptimestamp</strong>: 387 <br>
 																	</p>
 																</div>
 															</div>
@@ -865,13 +910,181 @@
 															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse7">
 													
 																		<p class="fw_300 color_33">
-																			Start tracing of leakage.
+																			<span class="ansi31">Found leakage: _IO_file_jumps+0(0x7ffff7bcd6e0)</span>
 																		</p>
 																	</a>
 																</h4>
 															</div>
 															
 															<div id="leakcollapse7" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Memory address found in output, causing information leakage. <br><strong>Leaked&nbspaddress</strong>: 0x7ffff7bcd6e0 <br><strong>Symbol&nbspof&nbspaddress</strong>: _IO_file_jumps <br><strong>Offset</strong>: 0x0 <br><strong>Lib</strong>: libc-2.23.so <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse8">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">Found leakage: _IO_2_1_stdout_-32(0x7ffff7bcf600)</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse8" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Memory address found in output, causing information leakage. <br><strong>Leaked&nbspaddress</strong>: 0x7ffff7bcf600 <br><strong>Symbol&nbspof&nbspaddress</strong>: _IO_2_1_stdout_ <br><strong>Offset</strong>: -0x20 <br><strong>Lib</strong>: libc-2.23.so <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse9">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">Found leakage: got._IO_2_1_stderr_-93(0x7ffff7bcf6a3)</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse9" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Memory address found in output, causing information leakage. <br><strong>Leaked&nbspaddress</strong>: 0x7ffff7bcf6a3 <br><strong>Symbol&nbspof&nbspaddress</strong>: got._IO_2_1_stderr_ <br><strong>Offset</strong>: -0x5d <br><strong>Lib</strong>: libc-2.23.so <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse10">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">Found leakage: got._IO_2_1_stderr_-93(0x7ffff7bcf6a3)</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse10" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Memory address found in output, causing information leakage. <br><strong>Leaked&nbspaddress</strong>: 0x7ffff7bcf6a3 <br><strong>Symbol&nbspof&nbspaddress</strong>: got._IO_2_1_stderr_ <br><strong>Offset</strong>: -0x5d <br><strong>Lib</strong>: libc-2.23.so <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse11">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">Found leakage: got._IO_2_1_stderr_-93(0x7ffff7bcf6a3)</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse11" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Memory address found in output, causing information leakage. <br><strong>Leaked&nbspaddress</strong>: 0x7ffff7bcf6a3 <br><strong>Symbol&nbspof&nbspaddress</strong>: got._IO_2_1_stderr_ <br><strong>Offset</strong>: -0x5d <br><strong>Lib</strong>: libc-2.23.so <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse12">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">Found leakage: got._IO_2_1_stderr_-92(0x7ffff7bcf6a4)</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse12" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Memory address found in output, causing information leakage. <br><strong>Leaked&nbspaddress</strong>: 0x7ffff7bcf6a4 <br><strong>Symbol&nbspof&nbspaddress</strong>: got._IO_2_1_stderr_ <br><strong>Offset</strong>: -0x5c <br><strong>Lib</strong>: libc-2.23.so <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse13">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">Found leakage: _IO_2_1_stdin_+0(0x7ffff7bce8e0)</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse13" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Memory address found in output, causing information leakage. <br><strong>Leaked&nbspaddress</strong>: 0x7ffff7bce8e0 <br><strong>Symbol&nbspof&nbspaddress</strong>: _IO_2_1_stdin_ <br><strong>Offset</strong>: 0x0 <br><strong>Lib</strong>: libc-2.23.so <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse14">
+													
+																		<p class="fw_300 color_33">
+																			Start tracing of leakage.
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse14" class="panel-collapse collapse">
 																<div class="panel-body">
 													
 																	<p class="fw_300 color_33">
@@ -886,16 +1099,16 @@
         													<div class="panel-heading">
 																<h4 class="panel-title">
 																	
-															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse8">
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse15">
 													
 																		<p class="fw_300 color_33">
-																			<span class="ansi31">Leakage trace: leak of _IO_file_jumps+0 (0x7ffff7bcd6e0) happened at :0x7ffff79012c0</span>
+																			<span class="ansi31">[9799] Leakage trace: leak of _IO_file_jumps+0 (0x7ffff7bcd6e0) happened at :0x7ffff79012c0</span>
 																		</p>
 																	</a>
 																</h4>
 															</div>
 															
-															<div id="leakcollapse8" class="panel-collapse collapse">
+															<div id="leakcollapse15" class="panel-collapse collapse">
 																<div class="panel-body">
 													
 																	<p class="fw_300 color_33">

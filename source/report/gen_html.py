@@ -1,6 +1,7 @@
 from jinja2 import Environment, FileSystemLoader
 from .log_view import *
 from .env_view import *
+from .time_picture import *
 import time
 
 def generate_report(binary_path, template_name="template.html", report_name = "report.html", \
@@ -27,8 +28,10 @@ def generate_report(binary_path, template_name="template.html", report_name = "r
     heap_output = report.get_heap_output()
     heap_image_path = report.get_heap_graph()
 
+    warning_image_path = generate_warning_timepicture(report.get_warning_statestamp())
 
-    def generate_html(got_output=[], heap_image_path="/tmp/HeapChange.png", heap_output=[] , leak_output=[], call_output=[]):
+    def generate_html(got_output=[], heap_image_path="/tmp/HeapChange.png", warning_image_path="/tmp/timepic.html", \
+                      heap_output=[] , leak_output=[], call_output=[]):
         '''
         :param got_table:
         :param image_path:
@@ -46,6 +49,13 @@ def generate_report(binary_path, template_name="template.html", report_name = "r
             print("Heap change image not found!")
             heap_image_path = ""
 
+        if os.access(warning_image_path,os.F_OK):
+            os.system("cp -f %s %s" % (warning_image_path, html_path))
+            warning_image_path = "./timepic.html"
+        else:
+            print("Timestamp image not found!")
+            warning_image_path = ""
+
         env = Environment(loader=FileSystemLoader(html_path))
         template = env.get_template(template_name)
 
@@ -56,13 +66,15 @@ def generate_report(binary_path, template_name="template.html", report_name = "r
                                            reporttime=report_time, \
                                            gotoutput=got_output, \
                                            img_path=heap_image_path, \
+                                           warning_image=warning_image_path, \
                                            leakoutput=leak_output, \
                                            heapoutput=heap_output, \
                                            calloutput=call_output)
             fout.write(html_content)
             print("Report generated at %s/report.html" % html_path)
+        fout.close()
 
-    generate_html(got_output, heap_image_path, heap_output, leak_output, call_output)
+    generate_html(got_output, heap_image_path, warning_image_path, heap_output, leak_output, call_output)
 
 if __name__ == '__main__':
     generate_report("../../test/packed_heap_sample/easyheap", report_name="report_new.html", \
