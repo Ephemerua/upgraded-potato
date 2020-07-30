@@ -1,0 +1,2 @@
+
+../ptrace ./test test
