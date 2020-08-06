@@ -52,8 +52,34 @@ then
     python3 -m pip install jinja2
 fi
 
+apt-get install -y graphviz
 python3 -m pip show graphviz 1>/dev/null
 if [ $? -ne 0  ]
 then
     python3 -m pip install graphviz
 fi
+
+python3 -m pip show seaborn 1>/dev/null
+if [ $? -ne 0  ]
+then
+    python3 -m pip install seaborn
+fi
+
+python3 -m pip show numpy 1>/dev/null
+if [ $? -ne 0  ]
+then
+    python3 -m pip install numpy
+fi
+
+python3 -m pip show structlog 1>/dev/null
+if [ $? -ne 0  ]
+then
+    python3 -m pip install structlog
+fi
+
+python3 -m pip show python-json-logger 1>/dev/null
+if [ $? -ne 0  ]
+then
+    python3 -m pip install python-json-logger
+fi
+

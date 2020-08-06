@@ -25,6 +25,20 @@ function base64_encode (s)
   return r.substring(0, r.length - p.length) + p;
 }
 
+const exit = new NativeFunction(Module.findExportByName(null, 'exit'),
+'int', ['int']);
+const sleep = new NativeFunction(Module.findExportByName(null, 'sleep'),
+'int', ['int']);
+function exit_hook(args)
+{
+    console.log("exit called");
+    var value = sleep(2);
+    exit(0);
+    return value;
+
+}
+var exit_cb = new NativeCallback(exit_hook, 'int', []);
+
 const PROT_READ = 1
 const PROT_WRITE = 2
 const PROT_EXEC = 4
@@ -91,6 +105,8 @@ function hook() {
 //            console.log("out" + retval.toInt32());
         }
     });
+    Interceptor.replace(Module.getExportByName(null, 'exit'), exit_cb);
+
 }
 
 //setImmediate(hook)

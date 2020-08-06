@@ -51,10 +51,31 @@ class Replayer(angr.project.Project):
         # input is the recorded stdin
         self.input = parse_log_from_file(log_path)
         target_name = binary_path.split(r"/")[-1]
-        main_opts, lib_opts, bp = parse_maps_from_file(map_path, target_name)
-        self.maps = parse_maps_from_file(map_path, plus = True)
-        self.reverse_maps = reverse_maps(self.maps)
         self.target  = target_name
+
+        main_opts, lib_opts, bp = parse_maps_from_file(map_path, target_name)
+
+        # use pwnlib's ELF to save all objects
+        # XXX: angr.loader has loaded all objects...
+        self.elfs = {self.target:ELF(binary_path, checksec=False)}
+        self.elfs[self.target].address = main_opts["base_addr"]
+        for k, v in lib_opts.items():
+            f = ELF(k, checksec=False)
+            # TEST: only use filename, not path?
+            k = k.split("/")[-1]
+            f.address = v["base_addr"]
+            self.elfs[k] = f
+        
+        # bug fix...
+        tmp = {}
+        for i in lib_opts:
+            tmp[i.split('/')[-1]] = lib_opts[i]
+        lib_opts = tmp
+
+
+        self.maps = parse_maps_from_file(map_path, plus = True)
+        self.mem_dump = 0
+        self.reverse_maps = reverse_maps(self.maps)
         self.report_log_path = os.getcwd()
         self.report_logger = 0
 
@@ -88,17 +109,6 @@ class Replayer(angr.project.Project):
         super().__init__(binary_path, main_opts = main_opts, lib_opts = lib_opts, \
             auto_load_libs=False, use_sim_procedures=False , preload_libs = force_load_libs)
 
-        # use pwnlib's ELF to save all objects
-        # XXX: angr.loader has loaded all objects...
-        self.elfs = {self.target:ELF(binary_path, checksec=False)}
-        self.elfs[self.target].address = self._main_opts["base_addr"]
-        for k, v in self._lib_opts.items():
-            f = ELF(k, checksec=False)
-            # TEST: only use filename, not path?
-            k = k.split("/")[-1]
-            f.address = v["base_addr"]
-            self.elfs[k] = f
-
         # replace unsupported syscall
         replace_stub(self)
 
@@ -121,6 +131,9 @@ class Replayer(angr.project.Project):
         """
         state = self.factory.entry_state(mode="tracing", stdin=self.input)
         state.regs.rsp = self._bp
+
+        if self.mem_dump:
+            recover_dump(state, self.mem_dump)
         return state
 
     def get_simgr(self, from_state = None):

@@ -8,6 +8,7 @@ import claripy
 import angr
 from pwnlib import elf
 from SimPacketsC import SimPacketsC
+import base64
 
 PROT_READ = 1
 PROT_WRITE = 2
@@ -30,7 +31,7 @@ def parse_maps(maps, target):
         bp = maps[0].split(" ")[-1].strip()
         bp = int(bp, 16)
     else:
-        puts("No stack pointer recorded?")
+        print("No stack pointer recorded?")
         exit(0)
     for line in maps[1:]:
         if line == "":
@@ -47,7 +48,7 @@ def parse_maps(maps, target):
                 continue
         #than lib opts
             # use first addr as base
-        if path.split('/')[-1] not in lib_opts:
+        if path not in lib_opts:
             # don't parse other segments of target
             if path.split("/")[-1] == target:
                 continue
@@ -57,7 +58,7 @@ def parse_maps(maps, target):
             # don't parse misc segs like [heap]
             if path[0] == "[":
                 continue
-            lib_opts[path.split('/')[-1]] = {"base_addr":start_addr}
+            lib_opts[path] = {"base_addr":start_addr}
     return main_opts, lib_opts, bp
 
 def _parse_mod(mod):
@@ -262,6 +263,25 @@ def hex2str(h):
 
 
 
+def parse_dumps(p, dump_file):
+    result = {}
+    with open(dump_file) as f:
+        dumps = f.read()
+        dumps = dumps.split('\n')[:-1]
+        assert(len(dumps)&1 == 0)
+        for i in range(0, len(dumps), 2):
+            info = dumps[i]
+            mem = dumps[i+1]
+            obj = info.split(' ')[-1].split('/')[-1]
+            if "[stack]" != obj:
+                continue
+            addrs = info.split(' ')[0]
+            start = int(addrs.split('-')[0], 16)
+            end = int(addrs.split('-')[1], 16)
+            result[start] = {"size":end-start, "mem":base64.b64decode(mem)} 
+    p.mem_dump = result
 
 
-
+def recover_dump(state, mem_dump):
+    for start, seg_info in mem_dump.items():
+        state.memory.store(start, claripy.BVV(seg_info["mem"]), endness="Iend_BE")
