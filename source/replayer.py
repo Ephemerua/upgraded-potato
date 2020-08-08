@@ -40,16 +40,15 @@ class Replayer(angr.project.Project):
 
     :ivar hooked_addr:  list of addr been hooked
     """
-    def __init__(self, binary_path, log_path, map_path):
+    def __init__(self, binary_path, log_path, map_path, test = False):
         assert(isinstance(binary_path, str))
         assert(isinstance(log_path, str))
         assert(isinstance(map_path, str))
         self.__binary_path = binary_path
         self.__log_path = log_path
         self.__map_path = map_path
+        self.test = test
         
-        # input is the recorded stdin
-        self.input = parse_log_from_file(log_path)
         target_name = binary_path.split(r"/")[-1]
         self.target  = target_name
 
@@ -110,7 +109,13 @@ class Replayer(angr.project.Project):
             auto_load_libs=False, use_sim_procedures=False , preload_libs = force_load_libs)
 
         # replace unsupported syscall
-        replace_stub(self)
+        if test:
+            syscall_info = parse_syscallinfo(log_path)
+            replace_stub(self, test=True, syscall_info = syscall_info)
+        else:
+            replace_stub(self)
+            self.input = parse_log_from_file(log_path)
+
 
         # do some steps as test
         simgr = self.get_simgr()
@@ -129,10 +134,15 @@ class Replayer(angr.project.Project):
         """
         Returns the state at entry point, with stdin set to recorded input
         """
-        state = self.factory.entry_state(mode="tracing", stdin=self.input)
+        if not self.test:
+            state = self.factory.entry_state(mode="tracing", stdin=self.input)
+        else:
+            state = self.factory.entry_state(mode="tracing")
+
         state.regs.rsp = self._bp
 
         if self.mem_dump:
+            print("doing recover")
             recover_dump(state, self.mem_dump)
         return state
 

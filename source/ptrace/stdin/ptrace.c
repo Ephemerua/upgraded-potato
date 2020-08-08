@@ -158,9 +158,9 @@ static inline void dump_segment(char* line, int fd, size_t size){
     char prot[0x20] = {0};
     sscanf(line, "%llx-%llx %s", &start, &end, prot);
     if (elf_loadaddr == 0){ elf_loadaddr = start;  debug_info("loadaddr: %llx\n", start);}
-    debug_info("start: %llx-%llx\n", start, end);
-    debug_info("size: %llx\n", end-start);
-    if (prot[1] == 'w'){
+    //debug_info("start: %llx-%llx\n", start, end);
+    //debug_info("size: %llx\n", end-start);
+    if (prot[2] != 'x'){
         // describe this segment
         write(fd, line, size);
         write(fd, "\n", 1);
@@ -287,6 +287,8 @@ int main(int argc, char *argv[]) {
     int is_init = 1;
     struct user_regs_struct regs;
     ull elf_hdr[4];
+    struct user_regs_struct regs_bak;
+
 
     // get entry point, we need break at there
     int elf_fd = open(argv[1], O_RDONLY);
@@ -313,22 +315,25 @@ int main(int argc, char *argv[]) {
             if(WIFEXITED(status))   break;
 
             if (is_init == 2){
-                is_init = 0;
                 tmp_rip = ptrace(PTRACE_PEEKUSER, child, 8*RIP, NULL);
                 // fucking rip points to next insn
                 if (tmp_rip == elf_entry+1){
+                    is_init = 0;
                     map_parser();
+                    ptrace(PTRACE_GETREGS, child, NULL, &regs_bak);
+                    regs_bak.rip -= 1;
                     ptrace(PTRACE_POKETEXT, child, elf_entry, elf_pokebak);
+                    ptrace(PTRACE_SETREGS, child, NULL, &regs_bak);
                     ptrace(PTRACE_SYSCALL, child, NULL, NULL);
                     continue;
-                }else {
-                    ptrace(PTRACE_SYSCALL, child, NULL, NULL);
-                    continue;
-                    }
+                }
+
             }
 
             orig_rax = ptrace(PTRACE_PEEKUSER, child, 8 * ORIG_RAX, NULL);
-            debug_info("now syscall: %ld\n", orig_rax);
+            if(orig_rax != -1) 
+                debug_info("now syscall: %ld\n", orig_rax);
+            
             switch(orig_rax){
                 case SYS_execve:
                     if (unlikely(is_init == 1)){
@@ -340,8 +345,7 @@ int main(int argc, char *argv[]) {
                             }
                             elf_pokebak = ptrace(PTRACE_PEEKTEXT, child, elf_entry, NULL);
                             ptrace(PTRACE_POKETEXT, child, elf_entry, 0xcc);
-                            ptrace(PTRACE_CONT, child, NULL, NULL);
-
+                            ptrace(PTRACE_SYSCALL, child, NULL, NULL);
                         }
                     }
                     break;

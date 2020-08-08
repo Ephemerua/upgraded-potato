@@ -9,6 +9,7 @@ import angr
 from pwnlib import elf
 from SimPacketsC import SimPacketsC
 import base64
+from syscall_dispatcher import syscall_dispatcher
 
 PROT_READ = 1
 PROT_WRITE = 2
@@ -243,18 +244,30 @@ class success_syscall_stub(angr.SimProcedure):
 
 # replace all unsupported syscall to success_syscall_stub
 # dirty, but don't need to edit source code
-def replace_stub(p, arch="amd64"):
+def replace_stub(p, arch="amd64", test = False, syscall_info = None):
     """
     Replace project's all unsupported syscall to a stub, 
     which always return 0.
     XXX: Default syscall stub returns an unconstrained value, cause mutiple paths
     """
+    
     sl = p.simos.syscall_library
-    for sysno, name in sl.syscall_number_mapping[arch].items():
-        syscall = sl.get(sysno, arch, abi_list=[arch])
-        if syscall.is_stub:
-            #print("add %s" % name)
-            sl.add(name, success_syscall_stub)
+    if test:
+        for sysno, call_infos in syscall_info.items():
+            if sysno == 1:
+                continue
+            if sysno == 0:
+                syscall_name = sl.syscall_number_mapping[arch][sysno]
+                sl.procedures[syscall_name] = syscall_dispatcher(sysno, call_infos, modify = "rsi")
+                continue
+            syscall_name = sl.syscall_number_mapping[arch][sysno]
+            sl.procedures[syscall_name] = syscall_dispatcher(sysno, call_infos)
+    else:
+        for sysno, name in sl.syscall_number_mapping[arch].items():
+            syscall = sl.get(sysno, arch, abi_list=[arch])
+            if syscall.is_stub:
+                #print("add %s" % name)
+                sl.add(name, success_syscall_stub)
     
 from binascii import unhexlify
 def hex2str(h):
@@ -273,7 +286,7 @@ def parse_dumps(p, dump_file):
             info = dumps[i]
             mem = dumps[i+1]
             obj = info.split(' ')[-1].split('/')[-1]
-            if "[stack]" != obj:
+            if obj != "[stack]":
                 continue
             addrs = info.split(' ')[0]
             start = int(addrs.split('-')[0], 16)
@@ -285,3 +298,16 @@ def parse_dumps(p, dump_file):
 def recover_dump(state, mem_dump):
     for start, seg_info in mem_dump.items():
         state.memory.store(start, claripy.BVV(seg_info["mem"]), endness="Iend_BE")
+
+
+def parse_syscallinfo(path_to_syscallinfo):
+    with open(path_to_syscallinfo, 'r') as f:
+        content = f.read().split('\n')[:-1]
+        result = {}
+        for line in content:
+            tmp = eval(line)
+            if tmp['sysno'] not in result:
+                result[tmp['sysno']] = [tmp]
+            else:
+                result[tmp['sysno']].append(tmp)
+        return result
