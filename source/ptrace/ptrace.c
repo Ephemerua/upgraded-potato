@@ -13,8 +13,14 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
-#define DEBUG 1
+#define DEBUG 0
+#if DEBUG == 0
+    #define B64_ENCODE 1
+#endif
 
 #define likely(x)       __builtin_expect(!!(x), 1)
 #define unlikely(x)     __builtin_expect(!!(x), 0)
@@ -131,9 +137,11 @@ void base64_cleanup() {
 }
 
 
-/* global variables goes here */
+/* global variables for each implemented syscall */
 int out_fd;
 pid_t child = 0;
+
+int open_calling = 0;
 
 int read_calling = 0;
 ull read_fd;
@@ -146,6 +154,22 @@ ull write_fd;
 ull write_addr;
 ull write_size;
 ull write_realsize;
+
+int socket_calling = 0;
+
+int accept_calling = 0;
+
+int recvmsg_calling = 0;
+ull msghdr_ptr;
+
+int recvfrom_calling = 0;
+ull recvfrom_ubuf;
+
+int sendto_calling = 0;
+ull sendto_buf;
+
+int sendmsg_calling = 0;
+ull sendmsg_msghdr;
 
 ull elf_entry = 0;
 ull elf_loadaddr = 0;
@@ -160,7 +184,7 @@ static inline void dump_segment(char* line, int fd, size_t size){
     if (elf_loadaddr == 0){ elf_loadaddr = start;  debug_info("loadaddr: %llx\n", start);}
     //debug_info("start: %llx-%llx\n", start, end);
     //debug_info("size: %llx\n", end-start);
-    if (prot[2] != 'x'){
+    if (prot[1] == 'w'){
         // describe this segment
         write(fd, line, size);
         write(fd, "\n", 1);
@@ -255,7 +279,7 @@ int save_call_context(int sysno){
     return 0;
 }
 
-int save_call_result(int sysno){
+ull save_call_result(int sysno){
     unsigned long long rax = ptrace(PTRACE_PEEKUSER, child, 8 * RAX, NULL);
     char *tmp = alloc_printf("{\"is_result\": True, \"sysno\": %d, \"rax\": %#llx, \"mem_changes\": [", sysno, rax);
     write(out_fd, tmp, strlen(tmp));
@@ -268,11 +292,18 @@ void save_memory_change(ull addr, ull size){
     for(ull i = 0; i < size; i++){
         buf[i] = ptrace(PTRACE_PEEKDATA, child, addr+i, NULL);
     }
-    size_t encoded_size;
-    char* encoded_buf = base64_encode(buf, size, &encoded_size);
+    #ifdef B64_ENCODE
+        size_t encoded_size;
+        char* encoded_buf = base64_encode(buf, size, &encoded_size);
+    #endif
+
     char* tmp = alloc_printf("{\"addr\": %#llx, \"size\": %lld, \"content\": \"", addr, size);
     write(out_fd, tmp, strlen(tmp));
-    write(out_fd, encoded_buf, encoded_size);
+    #ifdef B64_ENCODE
+        write(out_fd, encoded_buf, encoded_size);
+    #else
+        write(out_fd, buf, size);
+    #endif
     write(out_fd, "\"}, ", 4);
 }
 
@@ -326,6 +357,8 @@ int main(int argc, char *argv[]) {
                     ptrace(PTRACE_SETREGS, child, NULL, &regs_bak);
                     ptrace(PTRACE_SYSCALL, child, NULL, NULL);
                     continue;
+                }else{
+                    ptrace(PTRACE_SYSCALL, child, NULL, NULL);
                 }
 
             }
@@ -347,6 +380,16 @@ int main(int argc, char *argv[]) {
                             ptrace(PTRACE_POKETEXT, child, elf_entry, 0xcc);
                             ptrace(PTRACE_SYSCALL, child, NULL, NULL);
                         }
+                    }
+                    break;
+                case SYS_open:
+                    if(!open_calling){
+                        open_calling = 1;
+                        save_call_result(SYS_open);
+                    }else{
+                        open_calling = 0;
+                        save_call_result(SYS_open);
+                        save_end();
                     }
                     break;
                 
@@ -384,6 +427,101 @@ int main(int argc, char *argv[]) {
                         save_end();
                     }
                     break;
+
+                case SYS_socket:
+                    if(!socket_calling){
+                        socket_calling = 1;
+                        save_call_context(SYS_socket);
+                    }else{
+                        socket_calling = 0;
+                        save_call_result(SYS_socket);
+                        save_end();
+                    }
+                    break;
+                
+                case SYS_accept:
+                    if(!accept_calling){
+                        accept_calling = 1;
+                        save_call_context(SYS_accept);
+                    }else{
+                        accept_calling = 0;
+                        save_call_result(SYS_accept);
+                        save_end();
+                    }
+                    break;
+            
+                case SYS_recvmsg:
+                    if(!recvmsg_calling){
+                        recvmsg_calling = 1;
+                        msghdr_ptr = ptrace(PTRACE_PEEKUSER, child, 8 * RSI, NULL);
+                        save_call_context(SYS_recvmsg);
+                    }else{
+                        recvmsg_calling = 0;
+                        struct msghdr* msghdr_buf = malloc(sizeof(struct msghdr));
+                        for(int i = 0; i < sizeof(struct msghdr); i++){
+                            *((char*)msghdr_buf+i) = ptrace(PTRACE_PEEKDATA, child, msghdr_ptr+i, NULL);
+                        }
+                        struct iovec* iov_buf = malloc(sizeof(struct iovec));
+                        for(int i=0;i<sizeof(struct iovec);i++) {
+                            *((char*)iov_buf+i) = ptrace(PTRACE_PEEKDATA, child, (ull)msghdr_buf->msg_iov+i, NULL);
+                        }   
+                        ull msg_len = save_call_result(SYS_recvmsg);
+                        save_memory_change((ull)iov_buf->iov_base, msg_len);
+                        save_memory_change((ull)msghdr_ptr, sizeof(struct msghdr));
+                        save_memory_change((ull)msghdr_buf->msg_iov, sizeof(struct iovec));
+                        save_end();
+                        free(msghdr_buf);
+                        free(iov_buf);
+                    }
+                    break;
+                case  SYS_recvfrom:
+                    if(!recvfrom_calling){
+                        recvfrom_calling = 1;
+                        recvfrom_ubuf = ptrace(PTRACE_PEEKUSER, child, 8 * RSI, NULL);
+                        save_call_context(SYS_recvfrom);
+                    }else{
+                        recvfrom_calling = 0;
+                        ull msg_len = save_call_result(SYS_recvfrom);
+                        save_memory_change(recvfrom_ubuf, msg_len);
+                        save_end();
+                    }
+                    break;
+                
+                case SYS_sendto:
+                    if(!sendto_calling){
+                        sendto_calling = 1;
+                        sendto_buf = ptrace(PTRACE_PEEKUSER, child, 8 * RSI, NULL);
+                        save_call_context(SYS_sendto);
+                    }else{
+                        sendto_calling = 0;
+                        ull msg_len = save_call_result(SYS_sendto);
+                        save_memory_change(sendto_buf, msg_len);
+                        save_end();
+                    }
+                break;
+                case SYS_sendmsg:
+                    if(!sendmsg_calling){
+                        sendmsg_calling = 1;
+                        sendmsg_msghdr = ptrace(PTRACE_PEEKUSER, child, 8 * RSI, NULL);
+                        save_call_context(SYS_sendmsg);
+                    }else{
+                        sendmsg_calling = 0;
+                        struct msghdr* msghdr_buf = malloc(sizeof(struct msghdr));
+                        for(int i = 0; i < sizeof(struct msghdr); i++){
+                            *((char*)msghdr_buf+i) = ptrace(PTRACE_PEEKDATA, child, sendmsg_msghdr+i, NULL);
+                        }
+                        struct iovec* iov_buf = malloc(sizeof(struct iovec));
+                        for(int i=0;i<sizeof(struct iovec);i++) {
+                            *((char*)iov_buf+i) = ptrace(PTRACE_PEEKDATA, child, (ull)msghdr_buf->msg_iov+i, NULL);
+                        }   
+                        ull msg_len = save_call_result(SYS_recvmsg);
+                        save_memory_change((ull)iov_buf->iov_base, msg_len);
+                        save_end();
+                        free(msghdr_buf);
+                        free(iov_buf);
+                    }
+                break;
+
                 
             }
             ptrace(PTRACE_SYSCALL, child, NULL, NULL);

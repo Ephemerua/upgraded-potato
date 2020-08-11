@@ -1,0 +1,23 @@
+got bp: 0x7ffd32e49520
+55c2bf798000-55c2bf799000 r--p 00000000 00:53 66599324                   /ctf/work/playground/tmp/up2/source/ptrace/socket/tests/server
+55c2bf799000-55c2bf79a000 r-xp 00001000 00:53 66599324                   /ctf/work/playground/tmp/up2/source/ptrace/socket/tests/server
+55c2bf79a000-55c2bf79b000 r--p 00002000 00:53 66599324                   /ctf/work/playground/tmp/up2/source/ptrace/socket/tests/server
+55c2bf79b000-55c2bf79c000 r--p 00002000 00:53 66599324                   /ctf/work/playground/tmp/up2/source/ptrace/socket/tests/server
+55c2bf79c000-55c2bf79d000 rw-p 00003000 00:53 66599324                   /ctf/work/playground/tmp/up2/source/ptrace/socket/tests/server
+7f9649725000-7f964974a000 r--p 00000000 fe:01 1311719                    /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7f964974a000-7f96498c2000 r-xp 00025000 fe:01 1311719                    /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7f96498c2000-7f964990c000 r--p 0019d000 fe:01 1311719                    /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7f964990c000-7f964990d000 ---p 001e7000 fe:01 1311719                    /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7f964990d000-7f9649910000 r--p 001e7000 fe:01 1311719                    /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7f9649910000-7f9649913000 rw-p 001ea000 fe:01 1311719                    /usr/lib/x86_64-linux-gnu/libc-2.31.so
+7f9649913000-7f9649919000 rw-p 00000000 00:00 0 
+7f9649921000-7f9649922000 r--p 00000000 fe:01 1311697                    /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7f9649922000-7f9649945000 r-xp 00001000 fe:01 1311697                    /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7f9649945000-7f964994d000 r--p 00024000 fe:01 1311697                    /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7f964994e000-7f964994f000 r--p 0002c000 fe:01 1311697                    /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7f964994f000-7f9649950000 rw-p 0002d000 fe:01 1311697                    /usr/lib/x86_64-linux-gnu/ld-2.31.so
+7f9649950000-7f9649951000 rw-p 00000000 00:00 0 
+7ffd32e2a000-7ffd32e4b000 rw-p 00000000 00:00 0                          [stack]
+7ffd32ed4000-7ffd32ed7000 r--p 00000000 00:00 0                          [vvar]
+7ffd32ed7000-7ffd32ed9000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]

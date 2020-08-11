@@ -115,6 +115,11 @@ class Replayer(angr.project.Project):
         else:
             replace_stub(self)
             self.input = parse_log_from_file(log_path)
+        self.fake_fs = [{"path": "", "type": "stdin", "content":[], "last_fd":0},
+                        {"path": "", "type": "stdout", "content":[], "last_fd":1},
+                        {"path": "", "type": "stderr", "content":[], "last_fd":2},
+        ]
+        self.fdset = {0:0, 1:1, 2:2}
 
 
         # do some steps as test
@@ -143,7 +148,7 @@ class Replayer(angr.project.Project):
 
         if self.mem_dump:
             print("doing recover")
-            recover_dump(state, self.mem_dump)
+            recover_dump(state, self.mem_dump)        
         return state
 
     def get_simgr(self, from_state = None):

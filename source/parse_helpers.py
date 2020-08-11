@@ -9,7 +9,7 @@ import angr
 from pwnlib import elf
 from SimPacketsC import SimPacketsC
 import base64
-from syscall_dispatcher import syscall_dispatcher
+from syscall_dispatcher import  dispatchers
 
 PROT_READ = 1
 PROT_WRITE = 2
@@ -254,14 +254,42 @@ def replace_stub(p, arch="amd64", test = False, syscall_info = None):
     sl = p.simos.syscall_library
     if test:
         for sysno, call_infos in syscall_info.items():
-            if sysno == 1:
-                continue
-            if sysno == 0:
+            if sysno in dispatchers:
+                sd = dispatchers[sysno]
+                sd.set_callinfo(call_infos)
                 syscall_name = sl.syscall_number_mapping[arch][sysno]
-                sl.procedures[syscall_name] = syscall_dispatcher(sysno, call_infos, modify = "rsi")
-                continue
-            syscall_name = sl.syscall_number_mapping[arch][sysno]
-            sl.procedures[syscall_name] = syscall_dispatcher(sysno, call_infos)
+                sl.procedures[syscall_name] = sd
+        #     if sysno == 1:
+        #         continue
+        #     if sysno == 0:
+        #         syscall_name = sl.syscall_number_mapping[arch][sysno]
+        #         sl.procedures[syscall_name] = syscall_dispatcher(sysno, call_infos, modify = "rsi")
+        #         continue
+        #     if sysno == 2 or sysno == 41 or sysno == 43:
+        #         syscall_name = sl.syscall_number_mapping[arch][sysno]
+        #         sl.procedures[syscall_name] = sd =  syscall_dispatcher(sysno, call_infos)
+                
+        #         sd.add_posix_cb("""print(self.state.posix.open(hex(call_info["rbp"]+call_info["rdi"]), 3, preferred_fd = ret_info["rax"]))""")
+        #         continue
+        #     if sysno == 44 or sysno == 46:
+        #         syscall_name = sl.syscall_number_mapping[arch][sysno]
+        #         sl.procedures[syscall_name] = sd =  syscall_dispatcher(sysno, call_infos)
+        #         sd.add_posix_cb("""fd = self.state.posix.get_fd(call_info["rdi"])\n""")
+        #         sd.add_posix_cb("""print("write to %s" % fd)""")
+        #         sd.add_posix_cb("""content = ret_info["mem_changes"][0]["content"]\n """)
+        #         sd.add_posix_cb("""content = base64.b64decode(content)\n""")
+        #         sd.add_posix_cb("""fd.write(content, ret_info["rax"])\n""")
+        #         sd.add_posix_cb("""print("write %s" % content)""")
+
+        #     syscall_name = sl.syscall_number_mapping[arch][sysno]
+        #     sl.procedures[syscall_name] = syscall_dispatcher(sysno, call_infos)
+        
+        # replace other syscalls as always retuning 0
+        for sysno, name in sl.syscall_number_mapping[arch].items():
+            syscall = sl.get(sysno, arch, abi_list=[arch])
+            if syscall.is_stub:
+                #print("add %s" % name)
+                sl.add(name, success_syscall_stub)
     else:
         for sysno, name in sl.syscall_number_mapping[arch].items():
             syscall = sl.get(sysno, arch, abi_list=[arch])
