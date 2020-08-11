@@ -168,6 +168,18 @@ class sendto_dispatcher(write_dispatcher):
 class sendmsg_dispatcher(write_dispatcher):
     pass
 
+class getrandom_dispatcher(syscall_dispatcher):
+    def run(self, buf, size):
+        self.log()
+        call_info, ret_info = self.next_info()
+
+        mem_change = ret_info["mem_changes"][0]
+        mem_change["addr"] = buf.args[0]
+        self.recover_memory(mem_change)
+
+        return claripy.BVV(ret_info["rax"], 64)
+
+
 
 dispatchers = {0 : read_dispatcher(0),
               1 : write_dispatcher(1),
@@ -178,6 +190,7 @@ dispatchers = {0 : read_dispatcher(0),
               46 : sendmsg_dispatcher(46),
               45 : recvfrom_dispatcher(45),
               47 : recvmsg_dispatcher(47),
+              318 : getrandom_dispatcher(318),
                 }
 
 dispatch_index = {}

@@ -333,6 +333,8 @@ def parse_syscallinfo(path_to_syscallinfo):
         content = f.read().split('\n')[:-1]
         result = {}
         for line in content:
+            if line == "":
+                continue
             tmp = eval(line)
             if tmp['sysno'] not in result:
                 result[tmp['sysno']] = [tmp]

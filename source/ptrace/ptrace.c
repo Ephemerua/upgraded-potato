@@ -171,6 +171,10 @@ ull sendto_buf;
 int sendmsg_calling = 0;
 ull sendmsg_msghdr;
 
+int getrandom_calling = 0;
+ull getrandom_buf;
+ull getrandom_size;
+
 ull elf_entry = 0;
 ull elf_loadaddr = 0;
 
@@ -385,7 +389,7 @@ int main(int argc, char *argv[]) {
                 case SYS_open:
                     if(!open_calling){
                         open_calling = 1;
-                        save_call_result(SYS_open);
+                        save_call_context(SYS_open);
                     }else{
                         open_calling = 0;
                         save_call_result(SYS_open);
@@ -521,6 +525,19 @@ int main(int argc, char *argv[]) {
                         free(iov_buf);
                     }
                 break;
+                case SYS_getrandom:
+                    if(!getrandom_calling){
+                        getrandom_calling = 1;
+                        getrandom_buf = ptrace(PTRACE_PEEKUSER, child, 8 * RDI, NULL);
+                        save_call_context(SYS_getrandom);
+                    }else{
+                        getrandom_calling = 0;
+                        ull real_getrandom_size = save_call_result(SYS_getrandom);
+                        save_memory_change(getrandom_buf, real_getrandom_size);
+                        save_end();                        
+                    }
+                default:
+                    break;
 
                 
             }
