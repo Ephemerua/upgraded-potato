@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js">
+<head>
+
+	
+    <meta charset="utf-8">
+    <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1" />
+    <title>Final Report</title>
+    <!--favicon icon-->
+    <!--<link rel="icon" href="images/logo.png">>
+    <!--google font-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900" rel="stylesheet">
+    <!-- font awesome css -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <!-- iconmind icon css -->
+    <link rel="stylesheet" href="css/iconmind-line.css">
+    <!--bootstrap min css-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!--owl carousel min css-->
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <!--nice select css-->
+    <link rel="stylesheet" href="css/nice-select.css">
+    <!--Padding margin css-->
+    <link rel="stylesheet" href="css/padding.margin.css">
+    <!-- style css -->
+    <link rel="stylesheet" href="css/asset/shortcode-common.css">
+    <link rel="stylesheet" href="css/asset/typography.css">
+    <link rel="stylesheet" href="css/asset/accordion.css">
+    <link rel="stylesheet" href="css/asset/alert.css">
+    <link rel="stylesheet" href="css/asset/button.css">
+    <link rel="stylesheet" href="css/asset/input.css">
+    <link rel="stylesheet" href="css/asset/c2action.css">
+    <link rel="stylesheet" href="css/asset/testimonial.css">
+    <link rel="stylesheet" href="css/asset/carousel.css">
+    <link rel="stylesheet" href="css/asset/client.css">
+    <link rel="stylesheet" href="css/asset/color.css">
+    <link rel="stylesheet" href="css/asset/faq.css">
+    <link rel="stylesheet" href="css/asset/grid-systerm.css">
+    <link rel="stylesheet" href="css/asset/pricing.css">
+    <link rel="stylesheet" href="css/asset/progressbar.css">
+    <link rel="stylesheet" href="css/asset/table.css">
+    <link rel="stylesheet" href="css/asset/tab.css">
+    <link rel="stylesheet" href="css/asset/team.css">
+    <link rel="stylesheet" href="css/asset/testimonial.css">
+    <link rel="stylesheet" href="css/asset/navbar.css">
+
+    <!--responsive css-->
+    <link rel="stylesheet" href="css/asset/shortcode-responsive.css">
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body class="spresentation">
+    <!-- =========================================Start header section== =======================================-->
+    <header class="presentation_header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-2">
+                    <!--<a href="#" class="logo"><img src="images/logo.png" alt="logo"></a>-->
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- =========================================End header section=========================================-->
+
+
+    <!-- =========================================Start Sidebar section== =======================================-->
+    <div class="presentation_sidebar">
+        <div class="toggle_arrow">
+            <i class="fa fa-angle-right"></i>
+            <i class="fa fa-angle-left"></i>
+        </div>
+        <ul>
+            <li><a href="#information" class="anchor">Information</a></li>
+            <li><a href="#GOT_analysis" class="anchor">GOT Analysis</a></li>
+            <li><a href="#Heap_analysis" class="anchor">Heap Analysis</a></li>
+            <li><a href="#Leak_analysis" class="anchor">Leak Analysis</a></li>
+			<li><a href="#Call_analysis" class="anchor">Call Analysis</a></li>
+        </ul>
+    </div>
+    <!-- =========================================End Sidebar section=========================================-->
+
+
+    <!-- ========================================Start Accordion section=========================================-->
+    
+    <div id="accordion">
+        <section class="flick_accordion pt_90 pb_70 section_borderr">
+            <div class="container">
+				<div class="col-md-12">
+					<h1 class="fw_700">EXPLOIT ANALYSIS REPORT</h1>
+					<div class="panel-group style2 style3" role="tablist" id="accordion_3">
+						
+						<div class="panel">
+                                <a href="#information" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">
+									Basic Information
+								</a>
+                                <div class="collapse panel-collapse" role="tabpanel" id="information">
+                                    <div class="panel-body"> 
+                                        <p class="fw_300 color_33"> checksec:<br>[*] '/ctf/work/playground/tmp/up2/test/packed_daily/daily'<br/>    Arch:     amd64-64-little<br/>    RELRO:    Full RELRO<br/>    Stack:    Canary found<br/>    NX:       NX enabled<br/>    PIE:      No PIE (0x400000)<br/>&nbsp;</p>
+                                        <p class="fw_300 color_33"> system:<br>Linux 45da36abff59 4.19.76-linuxkit #1 SMP Tue May 26 11:42:35 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+ </p>
+                                        <p class="fw_300 color_33"> <br> report time: <br> 2020.08.16 </p>
+									</div>
+									<div class="panel-body">
+                                        
+
+<style>
+
+</style>
+
+<div id="fig_el626051407362286222886815417236"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       
+       mpld3.draw_figure("fig_el626051407362286222886815417236", {"width": 980.0, "height": 350.0, "axes": [{"bbox": [0.18, 0.10999999999999999, 0.81, 0.77], "xlim": [-0.8566004707645452, 17.856600470764548], "ylim": [-0.26944138661556905, 5.269441386615569], "xdomain": [-0.8566004707645452, 17.856600470764548], "ydomain": [-0.26944138661556905, 5.269441386615569], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 18, "tickvalues": [8.0, 9.0, 10.0, 11.0, 0.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], "tickformat_formatter": "fixed", "tickformat": ["10896", "12162", "13444", "14775", "1518", "19168", "20549", "21765", "23084", "24364", "25660", "2838", "4104", "5450", "5543", "6737", "8240", "9567"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 6, "tickvalues": [4.0, 1.0, 5.0, 3.0, 0.0, 2.0], "tickformat_formatter": "fixed", "tickformat": ["alloc_warn", "free", "free_warn", "leak_trace", "malloc", "redzone_write"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": true, "color": "#808080", "dasharray": "6.4,1.6,1.0,1.6", "alpha": 0.7}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el62605140736235708816", "lines": [], "paths": [], "markers": [], "texts": [{"text": "state timestamp", "position": [0.5, -0.07529375386518243], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 16.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el62605140737192875920"}], "collections": [{"offsets": "data01", "xindex": 0, "yindex": 1, "paths": [[[[0.0, -0.5], [0.13260155, -0.5], [0.25978993539242673, -0.44731684579412084], [0.3535533905932738, -0.3535533905932738], [0.44731684579412084, -0.25978993539242673], [0.5, -0.13260155], [0.5, 0.0], [0.5, 0.13260155], [0.44731684579412084, 0.25978993539242673], [0.3535533905932738, 0.3535533905932738], [0.25978993539242673, 0.44731684579412084], [0.13260155, 0.5], [0.0, 0.5], [-0.13260155, 0.5], [-0.25978993539242673, 0.44731684579412084], [-0.3535533905932738, 0.3535533905932738], [-0.44731684579412084, 0.25978993539242673], [-0.5, 0.13260155], [-0.5, 0.0], [-0.5, -0.13260155], [-0.44731684579412084, -0.25978993539242673], [-0.3535533905932738, -0.3535533905932738], [-0.25978993539242673, -0.44731684579412084], [-0.13260155, -0.5], [0.0, -0.5]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]], "pathtransforms": [[8.419691425682043, 0.0, 0.0, 8.419691425682043, 0.0, 0.0]], "alphas": [0.7], "edgecolors": ["rgba(178, 34, 34, 0.7)"], "facecolors": ["rgba(178, 34, 34, 0.7)"], "edgewidths": [1.0], "offsetcoordinates": "data", "pathcoordinates": "display", "zorder": 1, "id": "el62605140737192625584"}], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 0.0], [1.0, 0.0], [2.0, 1.0], [3.0, 0.0], [4.0, 2.0], [5.0, 3.0], [6.0, 0.0], [7.0, 0.0], [8.0, 0.0], [9.0, 1.0], [10.0, 1.0], [11.0, 0.0], [12.0, 1.0], [13.0, 2.0], [14.0, 0.0], [15.0, 0.0], [15.0, 4.0], [16.0, 1.0], [17.0, 1.0], [17.0, 5.0]]}, "id": "el62605140736228622288", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "https://d3js.org/d3.v5"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.1.js", function(){
+         
+         mpld3.draw_figure("fig_el626051407362286222886815417236", {"width": 980.0, "height": 350.0, "axes": [{"bbox": [0.18, 0.10999999999999999, 0.81, 0.77], "xlim": [-0.8566004707645452, 17.856600470764548], "ylim": [-0.26944138661556905, 5.269441386615569], "xdomain": [-0.8566004707645452, 17.856600470764548], "ydomain": [-0.26944138661556905, 5.269441386615569], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 18, "tickvalues": [8.0, 9.0, 10.0, 11.0, 0.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], "tickformat_formatter": "fixed", "tickformat": ["10896", "12162", "13444", "14775", "1518", "19168", "20549", "21765", "23084", "24364", "25660", "2838", "4104", "5450", "5543", "6737", "8240", "9567"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 6, "tickvalues": [4.0, 1.0, 5.0, 3.0, 0.0, 2.0], "tickformat_formatter": "fixed", "tickformat": ["alloc_warn", "free", "free_warn", "leak_trace", "malloc", "redzone_write"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": true, "color": "#808080", "dasharray": "6.4,1.6,1.0,1.6", "alpha": 0.7}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el62605140736235708816", "lines": [], "paths": [], "markers": [], "texts": [{"text": "state timestamp", "position": [0.5, -0.07529375386518243], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 16.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el62605140737192875920"}], "collections": [{"offsets": "data01", "xindex": 0, "yindex": 1, "paths": [[[[0.0, -0.5], [0.13260155, -0.5], [0.25978993539242673, -0.44731684579412084], [0.3535533905932738, -0.3535533905932738], [0.44731684579412084, -0.25978993539242673], [0.5, -0.13260155], [0.5, 0.0], [0.5, 0.13260155], [0.44731684579412084, 0.25978993539242673], [0.3535533905932738, 0.3535533905932738], [0.25978993539242673, 0.44731684579412084], [0.13260155, 0.5], [0.0, 0.5], [-0.13260155, 0.5], [-0.25978993539242673, 0.44731684579412084], [-0.3535533905932738, 0.3535533905932738], [-0.44731684579412084, 0.25978993539242673], [-0.5, 0.13260155], [-0.5, 0.0], [-0.5, -0.13260155], [-0.44731684579412084, -0.25978993539242673], [-0.3535533905932738, -0.3535533905932738], [-0.25978993539242673, -0.44731684579412084], [-0.13260155, -0.5], [0.0, -0.5]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]], "pathtransforms": [[8.419691425682043, 0.0, 0.0, 8.419691425682043, 0.0, 0.0]], "alphas": [0.7], "edgecolors": ["rgba(178, 34, 34, 0.7)"], "facecolors": ["rgba(178, 34, 34, 0.7)"], "edgewidths": [1.0], "offsetcoordinates": "data", "pathcoordinates": "display", "zorder": 1, "id": "el62605140737192625584"}], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 0.0], [1.0, 0.0], [2.0, 1.0], [3.0, 0.0], [4.0, 2.0], [5.0, 3.0], [6.0, 0.0], [7.0, 0.0], [8.0, 0.0], [9.0, 1.0], [10.0, 1.0], [11.0, 0.0], [12.0, 1.0], [13.0, 2.0], [14.0, 0.0], [15.0, 0.0], [15.0, 4.0], [16.0, 1.0], [17.0, 1.0], [17.0, 5.0]]}, "id": "el62605140736228622288", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("https://d3js.org/d3.v5.js", function(){
+         mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.1.js", function(){
+                 
+                 mpld3.draw_figure("fig_el626051407362286222886815417236", {"width": 980.0, "height": 350.0, "axes": [{"bbox": [0.18, 0.10999999999999999, 0.81, 0.77], "xlim": [-0.8566004707645452, 17.856600470764548], "ylim": [-0.26944138661556905, 5.269441386615569], "xdomain": [-0.8566004707645452, 17.856600470764548], "ydomain": [-0.26944138661556905, 5.269441386615569], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 18, "tickvalues": [8.0, 9.0, 10.0, 11.0, 0.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0], "tickformat_formatter": "fixed", "tickformat": ["10896", "12162", "13444", "14775", "1518", "19168", "20549", "21765", "23084", "24364", "25660", "2838", "4104", "5450", "5543", "6737", "8240", "9567"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 6, "tickvalues": [4.0, 1.0, 5.0, 3.0, 0.0, 2.0], "tickformat_formatter": "fixed", "tickformat": ["alloc_warn", "free", "free_warn", "leak_trace", "malloc", "redzone_write"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": true, "color": "#808080", "dasharray": "6.4,1.6,1.0,1.6", "alpha": 0.7}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el62605140736235708816", "lines": [], "paths": [], "markers": [], "texts": [{"text": "state timestamp", "position": [0.5, -0.07529375386518243], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 16.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el62605140737192875920"}], "collections": [{"offsets": "data01", "xindex": 0, "yindex": 1, "paths": [[[[0.0, -0.5], [0.13260155, -0.5], [0.25978993539242673, -0.44731684579412084], [0.3535533905932738, -0.3535533905932738], [0.44731684579412084, -0.25978993539242673], [0.5, -0.13260155], [0.5, 0.0], [0.5, 0.13260155], [0.44731684579412084, 0.25978993539242673], [0.3535533905932738, 0.3535533905932738], [0.25978993539242673, 0.44731684579412084], [0.13260155, 0.5], [0.0, 0.5], [-0.13260155, 0.5], [-0.25978993539242673, 0.44731684579412084], [-0.3535533905932738, 0.3535533905932738], [-0.44731684579412084, 0.25978993539242673], [-0.5, 0.13260155], [-0.5, 0.0], [-0.5, -0.13260155], [-0.44731684579412084, -0.25978993539242673], [-0.3535533905932738, -0.3535533905932738], [-0.25978993539242673, -0.44731684579412084], [-0.13260155, -0.5], [0.0, -0.5]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]], "pathtransforms": [[8.419691425682043, 0.0, 0.0, 8.419691425682043, 0.0, 0.0]], "alphas": [0.7], "edgecolors": ["rgba(178, 34, 34, 0.7)"], "facecolors": ["rgba(178, 34, 34, 0.7)"], "edgewidths": [1.0], "offsetcoordinates": "data", "pathcoordinates": "display", "zorder": 1, "id": "el62605140737192625584"}], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 0.0], [1.0, 0.0], [2.0, 1.0], [3.0, 0.0], [4.0, 2.0], [5.0, 3.0], [6.0, 0.0], [7.0, 0.0], [8.0, 0.0], [9.0, 1.0], [10.0, 1.0], [11.0, 0.0], [12.0, 1.0], [13.0, 2.0], [14.0, 0.0], [15.0, 0.0], [15.0, 4.0], [16.0, 1.0], [17.0, 1.0], [17.0, 5.0]]}, "id": "el62605140736228622288", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+            })
+         });
+}
+</script>
+									</div>
+                                </div>
+                            </div>
+
+						<div class="panel">
+                                <a href="#GOT_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">GOT Analysis</a>
+                                <div class="collapse panel-collapse" role="tabpanel" id="GOT_analysis">
+                                    <div class="panel-body">
+										<section class="flick_table">
+											<div class="container">
+												<div class="row">
+													
+													
+													<h3 class="fw_300">GOT Change</h3>
+													<div class="col-sm-11">
+											
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#gotcollapse0">
+													
+																		<p class="fw_300 color_33">
+																			Not enabled or nothing to report.
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="gotcollapse0" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+															
+																	
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+													</div>
+												</div>
+											</div>
+										</section>
+									</div>
+                                </div>
+                            </div>
+
+						<div class="panel">
+                                <a href="#Heap_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">Heap Analysis</a>
+                                <div class="collapse panel-collapse" role="tabpanel" id="Heap_analysis">
+                                    <div class="panel-body">
+										<section id="heapgraph">
+											<div class="container">
+												<div class="row">
+													<div class="col-md-11">
+														<h3 class="fw_300">Heap Transfer Gragh</h3>
+														<div class="panel panel-default">
+															<div class="panel-heading">
+																<h4 class="panel-title">
+																	<a data-toggle="collapse" data-parent="#accordion" href="#heapgraphcollapse">
+																		<p class="fw_300 ">
+																			click for large picture
+																		</p>
+																	</a>
+																</h4>
+															</div>
+
+															<div id="heapgraphcollapse" class="panel-collapse collapse">
+																<div class="panel-body">
+																		<a><img src="./HeapChange.png", style="width:100%;height:auto;"></a>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</section>
+														
+														
+										<section id="heapanalysisoutput">
+											<div class="container">
+												<div class="row">
+													<div class="col-md-11">
+														<h3 class="fw_300">Heap Information</h3>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse0">
+														
+																		<p class="fw_300 color_33">
+																			[1518] Memory allocate: malloc(0x210) =&gt; 0x603010
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse0" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x210 <br><strong>Addr</strong>: 0x603010 <br><strong>State&nbsptimestamp</strong>: 1518 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse1">
+														
+																		<p class="fw_300 color_33">
+																			[2838] Memory allocate: malloc(0x210) =&gt; 0x603220
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse1" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x210 <br><strong>Addr</strong>: 0x603220 <br><strong>State&nbsptimestamp</strong>: 2838 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse2">
+														
+																		<p class="fw_300 color_33">
+																			[4104] Memory free: free(0x603010) (size: 0x210)
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse2" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling free(void* addr) to free memory. <br><strong>Addr</strong>: 0x603010 <br><strong>Chunk size</strong>: 0x210 <br><strong>State&nbsptimestamp</strong>: 4104 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse3">
+														
+																		<p class="fw_300 color_33">
+																			[5450] Memory allocate: malloc(0x210) =&gt; 0x603010
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse3" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x210 <br><strong>Addr</strong>: 0x603010 <br><strong>State&nbsptimestamp</strong>: 5450 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse4">
+														
+																		<p class="fw_300 color_33">
+																			[8240] Memory allocate: malloc(0x70) =&gt; 0x603430
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse4" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x70 <br><strong>Addr</strong>: 0x603430 <br><strong>State&nbsptimestamp</strong>: 8240 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse5">
+														
+																		<p class="fw_300 color_33">
+																			[9567] Memory allocate: malloc(0x70) =&gt; 0x6034a0
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse5" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x70 <br><strong>Addr</strong>: 0x6034a0 <br><strong>State&nbsptimestamp</strong>: 9567 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse6">
+														
+																		<p class="fw_300 color_33">
+																			[10896] Memory allocate: malloc(0x70) =&gt; 0x603510
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse6" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x70 <br><strong>Addr</strong>: 0x603510 <br><strong>State&nbsptimestamp</strong>: 10896 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse7">
+														
+																		<p class="fw_300 color_33">
+																			[12162] Memory free: free(0x6034a0) (size: 0x70)
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse7" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling free(void* addr) to free memory. <br><strong>Addr</strong>: 0x6034a0 <br><strong>Chunk size</strong>: 0x70 <br><strong>State&nbsptimestamp</strong>: 12162 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse8">
+														
+																		<p class="fw_300 color_33">
+																			[13444] Memory free: free(0x603430) (size: 0x70)
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse8" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling free(void* addr) to free memory. <br><strong>Addr</strong>: 0x603430 <br><strong>Chunk size</strong>: 0x70 <br><strong>State&nbsptimestamp</strong>: 13444 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse9">
+														
+																		<p class="fw_300 color_33">
+																			[14775] Memory allocate: malloc(0x70) =&gt; 0x603430
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse9" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x70 <br><strong>Addr</strong>: 0x603430 <br><strong>State&nbsptimestamp</strong>: 14775 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse10">
+														
+																		<p class="fw_300 color_33">
+																			[19168] Memory free: free(0x603510) (size: 0x70)
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse10" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling free(void* addr) to free memory. <br><strong>Addr</strong>: 0x603510 <br><strong>Chunk size</strong>: 0x70 <br><strong>State&nbsptimestamp</strong>: 19168 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse11">
+														
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[20549] Redzone(freed chunk) at 0x603500 overwritten.</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse11" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: A memory write operation trys to access unavailable area. <br><strong>Redzone type</strong>: freed chunk <br><strong>Start&nbspaddr</strong>: 0x603500 <br><strong>Target&nbspaddr</strong>: 0x603510 <br><strong>Write&nbspsize</strong>: 0x9 <br><strong>Write&nbspexpr</strong>: &lt;BV72 0xed4addf7ff7f00000a&gt; <br><strong>Stack backtrace</strong>: <br/>Frame&emsp;&emsp;0:&emsp;&emsp;0x0000000003000181&emsp;&emsp;&emsp;&emsp;read_dispatcher_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;sp: 0x00007fffffffe538<br/>Frame&emsp;&emsp;1:&emsp;&emsp;0x0000000000400b83&emsp;&emsp;&emsp;&emsp;sub_400b83&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe538<br/>Frame&emsp;&emsp;2:&emsp;&emsp;0x0000000000400d69&emsp;&emsp;&emsp;&emsp;sub_400d69&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe568<br/>Frame&emsp;&emsp;3:&emsp;&emsp;0x00007ffff7a59730&emsp;&emsp;&emsp;&emsp;__libc_start_main+240&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;  sp: 0x00007fffffffe598<br/>Frame&emsp;&emsp;4:&emsp;&emsp;0x0000000000400719&emsp;&emsp;&emsp;&emsp;plt.exit+57&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;sp: 0x00007fffffffe658<br/> <br><strong>Memory</strong>: <br/>0x603500| 0000000000000000  0000000000000071<br/>0x603510| <span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">00</span><span class="ansi33"></span><span class="ansi31">7f</span><span class="ansi33"></span><span class="ansi31">ff</span><span class="ansi33"></span><span class="ansi31">f7</span><span class="ansi33"></span><span class="ansi31">dd</span><span class="ansi33"></span><span class="ansi31">4a</span><span class="ansi33"></span><span class="ansi31">ed</span>  00000000000000<span class="ansi33"></span><span class="ansi31">0a</span><br/> <br><strong>State&nbsptimestamp</strong>: 20549 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse12">
+														
+																		<p class="fw_300 color_33">
+																			[21765] Memory allocate: malloc(0x70) =&gt; 0x603510
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse12" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x70 <br><strong>Addr</strong>: 0x603510 <br><strong>State&nbsptimestamp</strong>: 21765 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse13">
+														
+																		<p class="fw_300 color_33">
+																			[23084] Memory allocate: malloc(0x70) =&gt; 0x7ffff7dd4afd
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse13" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling (void*)malloc(size_t size) to allocate memory. <br><strong>Chunk size</strong>: 0x70 <br><strong>Addr</strong>: 0x7ffff7dd4afd <br><strong>State&nbsptimestamp</strong>: 23084 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse14">
+														
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[23084] Chunk allocated (0x7ffff7dd4afd &lt;- __memalign_hook-3)not in heap.</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse14" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Misbehaviour found during allocating memory. <br><strong>Symbol</strong>: __memalign_hook <br><strong>Offset</strong>: -0x3 <br><strong>Stack backtrace</strong>: <br/>Frame&emsp;&emsp;0:&emsp;&emsp;0x00000000004009a3&emsp;&emsp;&emsp;&emsp;sub_4009a3&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe540<br/>Frame&emsp;&emsp;1:&emsp;&emsp;0x0000000000400d5d&emsp;&emsp;&emsp;&emsp;sub_400d5d&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe568<br/>Frame&emsp;&emsp;2:&emsp;&emsp;0x00007ffff7a59730&emsp;&emsp;&emsp;&emsp;__libc_start_main+240&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;  sp: 0x00007fffffffe598<br/>Frame&emsp;&emsp;3:&emsp;&emsp;0x0000000000400719&emsp;&emsp;&emsp;&emsp;plt.exit+57&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;sp: 0x00007fffffffe658<br/> <br><strong>State&nbsptimestamp</strong>: 23084 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse15">
+														
+																		<p class="fw_300 color_33">
+																			[24364] Memory free: free(0x603510) (size: 0x70)
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse15" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling free(void* addr) to free memory. <br><strong>Addr</strong>: 0x603510 <br><strong>Chunk size</strong>: 0x70 <br><strong>State&nbsptimestamp</strong>: 24364 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse16">
+														
+																		<p class="fw_300 color_33">
+																			[25660] Memory free: free(0x603510) (size: 0x70)
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse16" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Calling free(void* addr) to free memory. <br><strong>Addr</strong>: 0x603510 <br><strong>Chunk size</strong>: 0x70 <br><strong>State&nbsptimestamp</strong>: 25660 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse17">
+														
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[25660] Unallocated chunk is freed</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse17" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: Misbehaviour found during freeing memory. <br><strong>Stack backtrace</strong>: <br/>Frame&emsp;&emsp;0:&emsp;&emsp;0x00007ffff7ab1c50&emsp;&emsp;&emsp;&emsp;__free&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe538<br/>Frame&emsp;&emsp;1:&emsp;&emsp;0x0000000000400c3e&emsp;&emsp;&emsp;&emsp;sub_400c3e&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe538<br/>Frame&emsp;&emsp;2:&emsp;&emsp;0x0000000000400d75&emsp;&emsp;&emsp;&emsp;sub_400d75&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe568<br/>Frame&emsp;&emsp;3:&emsp;&emsp;0x00007ffff7a59730&emsp;&emsp;&emsp;&emsp;__libc_start_main+240&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;  sp: 0x00007fffffffe598<br/>Frame&emsp;&emsp;4:&emsp;&emsp;0x0000000000400719&emsp;&emsp;&emsp;&emsp;plt.exit+57&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;sp: 0x00007fffffffe658<br/> <br><strong>Addr</strong>: 0x603510 <br><strong>Chunk size</strong>: 0x70 <br><strong>State&nbsptimestamp</strong>: 25660 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse18">
+														
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[5543] Redzone(freed chunk) at 0x603000 overwritten.</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse18" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: A memory write operation trys to access unavailable area. <br><strong>Redzone type</strong>: freed chunk <br><strong>Start&nbspaddr</strong>: 0x603000 <br><strong>Target&nbspaddr</strong>: 0x603010 <br><strong>Write&nbspsize</strong>: 0x1 <br><strong>Write&nbspexpr</strong>: &lt;BV8 36&gt; <br><strong>Stack backtrace</strong>: <br/>Frame&emsp;&emsp;0:&emsp;&emsp;0x0000000003000181&emsp;&emsp;&emsp;&emsp;read_dispatcher_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;sp: 0x00007fffffffe538<br/>Frame&emsp;&emsp;1:&emsp;&emsp;0x00000000004009e7&emsp;&emsp;&emsp;&emsp;sub_4009e7&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe538<br/>Frame&emsp;&emsp;2:&emsp;&emsp;0x0000000000400d5d&emsp;&emsp;&emsp;&emsp;sub_400d5d&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe568<br/>Frame&emsp;&emsp;3:&emsp;&emsp;0x00007ffff7a59730&emsp;&emsp;&emsp;&emsp;__libc_start_main+240&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;  sp: 0x00007fffffffe598<br/>Frame&emsp;&emsp;4:&emsp;&emsp;0x0000000000400719&emsp;&emsp;&emsp;&emsp;plt.exit+57&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;sp: 0x00007fffffffe658<br/> <br><strong>Memory</strong>: <br/>0x603000| 0000000000000000  0000000000000211<br/>0x603010| 00007ffff7dd4b<span class="ansi33"></span><span class="ansi31">24</span>  00007ffff7dd4b78<br/> <br><strong>State&nbsptimestamp</strong>: 5543 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+													</div>
+												</div>
+											</div>
+										</section>
+									</div>
+                                </div>
+                            </div>
+
+						<div class="panel">
+                                <a href="#Leak_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">Leak Analysis</a>
+                                <div class="collapse panel-collapse" role="tabpanel" id="Leak_analysis">
+                                    <div class="panel-body">
+										<section class="flick_table">
+											<div class="container">
+												<div class="row">
+													
+													
+													<h3 class="fw_300">Leakage Information</h3>
+													<div class="col-sm-11">
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse0">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">Found leakage: main_arena+4(0x7ffff7dd4b24)</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse0" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Memory address found in output, causing information leakage. <br><strong>Leaked&nbspaddress</strong>: 0x7ffff7dd4b24 <br><strong>Symbol&nbspof&nbspaddress</strong>: main_arena <br><strong>Offset</strong>: 0x4 <br><strong>Lib</strong>: libc-2.23.so <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse1">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">Found leakage: main_arena+4(0x7ffff7dd4b24)</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse1" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Memory address found in output, causing information leakage. <br><strong>Leaked&nbspaddress</strong>: 0x7ffff7dd4b24 <br><strong>Symbol&nbspof&nbspaddress</strong>: main_arena <br><strong>Offset</strong>: 0x4 <br><strong>Lib</strong>: libc-2.23.so <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse2">
+													
+																		<p class="fw_300 color_33">
+																			Start tracing of leakage.
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse2" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: No detailed information. <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse3">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[6737] Leakage trace: leak of main_arena+4 (0x7ffff7dd4b24) happened at :0x7ffff7b137a0</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse3" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Found memory information leakage scene. <br><strong>Stack backtrace</strong>: <br/>Frame&emsp;&emsp;0:&emsp;&emsp;0x00007ffff7b137a0&emsp;&emsp;&emsp;&emsp;__write_nocancel+7&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffbd18<br/>Frame&emsp;&emsp;1:&emsp;&emsp;0x00007ffff7aa96cf&emsp;&emsp;&emsp;&emsp;_IO_file_write@@GLIBC_2.2.5+143&emsp;&emsp;sp: 0x00007fffffffbd18<br/>Frame&emsp;&emsp;2:&emsp;&emsp;0x00007ffff7aa8cd3&emsp;&emsp;&emsp;&emsp;new_do_write+51&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;sp: 0x00007fffffffbd48<br/>Frame&emsp;&emsp;3:&emsp;&emsp;0x00007ffff7aa9cd6&emsp;&emsp;&emsp;&emsp;_IO_file_xsputn@@GLIBC_2.2.5+390   sp: 0x00007fffffffbd68<br/>Frame&emsp;&emsp;4:&emsp;&emsp;0x00007ffff7a826f4&emsp;&emsp;&emsp;&emsp;__GI__IO_vfprintf+11812&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;sp: 0x00007fffffffbd98<br/>Frame&emsp;&emsp;5:&emsp;&emsp;0x00007ffff7a7fa8d&emsp;&emsp;&emsp;&emsp;__GI__IO_vfprintf+445&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;  sp: 0x00007fffffffdee8<br/>Frame&emsp;&emsp;6:&emsp;&emsp;0x00007ffff7a87b09&emsp;&emsp;&emsp;&emsp;__printf+153&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   sp: 0x00007fffffffe468<br/>Frame&emsp;&emsp;7:&emsp;&emsp;0x0000000000400a9e&emsp;&emsp;&emsp;&emsp;sub_400a9e&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe548<br/>Frame&emsp;&emsp;8:&emsp;&emsp;0x0000000000400d51&emsp;&emsp;&emsp;&emsp;sub_400d51&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe568<br/>Frame&emsp;&emsp;9:&emsp;&emsp;0x00007ffff7a59730&emsp;&emsp;&emsp;&emsp;__libc_start_main+240&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;  sp: 0x00007fffffffe598<br/>Frame&emsp;&emsp;10:&emsp;&emsp;0x0000000000400719&emsp;&emsp;&emsp;&emsp;plt.exit+57&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   sp: 0x00007fffffffe658<br/> <br><strong>State&nbsptimestamp</strong>: 6737 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+													</div>
+												</div>
+											</div>
+										</section>
+
+									</div>
+                                </div>
+                            </div>
+
+                        <div class="panel">
+                                <a href="#Call_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">Call Analysis</a>
+                                <div class="collapse panel-collapse" role="tabpanel" id="Call_analysis">
+                                    <div class="panel-body">
+										<section class="flick_table">
+											<div class="container">
+												<div class="row">
+													
+													
+													<h3 class="fw_300">Call Information</h3>
+													<div class="col-sm-11">
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse0">
+													
+																		<p class="fw_300 color_33">
+																			Not enabled or nothing to report.
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse0" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+													</div>
+												</div>
+											</div>
+										</section>
+									</div>
+                                </div>
+                            </div>
+                            <!--/panel-->
+					</div>
+				</div>
+            </div>
+        </section>
+    </div>
+    <!-- =========================================End Accordion section=========================================-->
+
+
+
+    <!-- ======================================= 
+        ==Start scroll top==  
+    =======================================-->
+    <div class="scroll_top not_visible"><i class="fa fa-angle-up"></i></div>
+    <!-- =======================================
+        ==End scroll top==  
+    =======================================-->
+
+    <!-- jQuary library -->
+    <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="js/modernizr-2.6.2.min.js"></script>
+
+    <!--bootstrap min js-->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+    <!--owl carousel min js-->
+    <script type="text/javascript" src="js/owl.carousel.min.js"></script>
+
+    <!--waypoint js-->
+    <script type="text/javascript" src="js/waypoints.min.js"></script>
+
+    <!--nice select js-->
+    <script type="text/javascript" src="js/jquery.nice-select.min.js"></script>
+
+    <!-- all jQuary activation code here and always it will be bottom of all script tag -->
+    <script type="text/javascript" src="js/main.js"></script>
+
+
+    <script>
+        $(".anchor").on("click", function(event) {
+            var target = $($(this).attr("href"));
+
+            if (target.length) {
+                event.preventDefault();
+                $("html, body").animate({
+                    scrollTop: target.offset().top - 90 + 'px'
+                }, 500);
+            }
+        });
+
+        //----------dropdown menu----------
+        $(".presentation_sidebar>ul>li").on("click", function() {
+            $(this).children(".dropdown").slideToggle();
+            $(this).siblings("li").children(".dropdown").slideUp();
+
+        });
+        $(".presentation_sidebar .dropdown li ").on("click", function(e) {
+            e.stopPropagation();
+        });
+
+        //---------presentation sidebar menu---------
+        $(".presentation_sidebar i.fa-angle-left").on("click", function() {
+            $(".presentation_sidebar").addClass("off");
+            $(this).css("display", "none");
+            $(".presentation_sidebar i.fa-angle-right").css("display", "block");
+
+        });
+        $(".presentation_sidebar i.fa-angle-right").on("click", function() {
+            $(".presentation_sidebar").removeClass("off");
+            $(this).css("display", "none");
+            $(".presentation_sidebar i.fa-angle-left").css("display", "block");
+
+        });
+
+
+    </script>
+
+</body>
+
+</html>

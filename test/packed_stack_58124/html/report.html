@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js">
+<head>
+
+	
+    <meta charset="utf-8">
+    <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1" />
+    <title>Final Report</title>
+    <!--favicon icon-->
+    <link rel="icon" href="images/logo.png">
+    <!--google font-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900" rel="stylesheet">
+    <!-- font awesome css -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <!-- iconmind icon css -->
+    <link rel="stylesheet" href="css/iconmind-line.css">
+    <!--bootstrap min css-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!--owl carousel min css-->
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <!--nice select css-->
+    <link rel="stylesheet" href="css/nice-select.css">
+    <!--Padding margin css-->
+    <link rel="stylesheet" href="css/padding.margin.css">
+    <!-- style css -->
+    <link rel="stylesheet" href="css/asset/shortcode-common.css">
+    <link rel="stylesheet" href="css/asset/typography.css">
+    <link rel="stylesheet" href="css/asset/accordion.css">
+    <link rel="stylesheet" href="css/asset/alert.css">
+    <link rel="stylesheet" href="css/asset/button.css">
+    <link rel="stylesheet" href="css/asset/input.css">
+    <link rel="stylesheet" href="css/asset/c2action.css">
+    <link rel="stylesheet" href="css/asset/testimonial.css">
+    <link rel="stylesheet" href="css/asset/carousel.css">
+    <link rel="stylesheet" href="css/asset/client.css">
+    <link rel="stylesheet" href="css/asset/color.css">
+    <link rel="stylesheet" href="css/asset/faq.css">
+    <link rel="stylesheet" href="css/asset/grid-systerm.css">
+    <link rel="stylesheet" href="css/asset/pricing.css">
+    <link rel="stylesheet" href="css/asset/progressbar.css">
+    <link rel="stylesheet" href="css/asset/table.css">
+    <link rel="stylesheet" href="css/asset/tab.css">
+    <link rel="stylesheet" href="css/asset/team.css">
+    <link rel="stylesheet" href="css/asset/testimonial.css">
+    <link rel="stylesheet" href="css/asset/navbar.css">
+
+    <!--responsive css-->
+    <link rel="stylesheet" href="css/asset/shortcode-responsive.css">
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body class="spresentation">
+    <!-- =========================================Start header section== =======================================-->
+    <header class="presentation_header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-2">
+                    <a href="#" class="logo"><img src="images/logo.png" alt="logo"></a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- =========================================End header section=========================================-->
+
+
+    <!-- =========================================Start Sidebar section== =======================================-->
+    <div class="presentation_sidebar">
+        <div class="toggle_arrow">
+            <i class="fa fa-angle-right"></i>
+            <i class="fa fa-angle-left"></i>
+        </div>
+        <ul>
+            <li><a href="#information" class="anchor">Information</a></li>
+            <li><a href="#GOT_analysis" class="anchor">GOT Analysis</a></li>
+            <li><a href="#Heap_analysis" class="anchor">Heap Analysis</a></li>
+            <li><a href="#Leak_analysis" class="anchor">Leak Analysis</a></li>
+			<li><a href="#Call_analysis" class="anchor">Call Analysis</a></li>
+        </ul>
+    </div>
+    <!-- =========================================End Sidebar section=========================================-->
+
+
+    <!-- ========================================Start Accordion section=========================================-->
+    
+    <div id="accordion">
+        <section class="flick_accordion pt_90 pb_70 section_borderr">
+            <div class="container">
+				<div class="col-md-12">
+					<h1 class="fw_700">EXPLOIT ANALYSIS REPORT</h1>
+					<div class="panel-group style2 style3" role="tablist" id="accordion_3">
+						
+						<div class="panel">
+                                <a href="#information" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">
+									Basic Information
+								</a>
+                                <div class="collapse panel-collapse" role="tabpanel" id="information">
+                                    <div class="panel-body"> 
+                                        <p class="fw_300 color_33"> checksec:<br>[*] '/ctf/work/playground/tmp/up2/test/packed_stack_58124/stack'<br/>    Arch:     amd64-64-little<br/>    RELRO:    Partial RELRO<br/>    Stack:    No canary found<br/>    NX:       NX enabled<br/>    PIE:      No PIE (0x400000)<br/>&nbsp;</p>
+                                        <p class="fw_300 color_33"> system:<br>Linux 45da36abff59 4.19.76-linuxkit #1 SMP Tue May 26 11:42:35 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux
+ </p>
+                                        <p class="fw_300 color_33"> <br> report time: <br> 2020.08.16 </p>
+									</div>
+									<div class="panel-body">
+                                        
+
+<style>
+
+</style>
+
+<div id="fig_el627791407363221142243864886372"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       
+       mpld3.draw_figure("fig_el627791407363221142243864886372", {"width": 980.0, "height": 350.0, "axes": [{"bbox": [0.18, 0.10999999999999999, 0.81, 0.77], "xlim": [-1.1566004707645454, 24.156600470764552], "ylim": [-0.16944138661556904, 3.1694413866155693], "xdomain": [-1.1566004707645454, 24.156600470764552], "ydomain": [-0.16944138661556904, 3.1694413866155693], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 24, "tickvalues": [9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], "tickformat_formatter": "fixed", "tickformat": ["1003", "1808", "1809", "1844", "1900", "2484", "2492", "2500", "2508", "2516", "2524", "2532", "2540", "3597", "3598", "691", "699", "947", "955", "963", "971", "979", "987", "995"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 4, "tickvalues": [2.0, 0.0, 1.0, 3.0], "tickformat_formatter": "fixed", "tickformat": ["leak_trace", "return_address_overwritten", "strange_return", "unrecorded_strange_return"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": true, "color": "#808080", "dasharray": "6.4,1.6,1.0,1.6", "alpha": 0.7}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el62779140736322119520", "lines": [], "paths": [], "markers": [], "texts": [{"text": "state timestamp", "position": [0.5, -0.07529375386518243], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 16.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el62779140736313070256"}], "collections": [{"offsets": "data01", "xindex": 0, "yindex": 1, "paths": [[[[0.0, -0.5], [0.13260155, -0.5], [0.25978993539242673, -0.44731684579412084], [0.3535533905932738, -0.3535533905932738], [0.44731684579412084, -0.25978993539242673], [0.5, -0.13260155], [0.5, 0.0], [0.5, 0.13260155], [0.44731684579412084, 0.25978993539242673], [0.3535533905932738, 0.3535533905932738], [0.25978993539242673, 0.44731684579412084], [0.13260155, 0.5], [0.0, 0.5], [-0.13260155, 0.5], [-0.25978993539242673, 0.44731684579412084], [-0.3535533905932738, 0.3535533905932738], [-0.44731684579412084, 0.25978993539242673], [-0.5, 0.13260155], [-0.5, 0.0], [-0.5, -0.13260155], [-0.44731684579412084, -0.25978993539242673], [-0.3535533905932738, -0.3535533905932738], [-0.25978993539242673, -0.44731684579412084], [-0.13260155, -0.5], [0.0, -0.5]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]], "pathtransforms": [[8.419691425682043, 0.0, 0.0, 8.419691425682043, 0.0, 0.0]], "alphas": [0.7], "edgecolors": ["rgba(178, 34, 34, 0.7)"], "facecolors": ["rgba(178, 34, 34, 0.7)"], "edgewidths": [1.0], "offsetcoordinates": "data", "pathcoordinates": "display", "zorder": 1, "id": "el62779140736313339520"}], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 0.0], [1.0, 0.0], [2.0, 0.0], [3.0, 0.0], [4.0, 0.0], [5.0, 0.0], [6.0, 0.0], [7.0, 0.0], [8.0, 0.0], [9.0, 0.0], [10.0, 1.0], [11.0, 1.0], [12.0, 2.0], [13.0, 1.0], [14.0, 0.0], [15.0, 0.0], [16.0, 0.0], [17.0, 0.0], [18.0, 0.0], [19.0, 0.0], [20.0, 0.0], [21.0, 0.0], [22.0, 3.0], [23.0, 3.0]]}, "id": "el62779140736322114224", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "https://d3js.org/d3.v5"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.1.js", function(){
+         
+         mpld3.draw_figure("fig_el627791407363221142243864886372", {"width": 980.0, "height": 350.0, "axes": [{"bbox": [0.18, 0.10999999999999999, 0.81, 0.77], "xlim": [-1.1566004707645454, 24.156600470764552], "ylim": [-0.16944138661556904, 3.1694413866155693], "xdomain": [-1.1566004707645454, 24.156600470764552], "ydomain": [-0.16944138661556904, 3.1694413866155693], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 24, "tickvalues": [9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], "tickformat_formatter": "fixed", "tickformat": ["1003", "1808", "1809", "1844", "1900", "2484", "2492", "2500", "2508", "2516", "2524", "2532", "2540", "3597", "3598", "691", "699", "947", "955", "963", "971", "979", "987", "995"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 4, "tickvalues": [2.0, 0.0, 1.0, 3.0], "tickformat_formatter": "fixed", "tickformat": ["leak_trace", "return_address_overwritten", "strange_return", "unrecorded_strange_return"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": true, "color": "#808080", "dasharray": "6.4,1.6,1.0,1.6", "alpha": 0.7}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el62779140736322119520", "lines": [], "paths": [], "markers": [], "texts": [{"text": "state timestamp", "position": [0.5, -0.07529375386518243], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 16.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el62779140736313070256"}], "collections": [{"offsets": "data01", "xindex": 0, "yindex": 1, "paths": [[[[0.0, -0.5], [0.13260155, -0.5], [0.25978993539242673, -0.44731684579412084], [0.3535533905932738, -0.3535533905932738], [0.44731684579412084, -0.25978993539242673], [0.5, -0.13260155], [0.5, 0.0], [0.5, 0.13260155], [0.44731684579412084, 0.25978993539242673], [0.3535533905932738, 0.3535533905932738], [0.25978993539242673, 0.44731684579412084], [0.13260155, 0.5], [0.0, 0.5], [-0.13260155, 0.5], [-0.25978993539242673, 0.44731684579412084], [-0.3535533905932738, 0.3535533905932738], [-0.44731684579412084, 0.25978993539242673], [-0.5, 0.13260155], [-0.5, 0.0], [-0.5, -0.13260155], [-0.44731684579412084, -0.25978993539242673], [-0.3535533905932738, -0.3535533905932738], [-0.25978993539242673, -0.44731684579412084], [-0.13260155, -0.5], [0.0, -0.5]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]], "pathtransforms": [[8.419691425682043, 0.0, 0.0, 8.419691425682043, 0.0, 0.0]], "alphas": [0.7], "edgecolors": ["rgba(178, 34, 34, 0.7)"], "facecolors": ["rgba(178, 34, 34, 0.7)"], "edgewidths": [1.0], "offsetcoordinates": "data", "pathcoordinates": "display", "zorder": 1, "id": "el62779140736313339520"}], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 0.0], [1.0, 0.0], [2.0, 0.0], [3.0, 0.0], [4.0, 0.0], [5.0, 0.0], [6.0, 0.0], [7.0, 0.0], [8.0, 0.0], [9.0, 0.0], [10.0, 1.0], [11.0, 1.0], [12.0, 2.0], [13.0, 1.0], [14.0, 0.0], [15.0, 0.0], [16.0, 0.0], [17.0, 0.0], [18.0, 0.0], [19.0, 0.0], [20.0, 0.0], [21.0, 0.0], [22.0, 3.0], [23.0, 3.0]]}, "id": "el62779140736322114224", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("https://d3js.org/d3.v5.js", function(){
+         mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.5.1.js", function(){
+                 
+                 mpld3.draw_figure("fig_el627791407363221142243864886372", {"width": 980.0, "height": 350.0, "axes": [{"bbox": [0.18, 0.10999999999999999, 0.81, 0.77], "xlim": [-1.1566004707645454, 24.156600470764552], "ylim": [-0.16944138661556904, 3.1694413866155693], "xdomain": [-1.1566004707645454, 24.156600470764552], "ydomain": [-0.16944138661556904, 3.1694413866155693], "xscale": "linear", "yscale": "linear", "axes": [{"position": "bottom", "nticks": 24, "tickvalues": [9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], "tickformat_formatter": "fixed", "tickformat": ["1003", "1808", "1809", "1844", "1900", "2484", "2492", "2500", "2508", "2516", "2524", "2532", "2540", "3597", "3598", "691", "699", "947", "955", "963", "971", "979", "987", "995"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": false}, "visible": true}, {"position": "left", "nticks": 4, "tickvalues": [2.0, 0.0, 1.0, 3.0], "tickformat_formatter": "fixed", "tickformat": ["leak_trace", "return_address_overwritten", "strange_return", "unrecorded_strange_return"], "scale": "linear", "fontsize": 12.0, "grid": {"gridOn": true, "color": "#808080", "dasharray": "6.4,1.6,1.0,1.6", "alpha": 0.7}, "visible": true}], "axesbg": "#FFFFFF", "axesbgalpha": null, "zoomable": true, "id": "el62779140736322119520", "lines": [], "paths": [], "markers": [], "texts": [{"text": "state timestamp", "position": [0.5, -0.07529375386518243], "coordinates": "axes", "h_anchor": "middle", "v_baseline": "hanging", "rotation": -0.0, "fontsize": 16.0, "color": "#262626", "alpha": 1, "zorder": 3, "id": "el62779140736313070256"}], "collections": [{"offsets": "data01", "xindex": 0, "yindex": 1, "paths": [[[[0.0, -0.5], [0.13260155, -0.5], [0.25978993539242673, -0.44731684579412084], [0.3535533905932738, -0.3535533905932738], [0.44731684579412084, -0.25978993539242673], [0.5, -0.13260155], [0.5, 0.0], [0.5, 0.13260155], [0.44731684579412084, 0.25978993539242673], [0.3535533905932738, 0.3535533905932738], [0.25978993539242673, 0.44731684579412084], [0.13260155, 0.5], [0.0, 0.5], [-0.13260155, 0.5], [-0.25978993539242673, 0.44731684579412084], [-0.3535533905932738, 0.3535533905932738], [-0.44731684579412084, 0.25978993539242673], [-0.5, 0.13260155], [-0.5, 0.0], [-0.5, -0.13260155], [-0.44731684579412084, -0.25978993539242673], [-0.3535533905932738, -0.3535533905932738], [-0.25978993539242673, -0.44731684579412084], [-0.13260155, -0.5], [0.0, -0.5]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]]], "pathtransforms": [[8.419691425682043, 0.0, 0.0, 8.419691425682043, 0.0, 0.0]], "alphas": [0.7], "edgecolors": ["rgba(178, 34, 34, 0.7)"], "facecolors": ["rgba(178, 34, 34, 0.7)"], "edgewidths": [1.0], "offsetcoordinates": "data", "pathcoordinates": "display", "zorder": 1, "id": "el62779140736313339520"}], "images": [], "sharex": [], "sharey": []}], "data": {"data01": [[0.0, 0.0], [1.0, 0.0], [2.0, 0.0], [3.0, 0.0], [4.0, 0.0], [5.0, 0.0], [6.0, 0.0], [7.0, 0.0], [8.0, 0.0], [9.0, 0.0], [10.0, 1.0], [11.0, 1.0], [12.0, 2.0], [13.0, 1.0], [14.0, 0.0], [15.0, 0.0], [16.0, 0.0], [17.0, 0.0], [18.0, 0.0], [19.0, 0.0], [20.0, 0.0], [21.0, 0.0], [22.0, 3.0], [23.0, 3.0]]}, "id": "el62779140736322114224", "plugins": [{"type": "reset"}, {"type": "zoom", "button": true, "enabled": false}, {"type": "boxzoom", "button": true, "enabled": false}]});
+            })
+         });
+}
+</script>
+									</div>
+                                </div>
+                            </div>
+
+						<div class="panel">
+                                <a href="#GOT_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">GOT Analysis</a>
+                                <div class="collapse panel-collapse" role="tabpanel" id="GOT_analysis">
+                                    <div class="panel-body">
+										<section class="flick_table">
+											<div class="container">
+												<div class="row">
+													
+													
+													<h3 class="fw_300">GOT Change</h3>
+													<div class="col-sm-11">
+											
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#gotcollapse0">
+													
+																		<p class="fw_300 color_33">
+																			Got analysis started.
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="gotcollapse0" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: No detailed information. <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#gotcollapse1">
+													
+																		<p class="fw_300 color_33">
+																			Got analysis done.
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="gotcollapse1" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+															
+																	<strong>Description</strong>: No detailed information. <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+													</div>
+												</div>
+											</div>
+										</section>
+									</div>
+                                </div>
+                            </div>
+
+						<div class="panel">
+                                <a href="#Heap_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">Heap Analysis</a>
+                                <div class="collapse panel-collapse" role="tabpanel" id="Heap_analysis">
+                                    <div class="panel-body">
+										<section id="heapgraph">
+											<div class="container">
+												<div class="row">
+													<div class="col-md-11">
+														<h3 class="fw_300">Heap Transfer Gragh</h3>
+														<div class="panel panel-default">
+															<div class="panel-heading">
+																<h4 class="panel-title">
+																	<a data-toggle="collapse" data-parent="#accordion" href="#heapgraphcollapse">
+																		<p class="fw_300 ">
+																			click for large picture
+																		</p>
+																	</a>
+																</h4>
+															</div>
+
+															<div id="heapgraphcollapse" class="panel-collapse collapse">
+																<div class="panel-body">
+																		<a><img src="./HeapChange.png", style="width:100%;height:auto;"></a>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</section>
+														
+														
+										<section id="heapanalysisoutput">
+											<div class="container">
+												<div class="row">
+													<div class="col-md-11">
+														<h3 class="fw_300">Heap Information</h3>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#heapcollapse0">
+														
+																		<p class="fw_300 color_33">
+																			Not enabled or nothing to report.
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="heapcollapse0" class="panel-collapse collapse">
+																<div class="panel-body">
+														
+																	<p class="fw_300 color_33">
+															
+																	
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+													</div>
+												</div>
+											</div>
+										</section>
+									</div>
+                                </div>
+                            </div>
+
+						<div class="panel">
+                                <a href="#Leak_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">Leak Analysis</a>
+                                <div class="collapse panel-collapse" role="tabpanel" id="Leak_analysis">
+                                    <div class="panel-body">
+										<section class="flick_table">
+											<div class="container">
+												<div class="row">
+													
+													
+													<h3 class="fw_300">Leakage Information</h3>
+													<div class="col-sm-11">
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse0">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">Found leakage: puts+0(0x7ffff7879690)</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse0" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Memory address found in output, causing information leakage. <br><strong>Leaked&nbspaddress</strong>: 0x7ffff7879690 <br><strong>Symbol&nbspof&nbspaddress</strong>: puts <br><strong>Offset</strong>: 0x0 <br><strong>Lib</strong>: libc-2.23.so <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse1">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">Found leakage: puts+0(0x7ffff7879690)</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse1" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Memory address found in output, causing information leakage. <br><strong>Leaked&nbspaddress</strong>: 0x7ffff7879690 <br><strong>Symbol&nbspof&nbspaddress</strong>: puts <br><strong>Offset</strong>: 0x0 <br><strong>Lib</strong>: libc-2.23.so <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse2">
+													
+																		<p class="fw_300 color_33">
+																			Start tracing of leakage.
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse2" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: No detailed information. <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#leakcollapse3">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[1844] Leakage trace: leak of puts+0 (0x7ffff7879690) happened at :0x7ffff79012c0</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="leakcollapse3" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																
+																	<strong>Description</strong>: Found memory information leakage scene. <br><strong>Stack backtrace</strong>: <br/>Frame&emsp;&emsp;0:&emsp;&emsp;0x00007ffff79012c0&emsp;&emsp;&emsp;&emsp;write+16&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   sp: 0x00007fffffffe3c0<br/>Frame&emsp;&emsp;1:&emsp;&emsp;0x00007ffff7882bff&emsp;&emsp;&emsp;&emsp;_IO_file_write+143&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe3c0<br/>Frame&emsp;&emsp;2:&emsp;&emsp;0x00007ffff788338a&emsp;&emsp;&emsp;&emsp;_IO_file_xsputn+426&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;sp: 0x00007fffffffe3f0<br/>Frame&emsp;&emsp;3:&emsp;&emsp;0x00007ffff7879738&emsp;&emsp;&emsp;&emsp;puts+168&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   sp: 0x00007fffffffe430<br/>Frame&emsp;&emsp;4:&emsp;&emsp;0x00007ffff782a830&emsp;&emsp;&emsp;&emsp;__libc_start_main+240&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;  sp: 0x00007fffffffe458<br/>Frame&emsp;&emsp;5:&emsp;&emsp;0x0000000000400579&emsp;&emsp;&emsp;&emsp;sub_400550&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; sp: 0x00007fffffffe518<br/> <br><strong>State&nbsptimestamp</strong>: 1844 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+													</div>
+												</div>
+											</div>
+										</section>
+
+									</div>
+                                </div>
+                            </div>
+
+                        <div class="panel">
+                                <a href="#Call_analysis" class="collapsed title" data-toggle="collapse" data-parent="#accordion3">Call Analysis</a>
+                                <div class="collapse panel-collapse" role="tabpanel" id="Call_analysis">
+                                    <div class="panel-body">
+										<section class="flick_table">
+											<div class="container">
+												<div class="row">
+													
+													
+													<h3 class="fw_300">Call Information</h3>
+													<div class="col-sm-11">
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse0">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[691] Return address at 0x7fffffffe438 overwritten to 0x400663</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse0" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe438 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x4006f9 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x400663 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe3e0<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3b8<br/>Frame 2: 0x0000000000000000&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x0<br/> <br><strong>State&nbsptimestamp</strong>: 691 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse1">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[699] Return address at 0x7fffffffe438 overwritten to 0x400763</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse1" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe438 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x400663 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x400763 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe3e0<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3b8<br/>Frame 2: 0x0000000000000000&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x0<br/> <br><strong>State&nbsptimestamp</strong>: 699 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse2">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[947] Return address at 0x7fffffffe458 overwritten to 0x7ffff782a861</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse2" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x7ffff782a830 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x7ffff782a861 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe3e0<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3b8<br/>Frame 2: 0x0000000000000000&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x0<br/> <br><strong>State&nbsptimestamp</strong>: 947 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse3">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[955] Return address at 0x7fffffffe458 overwritten to 0x7ffff7826161</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse3" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x7ffff782a861 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x7ffff7826161 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe3e0<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3b8<br/>Frame 2: 0x0000000000000000&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x0<br/> <br><strong>State&nbsptimestamp</strong>: 955 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse4">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[963] Return address at 0x7fffffffe458 overwritten to 0x7ffff7616161</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse4" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x7ffff7826161 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x7ffff7616161 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe3e0<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3b8<br/>Frame 2: 0x0000000000000000&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x0<br/> <br><strong>State&nbsptimestamp</strong>: 963 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse5">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[971] Return address at 0x7fffffffe458 overwritten to 0x7fff61616161</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse5" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x7ffff7616161 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x7fff61616161 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe3e0<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3b8<br/>Frame 2: 0x0000000000000000&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x0<br/> <br><strong>State&nbsptimestamp</strong>: 971 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse6">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[979] Return address at 0x7fffffffe458 overwritten to 0x7f6161616161</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse6" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x7fff61616161 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x7f6161616161 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe3e0<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3b8<br/>Frame 2: 0x0000000000000000&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x0<br/> <br><strong>State&nbsptimestamp</strong>: 979 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse7">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[987] Return address at 0x7fffffffe458 overwritten to 0x616161616161</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse7" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x7f6161616161 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x616161616161 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe3e0<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3b8<br/>Frame 2: 0x0000000000000000&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x0<br/> <br><strong>State&nbsptimestamp</strong>: 987 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse8">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[995] Return address at 0x7fffffffe458 overwritten to 0x61616161616161</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse8" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x616161616161 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x61616161616161 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe3e0<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3b8<br/>Frame 2: 0x0000000000000000&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x0<br/> <br><strong>State&nbsptimestamp</strong>: 995 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse9">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[1003] Return address at 0x7fffffffe458 overwritten to 0x6161616161616161</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse9" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x61616161616161 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x6161616161616161 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe3e0<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3b8<br/>Frame 2: 0x0000000000000000&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x0<br/> <br><strong>State&nbsptimestamp</strong>: 1003 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse10">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[1808] Strange return to 0x400763</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse10" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Function return's destnation mismatch with previous saved address.
+Probably caused by stack overflow or ROP attack. <br><strong>Return&nbspto</strong>: 0x400763 <br><strong>Ret&nbspinformation</strong>: From stack: sub_4006b6 + 0 (0x4006b6) to stack: sub_400763 + 0 (0x400763)<br/>Insns:<br/>&emsp;&emsp;0x400763:&emsp;&emsp;pop&emsp;&emsp;rdi<br/>&emsp;&emsp;0x400764:&emsp;&emsp;ret&emsp;&emsp;<br/>Args:<br/>&emsp;&emsp;rdi: 0x1<br/>&emsp;&emsp;rsi: 0x7ffff7bcf6a3 (_IO_2_1_stdout_ + 131)<br/>&emsp;&emsp;rdx: 0x7ffff7bd0780<br/> <br><strong>State&nbsptimestamp</strong>: 1808 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse11">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[1809] Strange return to 0x4004fc</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse11" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Function return's destnation mismatch with previous saved address.
+Probably caused by stack overflow or ROP attack. <br><strong>Return&nbspto</strong>: 0x4004fc <br><strong>Ret&nbspinformation</strong>: From stack: sub_400763 + 0 (0x400763) to stack: sub_4004fc + 0 (0x4004fc)<br/>Insns:<br/>&emsp;&emsp;0x4004fc:&emsp;&emsp;nop&emsp;&emsp;dword ptr [rax]<br/>&emsp;&emsp;0x400500:&emsp;&emsp;jmp&emsp;&emsp;qword ptr [rip + 0x200b12]<br/>Args:<br/>&emsp;&emsp;rdi: 0x601018 (got.puts + 0)<br/>&emsp;&emsp;rsi: 0x7ffff7bcf6a3 (_IO_2_1_stdout_ + 131)<br/>&emsp;&emsp;rdx: 0x7ffff7bd0780<br/> <br><strong>State&nbsptimestamp</strong>: 1809 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse12">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[1900] Strange return to 0x40068e</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse12" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Function return's destnation mismatch with previous saved address.
+Probably caused by stack overflow or ROP attack. <br><strong>Return&nbspto</strong>: 0x40068e <br><strong>Ret&nbspinformation</strong>: From libc-2.23.so: puts + 330 (0x7ffff78797da) to stack: sub_40068e + 0 (0x40068e)<br/>Insns:<br/>&emsp;&emsp;0x40068e:&emsp;&emsp;push&emsp;&emsp;rbp<br/>&emsp;&emsp;0x40068f:&emsp;&emsp;mov&emsp;&emsp;rbp, rsp<br/>&emsp;&emsp;0x400692:&emsp;&emsp;sub&emsp;&emsp;rsp, 0x40<br/>&emsp;&emsp;0x400696:&emsp;&emsp;lea&emsp;&emsp;rax, [rbp - 0x40]<br/>&emsp;&emsp;0x40069a:&emsp;&emsp;mov&emsp;&emsp;edx, 0xa<br/>&emsp;&emsp;0x40069f:&emsp;&emsp;mov&emsp;&emsp;esi, 0xc8<br/>&emsp;&emsp;0x4006a4:&emsp;&emsp;mov&emsp;&emsp;rdi, rax<br/>&emsp;&emsp;0x4006a7:&emsp;&emsp;call&emsp;&emsp;0x40063d<br/>Args:<br/>&emsp;&emsp;rdi: 0x1<br/>&emsp;&emsp;rsi: 0x7ffff7bcf6a3 (_IO_2_1_stdout_ + 131)<br/>&emsp;&emsp;rdx: 0x7ffff7bd0780<br/> <br><strong>State&nbsptimestamp</strong>: 1900 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse13">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[2484] Return address at 0x7fffffffe458 overwritten to 0x6161616161616163</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse13" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x6161616161616161 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x6161616161616163 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe400<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3d8<br/>Frame 2: 0xffffff00007ffff7&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0xbd0780000000000a<br/> <br><strong>State&nbsptimestamp</strong>: 2484 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse14">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[2492] Return address at 0x7fffffffe458 overwritten to 0x6161616161610763</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse14" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x6161616161616163 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x6161616161610763 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe400<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3d8<br/>Frame 2: 0xffffff00007ffff7&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0xbd0780000000000a<br/> <br><strong>State&nbsptimestamp</strong>: 2492 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse15">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[2500] Return address at 0x7fffffffe458 overwritten to 0x6161616161400763</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse15" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x6161616161610763 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x6161616161400763 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe400<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3d8<br/>Frame 2: 0xffffff00007ffff7&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0xbd0780000000000a<br/> <br><strong>State&nbsptimestamp</strong>: 2500 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse16">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[2508] Return address at 0x7fffffffe458 overwritten to 0x6161616100400763</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse16" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x6161616161400763 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x6161616100400763 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe400<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3d8<br/>Frame 2: 0xffffff00007ffff7&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0xbd0780000000000a<br/> <br><strong>State&nbsptimestamp</strong>: 2508 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse17">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[2516] Return address at 0x7fffffffe458 overwritten to 0x6161610000400763</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse17" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x6161616100400763 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x6161610000400763 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe400<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3d8<br/>Frame 2: 0xffffff00007ffff7&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0xbd0780000000000a<br/> <br><strong>State&nbsptimestamp</strong>: 2516 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse18">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[2524] Return address at 0x7fffffffe458 overwritten to 0x6161000000400763</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse18" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x6161610000400763 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x6161000000400763 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe400<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3d8<br/>Frame 2: 0xffffff00007ffff7&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0xbd0780000000000a<br/> <br><strong>State&nbsptimestamp</strong>: 2524 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse19">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[2532] Return address at 0x7fffffffe458 overwritten to 0x6100000000400763</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse19" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x6161000000400763 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x6100000000400763 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe400<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3d8<br/>Frame 2: 0xffffff00007ffff7&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0xbd0780000000000a<br/> <br><strong>State&nbsptimestamp</strong>: 2532 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse20">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[2540] Return address at 0x7fffffffe458 overwritten to 0x400763</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse20" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Stack return address modified by user.
+Probably stack overflow. <br><strong>Stack&nbspaddress</strong>: 0x7fffffffe458 <br><strong>Origin&nbspreturn&nbspaddress</strong>: 0x6100000000400763 <br><strong>Modified&nbspreturn&nbspaddress</strong>: 0x400763 <br><strong>Stack backtrace</strong>: <br/>Frame 0: 0x0000000003000181&emsp;&emsp;in read_syscall&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0x7fffffffe400<br/>Frame 1: 0x0000000000400680&emsp;&emsp;in sub_400680&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;   bp: 0x7fffffffe3d8<br/>Frame 2: 0xffffff00007ffff7&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; bp: 0xbd0780000000000a<br/> <br><strong>State&nbsptimestamp</strong>: 2540 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse21">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[3597] Unrecorded return to 0x400763</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse21" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Function returns while no frame in stack.
+Probably ROP attack. <br><strong>Return&nbspto</strong>: 0x400763 <br><strong>Ret&nbspinformation</strong>: From stack: sub_4006b6 + 0 (0x4006b6) to stack: sub_400763 + 0 (0x400763)<br/>Insns:<br/>&emsp;&emsp;0x400763:&emsp;&emsp;pop&emsp;&emsp;rdi<br/>&emsp;&emsp;0x400764:&emsp;&emsp;ret&emsp;&emsp;<br/>Args:<br/>&emsp;&emsp;rdi: 0x1<br/>&emsp;&emsp;rsi: 0x7ffff7bcf6a3 (_IO_2_1_stdout_ + 131)<br/>&emsp;&emsp;rdx: 0x7ffff7bd0780<br/> <br><strong>State&nbsptimestamp</strong>: 3597 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+														<div class="panel panel-default">
+        													<div class="panel-heading">
+																<h4 class="panel-title">
+																	
+															<a data-toggle="collapse" data-parent="#accordion" href="#callcollapse22">
+													
+																		<p class="fw_300 color_33">
+																			<span class="ansi31">[3598] Unrecorded return to 0x7ffff784f390</span>
+																		</p>
+																	</a>
+																</h4>
+															</div>
+															
+															<div id="callcollapse22" class="panel-collapse collapse">
+																<div class="panel-body">
+													
+																	<p class="fw_300 color_33">
+																	
+																	<strong>Description</strong>: Function returns while no frame in stack.
+Probably ROP attack. <br><strong>Return&nbspto</strong>: 0x7ffff784f390 <br><strong>Ret&nbspinformation</strong>: From stack: sub_400763 + 0 (0x400763) to libc-2.23.so: system + 0 (0x7ffff784f390)<br/>Insns:<br/>&emsp;&emsp;0x7ffff784f390:&emsp;&emsp;test&emsp;&emsp;rdi, rdi<br/>&emsp;&emsp;0x7ffff784f393:&emsp;&emsp;je&emsp;&emsp;0x7ffff784f3a0<br/>Args:<br/>&emsp;&emsp;rdi: 0x7ffff7996d57 -&gt; "/bin/sh"  (_libc_intl_domainname + 407)<br/>&emsp;&emsp;rsi: 0x7ffff7bcf6a3 (_IO_2_1_stdout_ + 131)<br/>&emsp;&emsp;rdx: 0x7ffff7bd0780<br/> <br><strong>State&nbsptimestamp</strong>: 3598 <br>
+																	</p>
+																</div>
+															</div>
+														</div>
+														
+													</div>
+												</div>
+											</div>
+										</section>
+									</div>
+                                </div>
+                            </div>
+                            <!--/panel-->
+					</div>
+				</div>
+            </div>
+        </section>
+    </div>
+    <!-- =========================================End Accordion section=========================================-->
+
+
+
+    <!-- ======================================= 
+        ==Start scroll top==  
+    =======================================-->
+    <div class="scroll_top not_visible"><i class="fa fa-angle-up"></i></div>
+    <!-- =======================================
+        ==End scroll top==  
+    =======================================-->
+
+    <!-- jQuary library -->
+    <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="js/modernizr-2.6.2.min.js"></script>
+
+    <!--bootstrap min js-->
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+    <!--owl carousel min js-->
+    <script type="text/javascript" src="js/owl.carousel.min.js"></script>
+
+    <!--waypoint js-->
+    <script type="text/javascript" src="js/waypoints.min.js"></script>
+
+    <!--nice select js-->
+    <script type="text/javascript" src="js/jquery.nice-select.min.js"></script>
+
+    <!-- all jQuary activation code here and always it will be bottom of all script tag -->
+    <script type="text/javascript" src="js/main.js"></script>
+
+
+    <script>
+        $(".anchor").on("click", function(event) {
+            var target = $($(this).attr("href"));
+
+            if (target.length) {
+                event.preventDefault();
+                $("html, body").animate({
+                    scrollTop: target.offset().top - 90 + 'px'
+                }, 500);
+            }
+        });
+
+        //----------dropdown menu----------
+        $(".presentation_sidebar>ul>li").on("click", function() {
+            $(this).children(".dropdown").slideToggle();
+            $(this).siblings("li").children(".dropdown").slideUp();
+
+        });
+        $(".presentation_sidebar .dropdown li ").on("click", function(e) {
+            e.stopPropagation();
+        });
+
+        //---------presentation sidebar menu---------
+        $(".presentation_sidebar i.fa-angle-left").on("click", function() {
+            $(".presentation_sidebar").addClass("off");
+            $(this).css("display", "none");
+            $(".presentation_sidebar i.fa-angle-right").css("display", "block");
+
+        });
+        $(".presentation_sidebar i.fa-angle-right").on("click", function() {
+            $(".presentation_sidebar").removeClass("off");
+            $(this).css("display", "none");
+            $(".presentation_sidebar i.fa-angle-left").css("display", "block");
+
+        });
+
+
+    </script>
+
+</body>
+
+</html>

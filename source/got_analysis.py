@@ -6,7 +6,7 @@ from symbol_resolve import symbol_resolve
 import os
 from analysis import register_ana
 import logger
-from util.info_print import stack_backtrace, printable_backtrace
+from util.info_print import stack_backtrace, printable_callstack
 from common import *
 
 # TODO: test this function
@@ -37,12 +37,12 @@ class got_analysis(object):
         main = self.project.elfs[self.project.target]
         ana = self
         state = self.project.get_entry_state()
-        #state.options.discard("UNICORN")
+        state.options.discard("UNICORN")
         for sym in self.mismatch:
             addr = main.got[sym]
             def got_trace_bp(state):
                 nonlocal ana, sym, addr
-                bt = printable_backtrace(stack_backtrace(state))
+                bt = printable_callstack(state)
                 changed = state.memory.load(addr, 8 , endness = "Iend_LE")
                 changed = BV2Int(changed)
                 message = "Found write to got table: %s" % sym

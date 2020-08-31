@@ -37,7 +37,7 @@ class symbol_resolve(object):
         """
         return self.project.loader.find_symbol(name).rebased_addr
 
-    def reverse_resolve(self, addr):
+    def reverse_resolve(self, addr, must_plus = False):
         """
         Resolve symbol name by symbol address. TODO: should be replace by using dwarf
         Returns (symbol name, offset of the found symbol, object name which includes
@@ -53,7 +53,7 @@ class symbol_resolve(object):
         if not found_obj:
             name = self._syscall_reverse_resolve(addr)
             if name:
-                return name, 0
+                return name, 0, "kernel space"
             else:
                 return None
         
@@ -69,12 +69,18 @@ class symbol_resolve(object):
         min_offset = 0xffffffff
         nearest_addr = -1
         for i in symbols:
+            if must_plus and i > addr:
+                continue
             offset = abs(i - addr)
             if offset < min_offset:
                 min_offset = offset
                 nearest_addr = i
 
         min_offset = addr - nearest_addr
+        if nearest_addr == -1:
+            return "sub_%x" % addr, 0, found_obj
         name = symbols[nearest_addr]
+        if "plt." in name and abs(min_offset)> 0x100:
+            return "sub_%x" % addr, 0, found_obj
         return name, min_offset, found_obj
 

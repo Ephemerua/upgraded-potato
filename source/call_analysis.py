@@ -107,9 +107,9 @@ def ret_info(state):
     ret_src = state.history.bbl_addrs[-1]
     ret_dst = state.regs.rip.args[0]
     args = call_args_x64(state)
-    dst_symbol = state.project.symbol_resolve.reverse_resolve(ret_dst)
+    dst_symbol = state.project.symbol_resolve.reverse_resolve(ret_dst, must_plus = True)
     dst_symbol = __test_filter(dst_symbol, ret_dst)
-    src_symbol = state.project.symbol_resolve.reverse_resolve(ret_src)
+    src_symbol = state.project.symbol_resolve.reverse_resolve(ret_src, must_plus = True)
     src_symbol = __test_filter(src_symbol, ret_src)
 
     result += "From"
@@ -133,7 +133,7 @@ def ret_info(state):
         s = fetch_str(state, value)
         if s:
             result += " ->" + """ "%s" """%(s)
-        s = state.project.symbol_resolve.reverse_resolve(value)
+        s = state.project.symbol_resolve.reverse_resolve(value.args[0], must_plus = True)
         if s:
             if '__gmon_start__' in s[0]:
                 s = list(s)
@@ -183,6 +183,7 @@ def ret_cb_constructor(ana, **kwargs):
     def ret_callback(state):
         # filter simprocedures
         at = state.history.bbl_addrs[-1]
+        #print(hex(at))
         if at >> 12 == 0x3000:
             return
         ret_origin = 0
@@ -277,5 +278,14 @@ class call_analysis(object):
         self.bps.append(state.inspect.b("return", when = angr.BP_AFTER, action = self.ret_cb))
         simgr = self.project.get_simgr(state)
         simgr.run()
+
+    def get_simgr(self):
+        state = self.project.get_entry_state()
+        # XXX: unicorn engine at present cannot handle call/return breakpoint...
+        state.options.discard("UNICORN")
+        self.bps.append(state.inspect.b("call", when = angr.BP_AFTER, action = self.call_cb))
+        self.bps.append(state.inspect.b("return", when = angr.BP_AFTER, action = self.ret_cb))
+        simgr = self.project.get_simgr(state)
+        return simgr
 
 register_ana('call_analysis', call_analysis)

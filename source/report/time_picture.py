@@ -1,7 +1,6 @@
 # !pip install brewer2mpl
 import numpy as np
 # import pandas as pd
-# import matplotlib as mpl
 # from pandas.core.frame import DataFrame
 # from io import BytesIO
 # import base64
@@ -39,6 +38,7 @@ def generate_warning_timepicture(lists = []):
     x = np.array([list[1] for list in lists], dtype=str)
     y_label = np.unique(y)
     x_label = np.unique(x)
+
 
     fig = plt.figure(figsize=(14,5), dpi=70)
     fig.subplots_adjust(left=0.18, right=0.99)

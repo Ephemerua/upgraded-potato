@@ -4,21 +4,47 @@ PROT_READ = 1
 PROT_WRITE = 2
 PROT_EXEC = 4
 
-def print_callstack(state):
+def printable_callstack(state):
     cs = state.callstack
-    print("\nStack:")
-    for frame in cs:
-        if not frame.func_addr:
-            return 
-        symbol  = state.project.symbol_resolve.reverse_resolve(frame.func_addr)
-        if symbol:
-            if '__gmon_start__' in symbol[0]:
-                symbol = list(symbol)
-                symbol[0] = 'sub_%x'% frame.func_addr
-                symbol[1] = 0
-            print('\t'+ symbol[0]+ "+ %d" % symbol[1])
+    frame_no = 1
+    now = state.regs.rip.args[0]
+    symbol = state.project.symbol_resolve.reverse_resolve(now, must_plus = True)
+    result = "\nFrame\t0:\t%#018x\t\t" % (now)
+    if symbol:
+        if '__gmon_start__'  in symbol[0]:
+            symbol = list(symbol)   
+            symbol[0] = 'sub_%x'% now
+            symbol[1] = 0
+        if symbol[1]:
+            result += "%s%+d " % (symbol[0], symbol[1])
         else:
-            print('\t'+ hex(frame.func_addr))
+            result += "%s " % symbol[0]
+    result = result.ljust(65, " ")
+    result += "sp: %#018x\n" % state.regs.rsp.args[0]
+
+    for frame in cs:
+        line = ""
+        if not frame.func_addr:
+            return result
+        line += "Frame\t%d:\t%#018x\t\t" % (frame_no, frame.ret_addr)
+        symbol  = state.project.symbol_resolve.reverse_resolve(frame.ret_addr, must_plus = True)
+        if symbol:
+            if '__gmon_start__'  in symbol[0]:
+                symbol = list(symbol)   
+                symbol[0] = 'sub_%x'% frame.call_site_addr
+                symbol[1] = 0
+            if symbol[1]:
+                line += "%s%+d " % (symbol[0], symbol[1])
+            else:
+                line += "%s " % symbol[0]
+        
+        line = line.ljust(64, " ")
+        line += "sp: %#018x\n" % frame.stack_ptr
+        result += line
+        frame_no += 1
+
+    return result            
+
 
 class stack_frame(object):
     def __init__(self, addr, bp, symbol = None, frame_no = -1):
@@ -43,19 +69,41 @@ class stack_frame(object):
                 name = "sub_%x" % (self.addr+offset)
                 offset = 0
 
-            result += "\tin  %s" % name
+            result += "\tin %s" % name
             if offset != 0:
-                result += "%+d\t" % offset
-            else:
-                result +='\t'
+                result += "%+d" % offset
+            result = result.ljust(64, " ")
         else:
-            result += '\t\t\t'
+            result = result.ljust(68, " ")
         result += "bp: 0x%x\n" % self.bp
                 
             
         return result
-    
 
+def find_add_sp(state, last_ret):
+    ret_found = 0
+    result = 0
+    bb = state.block(last_ret)
+    while not ret_found:
+        for insn in bb.capstone.insns:
+            print("%s\t%s"%(insn.insn.insn_name(), insn.insn.op_str))
+            if insn.insn.insn_name() == "ret":
+                return result
+            if insn.insn.insn_name() == "add":
+                if "rsp" in insn.insn.op_str:
+                    opvalue = insn.insn.op_str.split(", ")[-1]
+                    if "0x" in opvalue:
+                        opvalue = int(opvalue, 16)
+                    else:
+                        if not opvalue.isnumeric():
+                            continue
+                        opvalue = int(opvalue)
+                    result += opvalue
+            if insn.insn.insn_name() == "pop":
+                result += 8
+            if insn.insn.insn_name() == "push":
+                result -= 8
+        bb = state.block(bb.addr+bb.size)
 
 def stack_backtrace(state, depth = 'Max'):
     """
@@ -66,30 +114,50 @@ def stack_backtrace(state, depth = 'Max'):
     :param depth:   bt depth
     """
     # gdb's backtrace records present rip in frame0, do the same with gdb
-    symbol = state.project.symbol_resolve.reverse_resolve(state.regs.rip.args[0])
+    symbol = state.project.symbol_resolve.reverse_resolve(state.regs.rip.args[0], must_plus = True)
     result = [stack_frame(state.regs.rip.args[0], state.regs.rbp.args[0], symbol, 0)]
     bp = state.regs.rbp.args[0]
-    frame_num = -1 if depth=='Max' else depth
+    sp = state.regs.rsp.args[0]
+    frame_num = 16 if depth=='Max' else depth
     no = 0
+    use_sp = 1
 
     while frame_num:
         no += 1
         frame_num -= 1
-        # bp==0 means trace ends
-        if (bp == 0):
-            return result
+        # first check sp(only leave funcs use sp to index the stack)
+        if use_sp:
+            ret_addr = state.memory.load(sp, 8, endness = 'Iend_LE').args[0]
+            if ret_addr < state.project.loader.min_addr or ret_addr > state.project.loader.max_addr:
+                use_sp = 0
+                # then goto backtrace use bp
+            else:
+                use_sp = 0
+                symbol = state.project.symbol_resolve.reverse_resolve(ret_addr, must_plus = True)
+                # XXX: use sp to represent bp?
+                frame = stack_frame(ret_addr, sp, symbol, no)
+                bp = state.memory.load(sp-0x10, 8, endness = 'Iend_LE').args[0]
+                #print(hex(bp))
+                result.append(frame)
+                continue
 
+        # then use bp to backtrace
         ret_addr = state.memory.load(bp+8, 8, endness = 'Iend_LE').args[0]
         bp = state.memory.load(bp, 8, endness = 'Iend_LE').args[0]
-        symbol = state.project.symbol_resolve.reverse_resolve(ret_addr)
+        symbol = state.project.symbol_resolve.reverse_resolve(ret_addr, must_plus = True)
         frame = stack_frame(ret_addr, bp, symbol, no)
+
         result.append(frame)
 
-        # We have set uninited memory to zero, and ret_addr shouldn't be zero.
-        if ret_addr == 0:
+        if ret_addr < state.project.loader.min_addr or ret_addr > state.project.loader.max_addr:
             return result
-        if ret_addr > 0x7fffffffffff:
+        if bp == 0 or bp >= 0x7fffffffffff:
             return result
+    return result
+
+
+
+
 
 def printable_backtrace(bt):
     """
@@ -106,7 +174,7 @@ def printable_backtrace(bt):
 def fetch_str(state, addr):
     try:
         prots = state.memory.permissions(addr)
-    except angr.errors.SimMemoryMissingError:
+    except :
         return ""
     prots = prots.args[0]
     result = ""
