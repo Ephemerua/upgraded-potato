@@ -15,6 +15,7 @@ from symbol_resolve import symbol_resolve
 
 from util.rep_pack import rep_pack
 from report.gen_html import generate_report as gen_report
+from syscall_dispatcher import reset_dispatchers
 
 from analysis import visualize_analysis
 
@@ -40,14 +41,16 @@ class Replayer(angr.project.Project):
 
     :ivar hooked_addr:  list of addr been hooked
     """
-    def __init__(self, binary_path, log_path, map_path, test = False):
+    def __init__(self, binary_path, log_path, map_path, new_syscall = False):
         assert(isinstance(binary_path, str))
         assert(isinstance(log_path, str))
         assert(isinstance(map_path, str))
         self.__binary_path = binary_path
         self.__log_path = log_path
         self.__map_path = map_path
-        self.test = test
+        self.test = new_syscall
+        self.from_syscall = 0
+
         
         target_name = binary_path.split(r"/")[-1]
         self.target  = target_name
@@ -109,9 +112,10 @@ class Replayer(angr.project.Project):
             auto_load_libs=False, use_sim_procedures=False , preload_libs = force_load_libs)
 
         # replace unsupported syscall
-        if test:
+        if self.test:
             syscall_info = parse_syscallinfo(log_path)
             replace_stub(self, test=True, syscall_info = syscall_info)
+            parse_dumps(self, map_path+".dump")
         else:
             replace_stub(self)
             self.input = parse_log_from_file(log_path)
@@ -147,8 +151,9 @@ class Replayer(angr.project.Project):
         state.regs.rsp = self._bp
 
         if self.mem_dump:
-            print("doing recover")
-            recover_dump(state, self.mem_dump)        
+            print("Recovering memory snapshot.")
+            recover_dump(state, self.mem_dump)      
+        reset_dispatchers()  
         return state
 
     def get_simgr(self, from_state = None):

@@ -1,0 +1,18 @@
+got bp: 0x7fffffffe670
+00400000-00402000 r-xp 00000000 00:53 66926503                           /ctf/work/playground/tmp/up2/test/packed_daily/daily
+00601000-00602000 r--p 00001000 00:53 66926503                           /ctf/work/playground/tmp/up2/test/packed_daily/daily
+00602000-00603000 rw-p 00002000 00:53 66926503                           /ctf/work/playground/tmp/up2/test/packed_daily/daily
+7ffff7a39000-7ffff7bd0000 r-xp 00000000 fe:01 2365566                    /glibc/2.23/64/lib/libc-2.23.so
+7ffff7bd0000-7ffff7dd0000 ---p 00197000 fe:01 2365566                    /glibc/2.23/64/lib/libc-2.23.so
+7ffff7dd0000-7ffff7dd4000 r--p 00197000 fe:01 2365566                    /glibc/2.23/64/lib/libc-2.23.so
+7ffff7dd4000-7ffff7dd6000 rw-p 0019b000 fe:01 2365566                    /glibc/2.23/64/lib/libc-2.23.so
+7ffff7dd6000-7ffff7dda000 rw-p 00000000 00:00 0 
+7ffff7dda000-7ffff7dfd000 r-xp 00000000 fe:01 2759366                    /tmp/ld-2.23.so
+7ffff7ff3000-7ffff7ff6000 rw-p 00000000 00:00 0 
+7ffff7ff7000-7ffff7ffa000 r--p 00000000 00:00 0                          [vvar]
+7ffff7ffa000-7ffff7ffc000 r-xp 00000000 00:00 0                          [vdso]
+7ffff7ffc000-7ffff7ffd000 r--p 00022000 fe:01 2759366                    /tmp/ld-2.23.so
+7ffff7ffd000-7ffff7ffe000 rw-p 00023000 fe:01 2759366                    /tmp/ld-2.23.so
+7ffff7ffe000-7ffff7fff000 rw-p 00000000 00:00 0 
+7ffffffde000-7ffffffff000 rw-p 00000000 00:00 0                          [stack]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]

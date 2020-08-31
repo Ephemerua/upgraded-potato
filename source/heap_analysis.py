@@ -3,7 +3,7 @@ import angr
 import os
 from structures import malloc_state
 from arena import Arena
-from util.info_print import  stack_backtrace, printable_backtrace, printable_memory
+from util.info_print import   printable_memory, printable_callstack
 import logging
 from analysis import register_ana
 from common import state_timestamp
@@ -69,7 +69,7 @@ def bp_overflow(report_logger, start_addr, size, callback = None):
 
 
 
-def bp_redzone(report_logger, start_addr, size, callback = None,  allow_heap_ops = False, mtype = 'redzone'):
+def bp_redzone(report_logger, start_addr, size, callback = None,  allow_heap_ops_size = 0, mtype = 'redzone'):
     def write_bp(state):
         nonlocal start_addr, size
         target_addr = state.inspect.mem_write_address
@@ -97,28 +97,24 @@ def bp_redzone(report_logger, start_addr, size, callback = None,  allow_heap_ops
             write_size = min(target_size, size)
         assert(write_size)
         # figure out if this write comes from heap operations
-        if write_size < 0x20 and allow_heap_ops:
-            cs = state.callstack
-            for frame in cs:
-                symbol = state.project.symbol_resolve.reverse_resolve(frame.func_addr)
-                if symbol:
-                    name = symbol[0].split('.')[-1]
-                    if name == 'malloc' or name == 'free' or name == 'calloc' or name == 'realloc':
-                        #print(frame)
-                        return
+        if write_size <  allow_heap_ops_size:
+            bt = printable_callstack(state)
+            if  'alloc' in bt or 'free'  in bt:
+                #print(frame)
+                return
             
         write_expr = state.inspect.mem_write_expr
         write_expr = write_expr[(target_size-offset)*8 - 1: (target_size-offset-write_size)*8]
 
         if size > 0x40:
-            start_addr = (target_addr>>4)<<4 - 0x10
-            size = (write_size>>4)<<4 + 0x10
+            start_addr = ((target_addr>>4)<<4) - 0x10
+            size = ((write_size>>4)<<4) + 0x10
 
         memory = printable_memory(state, min(start_addr, info_pos)\
             , max(size, info_size), warn_pos = target_addr,\
                  warn_size  = write_size, info_pos = info_pos, info_size = info_size)
 
-        backtrace = printable_backtrace(stack_backtrace(state))
+        backtrace = printable_callstack(state)
         message = "Redzone(%s) at %s overwritten." %(mtype, hex(start_addr))
         report_logger.warn(message, type="redzone_write",mtype = mtype, start_addr = start_addr, target_addr = target_addr, \
                            write_size = write_size, write_expr = write_expr, backtrace = backtrace, memory = memory, state_timestamp = state_timestamp(state))
@@ -161,8 +157,10 @@ def _malloc_hook(state):
         # TODO: check if return addr is sane. 
         symbol = state.project.symbol_resolve.reverse_resolve(rax) # dirty but easy
         if symbol:
-            message = "Chunk returned (%s <- %s%+d)not in heap."% (hex(rax), hex(symbol[0]), hex(symbol[1]))
-            state.project.report_logger.warn(message, symbol = symbol[0], offset = symbol[1], type = 'alloc_warn', state_timestamp = state_timestamp(state))
+            print(symbol)
+            message = "Chunk allocated (%s <- %s%+d)not in heap."% (hex(rax), symbol[0], symbol[1])
+            backtrace = printable_callstack(state)
+            state.project.report_logger.warn(message, symbol = symbol[0], offset = symbol[1], backtrace = backtrace, type = 'alloc_warn', state_timestamp = state_timestamp(state))
 
         state.project.heap_analysis.add_chunk(rax, size, state)
         # # TEST
@@ -187,11 +185,11 @@ def _malloc_hook(state):
     
         bp_content = state.inspect.b("mem_write", action = bp_overflow(state.project.report_logger, rax, origin_size))
         bp_metadata = state.inspect.b("mem_write", action = \
-            bp_redzone(state.project.report_logger, rax-0x10, 0x10, allow_heap_ops = False, mtype = 'chunk header'))
+            bp_redzone(state.project.report_logger, rax-0x10, 0x10, allow_heap_ops_size = 0x10, mtype = 'chunk header'))
         state.project.heap_analysis.inuse_bps[rax] = bp_content
         state.project.heap_analysis.inuse_bps[rax - 0x10] = bp_metadata
 
-    assert(not state.project.is_hooked(ret_addr))
+    #assert(not state.project.is_hooked(ret_addr))
     state.project.hook(ret_addr, _malloc_callback)
 
 # TODO： rewrite this!!!!
@@ -226,7 +224,7 @@ def _calloc_hook(state):
         state.project.report_logger.info("Calloc", type = 'calloc', size = size*count, ret_addr = rax, state_timestamp = state_timestamp(state))
         state.project.unhook(ret_addr)
 
-    assert(not state.project.is_hooked(ret_addr))
+    #assert(not state.project.is_hooked(ret_addr))
     state.project.hook(ret_addr, _calloc_callback)
 
 def _free_hook(state):
@@ -281,11 +279,11 @@ def _free_hook(state):
         chks = arena.get_all_chunks()
         for chk in chks:
             chk_size = (chk[1]>>4)<<4
-            bp = state.inspect.b('mem_write', when = angr.BP_AFTER,action=bp_redzone(state.project.report_logger, chk[0], chk_size, allow_heap_ops = True, mtype = "freed chunk"))
+            bp = state.inspect.b('mem_write', when = angr.BP_AFTER,action=bp_redzone(state.project.report_logger, chk[0], chk_size, allow_heap_ops_size = 0x20, mtype = "freed chunk"))
             state.project.heap_analysis.free_bps[chk[0]] = bp
 
 
-    assert(not state.project.is_hooked(ret_addr))
+    #assert(not state.project.is_hooked(ret_addr))
     state.project.hook(ret_addr, _free_callback)
 
 
@@ -329,6 +327,8 @@ class heap_analysis(object):
         """
         when a chunk is alloced, this func is called to do record and check.
         """
+        backtrace = printable_callstack(state)
+
         # do log in chunks_av
         if addr in self.chunks_av:
             # why allocated again?
@@ -338,7 +338,7 @@ class heap_analysis(object):
             else:
                 self.chunks_av[addr] = [sizes, size]
             self.abused_chunks.append({"addr":addr, "size":size, "type":"allocated mutiple times"})
-            self.project.report_logger.warn("Double allocated chunk", addr = addr, size = size, type = 'alloc_warn', state_timestamp = state_timestamp(state))
+            self.project.report_logger.warn("Double allocated chunk", backtrace = backtrace, addr = addr, size = size, type = 'alloc_warn', state_timestamp = state_timestamp(state))
 
         else:
             self.chunks_av[addr] = size
@@ -354,6 +354,8 @@ class heap_analysis(object):
         when a chunk is freed, this func is called to do record and check.
         """
         # check if the chunk is allocated
+        backtrace = printable_callstack(state)
+
         if addr in self.chunks_av:
             sizes = self.chunks_av[addr]
             # check if size matchess
@@ -364,7 +366,7 @@ class heap_analysis(object):
                         self.chunks_av.pop(addr)
                 else:
                     self.abused_chunks.append({"addr": addr, "size":size, "type":"freed with modified size"})
-                    self.project.report_logger.warn("Chunk freed with modified size", addr = addr, size = size, type='free_warn', state_timestamp = state_timestamp(state))
+                    self.project.report_logger.warn("Chunk freed with modified size", backtrace = backtrace, addr = addr, size = size, type='free_warn', state_timestamp = state_timestamp(state))
             # target chunk doesn't been allocated more than one time,
             # so sizes is an int
             elif size == sizes:
@@ -376,7 +378,7 @@ class heap_analysis(object):
         else:
             # this chunk is not allocated by c/m/relloc
             self.abused_chunks.append({"addr":addr, "size": size, "type":"chunk not allocated is freed"})
-            self.project.report_logger.warn("Unallocated chunk is freed", addr = addr, size = size, type = 'free_warn', state_timestamp = state_timestamp(state))
+            self.project.report_logger.warn("Unallocated chunk is freed", backtrace = backtrace, addr = addr, size = size, type = 'free_warn', state_timestamp = state_timestamp(state))
 
     
     def enable_hook(self):
@@ -410,8 +412,11 @@ class heap_analysis(object):
         self.project.report_logger = logger.get_logger(__name__)
         self.enable_hook()
         state = self.project.get_entry_state()
+        
         #state.options.discard("UNICORN")
         simgr = self.project.get_simgr(state)
+        simgr.active[0].options.discard("UNICORN")
+
         simgr.run()
         self.disable_hook()
         

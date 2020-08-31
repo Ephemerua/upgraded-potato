@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <signal.h>
 
 #define DEBUG 1
 #if DEBUG == 0
@@ -46,7 +47,15 @@ do {\
 
 #define ull unsigned long long
 
-// base64 encoding goes here
+ull load_ull(int pid, ull addr){
+    ull result = 0;
+    for(int i = 0; i < 8; i++){
+        *((char*)&result + i) = ptrace(PTRACE_PEEKDATA, pid, addr+i, NULL);
+    }
+    return result;
+}
+
+// base64 encoding goes here, skip please
 static char encoding_table[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
                                 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
                                 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
@@ -310,6 +319,8 @@ void output_from_talbe_node(long sysno, pid_t pid, int fd) {
 
 int socket_calling = 0;
 
+int mmap_calling = 0;
+
 int accept_calling = 0;
 
 int recvmsg_calling = 0;
@@ -333,6 +344,10 @@ int clone_calling = 0;
 int fork_calling = 0;
 
 int vfork_calling = 0;
+int time_calling = 0;
+int times_calling = 0;
+
+int writev_calling = 0;
 
 ull elf_entry = 0;
 ull elf_loadaddr = 0;
@@ -482,7 +497,8 @@ void save_end(int sysno, pid_t pid){
     remove_syscall_table(sysno, pid);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[], char** envp) {
+    long orig_rax;
     int status;
     int iscalling = 0;
     int is_init = 1;
@@ -505,11 +521,11 @@ int main(int argc, char *argv[]) {
     {
         ptrace(PTRACE_TRACEME, 0, NULL, NULL);
 //        execl("/bin/ping", "ping", "baidu.com", NULL);
-        execv(argv[1], argv+1);
+        execvpe(argv[1], argv+1, envp);
     }
     else
     {
-		out_fd = open("stdin.txt", O_RDWR | O_CREAT | O_TRUNC, 0666);
+		out_fd = open("output.txt", O_RDWR | O_CREAT | O_TRUNC, 0666);
 		int fd = -1;
         ull tmp_rip;
 
@@ -523,6 +539,12 @@ int main(int argc, char *argv[]) {
             if (WIFEXITED(status)) {
             //线程结束时，收到的信号
                 WEXITSTATUS(status);
+                break;
+            }
+            if(WIFSTOPPED(status)){
+                int sig = WSTOPSIG(status);
+                if (sig == SIGABRT || sig == SIGSEGV || sig == SIGILL || sig == SIGKILL)
+                    break;
             }
 
             if (is_init == 2 && child_waited == child_pid){
@@ -559,6 +581,32 @@ int main(int argc, char *argv[]) {
 
                         map_parser(child_waited);
                         is_init = 2;
+                        // trying to kill vdso， first find end of argv
+                        ull rsp = ptrace(PTRACE_PEEKUSER, child, 8 * RSP, NULL);
+                        debug_info("got envp value: %#llx\n", rsp);
+                        ull argc = load_ull(child, rsp);
+                        debug_info("got argc: %lld\n", argc);
+                        rsp += 8 * argc + 16;
+                        // now rsp points to envp, find end of it
+                        while(1){
+                            ull envp_entry = load_ull(child, rsp);
+                            //debug_info("rsp: %#llx envp: %#llx\n", rsp, envp_entry);
+
+                            rsp += 8;
+                            if (envp_entry == NULL) break; 
+                        }
+                        // now kill auxv type == 33, rsp now points to first auxv entry
+                        for(int i = 0; i < 20 ; i++){
+                            ull auxv_type = load_ull(child, rsp + 16*i);
+                            ull auxv_val = load_ull(child, rsp+16*i+8);
+                            //debug_info("found auxv type: %#lld AT_SYSINFO_EHDR: %#llx\n", auxv_type,auxv_val & 0xfff);
+                            if (auxv_type == 33 && (auxv_val & 0xfff) == 0){
+                                debug_info("we found the auxv AT_SYSINFO_EHDR: %#llx\n", auxv_val);
+                                ptrace(PTRACE_POKEDATA, child, rsp, 1);
+                                break;
+                            }
+                        }
+                        
                         if (elf_loadaddr){
                             if (elf_loadaddr>>12 != elf_entry>>12){
                                 elf_entry = elf_entry + elf_loadaddr;
@@ -720,6 +768,50 @@ int main(int argc, char *argv[]) {
                         save_memory_change(getrandom_buf, real_getrandom_size, child_waited, SYS_getrandom);
                         save_end(SYS_getrandom, child_waited);
                     }
+                    break;
+                case SYS_time:
+                    debug_info("%s", "calling time!\n");
+                    if(!time_calling){
+                        time_calling = 1;
+                        save_call_context(SYS_time);
+                    }else{
+                        time_calling = 0;
+                        save_call_result(SYS_time);
+                        save_end();
+                    }
+                    break;
+                case SYS_times:
+                    if(!times_calling){
+                        times_calling = 1;
+                        save_call_context(SYS_times);
+                    }else{
+                        times_calling = 0;
+                        save_call_result(SYS_times);
+                        save_end();
+                    }
+                    break;
+                case SYS_writev:
+                    if(!writev_calling){
+                        writev_calling = 1;
+                        save_call_context(SYS_writev);
+                    }else{
+                        writev_calling = 0;
+                        save_call_result(SYS_writev);
+                        save_end();
+                    }
+                    break;
+
+                case SYS_mmap:
+                    if(!mmap_calling){
+                        mmap_calling = 1;
+                        save_call_context(SYS_mmap);
+                    }else{
+                        mmap_calling = 0;
+                        save_call_result(SYS_mmap);
+                        save_end();
+                    }
+                    break;
+                default:
                     break;
 
                 case SYS_clone:

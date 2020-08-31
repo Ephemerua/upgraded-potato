@@ -22,3 +22,5 @@ def run():
     p.do_analysis()
     p.generate_report()
 
+if __name__ == "__main__":
+    run()

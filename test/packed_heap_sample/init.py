@@ -26,4 +26,4 @@ def run():
     p.generate_report()
 
 
-
+run()

@@ -35,6 +35,7 @@ def html_format(dict):
         elif isinstance(val, int):
             dict[key] = hex(val)
         dict[key] = dict[key].replace("\n", "<br/>")
+        dict[key] = dict[key].replace("    ", "&emsp;"*2)
         dict[key] = dict[key].replace("\t", "&emsp;"*2)
     # replace some key name to be more neat
     for k,v in dict.items():

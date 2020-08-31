@@ -9,7 +9,7 @@ from symbol_resolve import symbol_resolve
 import os
 from analysis import register_ana
 import logger
-from util.info_print import stack_backtrace, printable_backtrace
+from util.info_print import stack_backtrace, printable_callstack
 from common import *
 
 
@@ -104,7 +104,7 @@ class leak_analysis(object):
         if "found" in simgr.stashes:
             state = simgr.stashes["found"][0]
             rip = BV2Int(state.regs.rip)
-            bt = printable_backtrace(stack_backtrace(state))
+            bt = printable_callstack(state)
             addr = find_func(state, get_addr=True)
             symbol = []
             for i in self.leaked_symbols:

@@ -9,7 +9,7 @@ import angr
 from pwnlib import elf
 from SimPacketsC import SimPacketsC
 import base64
-from syscall_dispatcher import  dispatchers
+from syscall_dispatcher import  dispatchers , syscall_dispatcher
 
 PROT_READ = 1
 PROT_WRITE = 2
@@ -254,11 +254,26 @@ def replace_stub(p, arch="amd64", test = False, syscall_info = None):
     sl = p.simos.syscall_library
     if test:
         for sysno, call_infos in syscall_info.items():
+            if sysno == 1 :
+                continue
+            if sysno == 9:
+                sd = dispatchers[sysno]
+                sd.set_callinfo(call_infos)
+                p.hook_symbol("mmap", sd)
+                continue
             if sysno in dispatchers:
                 sd = dispatchers[sysno]
                 sd.set_callinfo(call_infos)
                 syscall_name = sl.syscall_number_mapping[arch][sysno]
                 sl.procedures[syscall_name] = sd
+                print("Setting up %s's syscall dispatcher." % syscall_name)
+            else:
+                print("sysno %d" % sysno)
+                sd = syscall_dispatcher(sysno)
+                sd.set_callinfo(call_infos)
+                syscall_name = sl.syscall_number_mapping[arch][sysno]
+                sl.procedures[syscall_name] = sd
+
         #     if sysno == 1:
         #         continue
         #     if sysno == 0:
@@ -314,7 +329,7 @@ def parse_dumps(p, dump_file):
             info = dumps[i]
             mem = dumps[i+1]
             obj = info.split(' ')[-1].split('/')[-1]
-            if obj != "[stack]":
+            if (obj != "[stack]") :
                 continue
             addrs = info.split(' ')[0]
             start = int(addrs.split('-')[0], 16)
