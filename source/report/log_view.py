@@ -1,6 +1,6 @@
 import re
 import copy
-from graphviz import Source
+from graphviz import Digraph
 import os
 import json
 from ansi2html import Ansi2HTMLConverter
@@ -35,7 +35,6 @@ def html_format(dict):
         elif isinstance(val, int):
             dict[key] = hex(val)
         dict[key] = dict[key].replace("\n", "<br/>")
-        dict[key] = dict[key].replace("    ", "&emsp;"*2)
         dict[key] = dict[key].replace("\t", "&emsp;"*2)
     # replace some key name to be more neat
     for k,v in dict.items():
@@ -253,57 +252,59 @@ class report_log(object):
                                        'backtrace': dict['backtrace']})
             return heap_infos
 
+        def _generate_heap_node_label(heap_info):
+            label_dot = '''<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">'''
+
+            # when the node is empty
+            if len(heap_info["node"])==0:
+                label_dot += "<tr><td>......</td></tr></table>>"
+                return label_dot
+
+            # construct the heap node graph ande highlight the overflow part
+            for info in heap_info['node']:
+                if info['type'] == "heap_overflow":
+                    label_dot += '''<tr><td bgcolor="lightgrey"><font color="red">%s size:%s</font></td></tr>''' % (
+                        info['addr'], info['size'])
+                    continue
+                label_dot += '''<tr><td>%s size:%s</td></tr>''' % (info['addr'], info['size'])
+            label_dot += '''</table>>'''
+            return label_dot
+
 
         heap_infos = _heap_trans_list(self.heap_log_list_dot)
-        head_dot = '''digraph G {n0[shape=record,label="......"]'''
-        tail_dot = "}"
-        label_dot = ""
-        edge_dot = ""
+        dot = Digraph(name="heapPictruce")
         index = 0
+        dot.node(name="n0", shape="record", label="......")
         for heap_info in heap_infos:
             index += 1
 
-            # table format
-            content = '''n%s[shape=none, label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">''' % (
-                index)
-            # when the node is empty
-            if 'node' in heap_info.keys():
-                if len(heap_info['node']) == 0:
-                    label_dot += '''n%s[shape=record,label="......"]''' % (index)
-                    edge_dot += '''n%s->n%s[label="%s"]''' % (index - 1, index, heap_info['content'])
-                    continue
 
-                # construct the heap node graph ande highlight the overflow part
-                for info in heap_info['node']:
-                    if info['type'] == "heap_overflow":
-                        content += '''<tr><td bgcolor="lightgrey"><font color="red">%s size:%s</font></td></tr>''' % (
-                            info['addr'], info['size'])
-                        continue
-                    content += '''<tr><td>%s size:%s</td></tr>''' % (info['addr'], info['size'])
+            if "node" in heap_info.keys():
+                dot.node(name="n%s"%index, label=_generate_heap_node_label(heap_info), shape='none')
 
             # when the node is the overflow one
             if heap_info['type'] == "heap_overflow":
-                label_dot += '''n%s%s[shape=box,label=<%s>]''' % (index, index, heap_info['memory'])
-                edge_dot += '''{rank = same; n%s->n%s%s[style=dotted label="%s"]}''' % (
-                index, index, index, "memory content")
+                dot.node("n%s_%s"%(index,index), shape="box", label="<%s>"%heap_info["memory"])
+                with dot.subgraph() as s:
+                    s.attr(rank="same")
+                    s.edge("n%s"%index, "n%s_%s"%(index, index), style="dotted", label="memory content")
 
             # when the node is the mem write one
             if heap_info['type'] == 'redzone_write':
-                label_dot += '''n%s[shape=box,label=<%s>]''' % (index, heap_info['memory'])
-                label_dot += '''n%s%s[shape=box,label=<%s>]''' % (index, index, heap_info['backtrace'])
-                edge_dot += '''n%s->n%s[label="%s",style=dotted]''' % (index - 1, index, heap_info['content'])
-                edge_dot += '''{rank = same; n%s->n%s%s[style=dotted]}''' % (index, index, index)
+                dot.node("n%s"%index, shape="box", label="<%s>"%heap_info["memory"])
+                dot.node("n%s_%s"%(index,index), shape="box", label="<%s>"%heap_info["backtrace"])
+                dot.edge("n%s"%(index-1), "n%s"%index, sytle="dotted", label=heap_info["content"])
+                with dot.subgraph() as s:
+                    s.attr(rank="same")
+                    s.edge("n%s"%index, "n%s_%s"%(index, index), style="dotted")
                 continue
 
-            content += '''</table>>]'''
-            label_dot += content
-            edge_dot += '''n%s->n%s[label="%s"]''' % (index - 1, index, heap_info['content'])
+            dot.edge("n%s"%(index-1), "n%s"%index, label=heap_info["content"])
 
-        dot = head_dot + label_dot + edge_dot + tail_dot
-        t = Source(dot)
-        t.save("/tmp/HeapChange.dot")
+
+        dot.render("/tmp/HeapChange.dot")
         os.system("dot /tmp/HeapChange.dot -Tpng -o /tmp/HeapChange.png")
-        return "/tmp/HeapChange.png"
+        return "/tmp/HeapChange.svg"
 
 
 

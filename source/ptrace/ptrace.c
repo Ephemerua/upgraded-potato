@@ -18,7 +18,7 @@
 #include <arpa/inet.h>
 #include <signal.h>
 
-#define DEBUG 1
+#define DEBUG 0
 #if DEBUG == 0
     #define B64_ENCODE 1
 #endif
@@ -539,7 +539,7 @@ int main(int argc, char *argv[], char** envp) {
             if (WIFEXITED(status)) {
             //线程结束时，收到的信号
                 WEXITSTATUS(status);
-                break;
+//                break;
             }
             if(WIFSTOPPED(status)){
                 int sig = WSTOPSIG(status);
@@ -582,27 +582,27 @@ int main(int argc, char *argv[], char** envp) {
                         map_parser(child_waited);
                         is_init = 2;
                         // trying to kill vdso， first find end of argv
-                        ull rsp = ptrace(PTRACE_PEEKUSER, child, 8 * RSP, NULL);
+                        ull rsp = ptrace(PTRACE_PEEKUSER, child_waited, 8 * RSP, NULL);
                         debug_info("got envp value: %#llx\n", rsp);
-                        ull argc = load_ull(child, rsp);
+                        ull argc = load_ull(child_waited, rsp);
                         debug_info("got argc: %lld\n", argc);
                         rsp += 8 * argc + 16;
                         // now rsp points to envp, find end of it
                         while(1){
-                            ull envp_entry = load_ull(child, rsp);
+                            ull envp_entry = load_ull(child_waited, rsp);
                             //debug_info("rsp: %#llx envp: %#llx\n", rsp, envp_entry);
 
                             rsp += 8;
-                            if (envp_entry == NULL) break; 
+                            if (envp_entry == (ull)NULL) break;
                         }
                         // now kill auxv type == 33, rsp now points to first auxv entry
                         for(int i = 0; i < 20 ; i++){
-                            ull auxv_type = load_ull(child, rsp + 16*i);
-                            ull auxv_val = load_ull(child, rsp+16*i+8);
+                            ull auxv_type = load_ull(child_waited, rsp + 16*i);
+                            ull auxv_val = load_ull(child_waited, rsp+16*i+8);
                             //debug_info("found auxv type: %#lld AT_SYSINFO_EHDR: %#llx\n", auxv_type,auxv_val & 0xfff);
                             if (auxv_type == 33 && (auxv_val & 0xfff) == 0){
                                 debug_info("we found the auxv AT_SYSINFO_EHDR: %#llx\n", auxv_val);
-                                ptrace(PTRACE_POKEDATA, child, rsp, 1);
+                                ptrace(PTRACE_POKEDATA, child_waited, rsp, 1);
                                 break;
                             }
                         }
@@ -773,46 +773,46 @@ int main(int argc, char *argv[], char** envp) {
                     debug_info("%s", "calling time!\n");
                     if(!time_calling){
                         time_calling = 1;
-                        save_call_context(SYS_time);
+                        save_call_context(SYS_time, child_waited);
                     }else{
                         time_calling = 0;
-                        save_call_result(SYS_time);
-                        save_end();
+                        save_call_result(SYS_time, child_waited);
+                        save_end(SYS_time, child_waited);
                     }
                     break;
                 case SYS_times:
                     if(!times_calling){
                         times_calling = 1;
-                        save_call_context(SYS_times);
+                        save_call_context(SYS_times, child_waited);
                     }else{
                         times_calling = 0;
-                        save_call_result(SYS_times);
-                        save_end();
+                        save_call_result(SYS_times, child_waited);
+                        save_end(SYS_times, child_waited);
+                        save_end(SYS_times, child_waited);
                     }
                     break;
                 case SYS_writev:
                     if(!writev_calling){
                         writev_calling = 1;
-                        save_call_context(SYS_writev);
+                        save_call_context(SYS_writev, child_waited);
                     }else{
                         writev_calling = 0;
-                        save_call_result(SYS_writev);
-                        save_end();
+                        save_call_result(SYS_writev, child_waited);
+                        save_end(SYS_writev, child_waited);
                     }
                     break;
 
                 case SYS_mmap:
                     if(!mmap_calling){
                         mmap_calling = 1;
-                        save_call_context(SYS_mmap);
+                        save_call_context(SYS_mmap, child_waited);
                     }else{
                         mmap_calling = 0;
-                        save_call_result(SYS_mmap);
-                        save_end();
+                        save_call_result(SYS_mmap, child_waited);
+                        save_end(SYS_mmap, child_waited);
                     }
                     break;
-                default:
-                    break;
+
 
                 case SYS_clone:
                     if(!clone_calling) {
@@ -828,6 +828,7 @@ int main(int argc, char *argv[], char** envp) {
                     if(!fork_calling) {
                         fork_calling = 1;
                     }else{
+                        fork_calling = 0;
                         pid_t new_pid = ptrace(PTRACE_PEEKUSER, child_waited, 8 * RAX, NULL);
                         ptrace(PTRACE_ATTACH, new_pid, NULL, NULL);
                     }
@@ -837,6 +838,7 @@ int main(int argc, char *argv[], char** envp) {
                     if(!vfork_calling) {
                         vfork_calling = 1;
                     }else{
+                        vfork_calling = 0;
                         pid_t new_pid = ptrace(PTRACE_PEEKUSER, child_waited, 8 * RAX, NULL);
                         ptrace(PTRACE_ATTACH, new_pid, NULL, NULL);
                     }
